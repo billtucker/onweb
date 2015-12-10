@@ -1,0 +1,223 @@
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+
+.icon-red {
+    color: red;
+}
+
+.btn-file input {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: #ffffff;
+    cursor: inherit;
+    display: block;
+}
+
+.inline{
+    display: inline-block;
+}
+
+div.Outer {
+    width: 350px;
+    border: dashed 1px #000000;
+    position: relative;
+    clear: both;
+}
+
+div.InnerLeft {
+    width: 50%;
+    position: relative;
+    background: #CCCCCC;
+    float: left;
+}
+
+div.InnerRight {
+    width: 49%;
+    position: relative;
+    background: #AAAAFF;
+    float: right;
+}
+
+.nopadding {
+    padding:  0 !important;
+    margin: 0 !important;
+    border-right: 1px #000000;
+    border-left: 1px #000000;
+}
+
+.divBorder {
+    border: 1px solid #000000;
+}
+
+/** This was added to control tables headers with a color **/
+.tableTDHeaderDef {
+    background-color: #f3f3f3;
+}
+
+.tdc-header-background-color{
+    background-color: #F0F8FF;
+}
+
+/* This was added to hide empty cells and remove borders around empty cells */
+table td {
+    empty-cells: hide;
+}
+
+/** This was added to control the background colors and borders around glyphicon */
+.tdc-glyphicon-control {
+    width:auto;
+    height:auto;
+    background:transparent;
+    border: 0;
+}
+
+/* This is put in to override the table font size */
+.table {
+    font-size: 10px;
+}
+
+/* This to remove padding and margins around glyphicon */
+.tdc-cell-spacing {
+    padding: 0px;
+    margin: 0px;
+}
+
+/* This was added to remove that tan background color used by Bootstrap on Panel Heading */
+.panel-default > .panel-heading{
+    background-color: #ffffff;
+}
+
+.tdcDataCells {
+    font-family: "Times New Roman", Times, serif;
+}
+
+.tdc-body-font{
+    font-family: "Times New Roman", Times, serif;
+}
+
+.tdc-deliverable-input-height{
+    height: 30px;
+}
+
+.tdc-deliverable-input-length{
+    width: 300px;
+}
+
+.tdc-display-none{
+    display: none;
+}
+
+.tdc-request-list-height{
+    height: 30px;
+    line-height: 2.0;
+}
+
+.tdc-home-button-custom {
+    margin: 10px;
+    background-color: hsl(262, 14%, 77%) !important;
+    background-repeat: repeat-x; filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fcfcfc", endColorstr="#c2bccc");
+    background-image: -khtml-gradient(linear, left top, left bottom, from(#fcfcfc), to(#c2bccc));
+    background-image: -moz-linear-gradient(top, #fcfcfc, #c2bccc);
+    background-image: -ms-linear-gradient(top, #fcfcfc, #c2bccc);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fcfcfc), color-stop(100%, #c2bccc));
+    background-image: -webkit-linear-gradient(top, #fcfcfc, #c2bccc);
+    background-image: -o-linear-gradient(top, #fcfcfc, #c2bccc);
+    background-image: linear-gradient(#fcfcfc, #c2bccc);
+    border-color: #c2bccc #c2bccc hsl(262, 14%, 71.5%);
+    color: #333 !important;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.36);
+    -webkit-font-smoothing: antialiased;
+}
+
+
+.tdc-header-bar-background {
+	width: 102%;
+    background: rgba(245,245,245,1);
+    background: -moz-linear-gradient(left, rgba(245,245,245,1) 0%, rgba(235,235,235,1) 47%, rgba(227,227,227,1) 100%);
+    background: -webkit-gradient(left top, right top, color-stop(0%, rgba(245,245,245,1)), color-stop(47%, rgba(235,235,235,1)), color-stop(100%, rgba(227,227,227,1)));
+    background: -webkit-linear-gradient(left, rgba(245,245,245,1) 0%, rgba(235,235,235,1) 47%, rgba(227,227,227,1) 100%);
+    background: -o-linear-gradient(left, rgba(245,245,245,1) 0%, rgba(235,235,235,1) 47%, rgba(227,227,227,1) 100%);
+    background: -ms-linear-gradient(left, rgba(245,245,245,1) 0%, rgba(235,235,235,1) 47%, rgba(227,227,227,1) 100%);
+    background: linear-gradient(to right, rgba(245,245,245,1) 0%, rgba(235,235,235,1) 47%, rgba(227,227,227,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5f5f5', endColorstr='#e3e3e3', GradientType=1 );
+}
+
+.tdc-footer{
+    text-align: center;
+	font-size: 9pt;
+}
+
+.tdc-nav-bar-background-grad {
+    background: #f6f8f9; /* Old browsers */
+    background: -moz-linear-gradient(top,  #f6f8f9 0%, #d7dee3 39%, #e5ebee 50%, #f5f7f9 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f6f8f9), color-stop(39%,#d7dee3), color-stop(50%,#e5ebee), color-stop(100%,#f5f7f9)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #f6f8f9 0%,#d7dee3 39%,#e5ebee 50%,#f5f7f9 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #f6f8f9 0%,#d7dee3 39%,#e5ebee 50%,#f5f7f9 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #f6f8f9 0%,#d7dee3 39%,#e5ebee 50%,#f5f7f9 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #f6f8f9 0%,#d7dee3 39%,#e5ebee 50%,#f5f7f9 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f6f8f9', endColorstr='#f5f7f9',GradientType=0 ); /* IE6-9 */
+}
+
+.tdc-nav-bar-header-divider-left{
+    border-left: ridge #e5e5e5;
+}
+
+.tdc-nav-bar-header-margin-padding-left {
+    margin-left: 0px;
+    padding-left: 0px;
+}
+
+.tdc-nav-bar-header-margin-padding-right{
+    padding-right: 0px;
+    margin-right: 0px;
+}
+
+.tdc-title-text-color{
+    color: #337Ab7;
+    text-transform: uppercase;
+}
+
+.tdc-input-xs {
+    height: 30px;
+    padding: 5px 5px;
+    font-size: 12px;
+    line-height: 2.0;
+    border-radius: 3px;
+}
+
+.tdc-textarea-font-size{
+    font-size: 12px;
+}
+
+.tdc-tag-delete-icon {
+    color: red;
+    background: #ffffff;
+    border: none;
+    padding: 0px;
+    margin: 0px;
+}
+
+.tdc-tag-add-icon {
+    color:lightskyblue;
+    border: none;
+    padding-bottom: 5px;
+    background-color: #ffffff;
+    padding-top: 0px;
+    margin-top: 0px;
+}
+
+.tdc-splash-image-size {
+    width: 400px;
+    height: 300px;
+}
+

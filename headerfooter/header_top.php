@@ -1,0 +1,86 @@
+<?php
+/**
+ * Created by IntelliJ IDEA.
+ * User: Bill
+ * Date: 10/16/2014
+ * Time: 1:33 PM
+ */
+
+include_once($_SERVER["DOCUMENT_ROOT"] ."/onweb/onweb-config.php");
+
+$pageUrl = urlencode($port ."$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
+
+?>
+
+<!DOCTYPE html>
+<html  lang="en">
+<head>
+    <title>On-Air Pro</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<!-- Add these header values to reset the page when save operation has occurred -->
+	<meta http-equiv="cache-control" content="no-cache"> <!-- tells browser not to cache -->
+	<meta http-equiv="expires" content="0"> <!-- says that the cache expires 'now' -->
+	<meta http-equiv="pragma" content="no-cache"> <!-- says not to use cached stuff, if there is any -->
+
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen" type="text/css">
+    <link href="css/fileinput.css" media="all" rel="stylesheet" type="text/css" />
+    <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.1.6/nprogress.css" rel="stylesheet" type="text/css">
+    <link href="css/tdc-main.css" rel="stylesheet" media="screen">
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js" type="text/javascript"></script>
+
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+    <script src="js/fileinput.js" type="text/javascript"></script>
+
+    <!-- TODO remove filestyle.js from the imports as it is no longer needed -->
+    <script type="text/javascript" src="js/bootstrap-filestyle.js"></script>
+	<script type="text/javascript" src="js/jquery.are-you-sure.js"></script>
+    <script type="text/javascript" src="js/ays-beforeunload-shim.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.1.6/nprogress.js"></script>
+    <script type="text/javascript" src="js/tdc.app.js"></script>
+
+    <!--[if lt IE 9]>
+    <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="//oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<div class="container-fluid"><!-- start site navigation bar -->
+    <div class="row tdc-nav-bar-background-grad">
+        <div class="col-xs-1 col-md-1 tdc-nav-bar-header-margin-padding-right">
+            <img src="images/universal-sports-logo_75x37_org.png" alt="Universal Sports Logo">
+        </div>
+        <form role="form" action="utils/printPage.php" method="post" id="print" name="print">
+            <input type="hidden" name="url" id="url" value="<?php echo($pageUrl);?>">
+            <div class="col-xs-4 col-md-4">
+                <ul class="nav nav-pills" role="tablist">
+                    <li class="tdc-nav-bar-header-divider-left" role="presentation">
+                        <a href="<?php echo($homepage);?>"><strong>Home</strong></a>
+                    </li>
+                    <li class="tdc-nav-bar-header-divider-left" role="presentation">
+                        <!-- This configuration works in all browsers -->
+                        <a href="#" onclick="history.go(-1);return false;"><strong>Back</strong></a>
+                    </li>
+                    <li class="tdc-nav-bar-header-divider-left" role="presentation">
+                        <a href="#" onclick="document.print.submit()"><strong>Print</strong></a>
+                    </li>
+                    <li class="tdc-nav-bar-header-divider-left" role="presentation">
+                        <a href="<?php echo($site_prefix ."logout.php");?>" id="logout"><strong>Logout</strong></a>
+                    </li>
+                    <li class="tdc-nav-bar-header-divider-left" role="presentation">
+                        <a href="#" id="empty_nav_link">&nbsp;</a>
+                    </li>
+                </ul>
+            </div>
+        </form>
+        <div class="col-xs-6 col-md-6">&nbsp;</div>
+        <div class="col-xs-1 col-md-1 pull-right">
+            <img src="images/TD_OAP_logo_small.png" alt="No Alt Available" align="right" width="120" height="35">
+        </div>
+    </div>
+</div><!-- start site navigation bar -->
+<div class="container"><!-- start container div -->
