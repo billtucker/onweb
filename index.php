@@ -44,6 +44,7 @@ if($validateUser) {
 }
 
 $projectTypesFind = $fmOrderDB->newFindCommand('[WEB] Project Request Types');
+$projectTypesFind->addFindCriterion("Request Type", "*");
 $projectTypesResults = $projectTypesFind->execute();
 
 if(FileMaker::isError($projectTypesResults)){
@@ -54,7 +55,7 @@ if(FileMaker::isError($projectTypesResults)){
 }
 
 $projectTypeRecords = $projectTypesResults->getRecords();
-$splashScreenImage = $projectTypeRecords[0];
+//$splashScreenImage = $projectTypeRecords[0];
 
 //Variables used in the Algorithm to display project type button array of 4 by X buttons per row of 12 column grid
 $projectTypeRecordCount = count($projectTypeRecords);
@@ -63,7 +64,7 @@ $dynamicColumnLgClassText = "col-lg-";
 $dynamicColumnXsClassText = "col-xs-";
 $decrementColumnBy = 2;
 
-$image = $splashScreenImage->getField('OAP_PREFS::Logo_SplashScreen_Image_cc');
+//$image = $splashScreenImage->getField('OAP_PREFS::Logo_SplashScreen_Image_cc');
 
 //1. Do not include HTML header record until most processing is completed. The error page cannot be called "Redirected"
 //after HTML header is called.

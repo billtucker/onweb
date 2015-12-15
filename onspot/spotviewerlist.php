@@ -30,7 +30,9 @@ if($validateUser) {
 
 $spotViewerLayout = "[WEB] cwp_spotviewer_browse";
 
+$quickListFilter = "1";
 $spotList = $fmWorkDB->newFindCommand($spotViewerLayout);
+$spotList->addFindCriterion("z_QuickList_RoughCutsToApprove_cn", "==" .$quickListFilter);
 $spotResults = $spotList->execute();
 
 if(FileMaker::isError($spotResults)){

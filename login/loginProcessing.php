@@ -231,6 +231,16 @@ function setSessionData($userRecord, $site_prefix){
         //Force the Array items to uppercase just in case the character case was mixed at entry
         $_SESSION['installedPlugins'] = array_map("strtoupper", convertPipeToArray($pipeInstalledPlugins));
 
+        //New values to capture from [WEB] Login view to be used when determining which users can view Spots
+        // based on account name and we also need to capture PK for the contact ID
+        $_SESSION['contact_pk'] = $userRecord->getField('User_Contact_pk_ID_ct');
+
+        //System preference apply if 1 or else value is null
+        $_SESSION['system_preference'] = $userRecord->getField('z_PRO_SeparateWorkByPrograming_on');
+
+        //Accounts associated with user in cr delaminated field
+        $_SESSION['user_accounts'] = array(stripControlChars($userRecord->getField('User_Contact_Programming_Type_Associations_ct')));
+
         //Now test for ON-WEB from the PLUGIN array to validate that the user has the License authority to access web
         validatePlugin($_SESSION['userName'], $_SESSION['installedPlugins'], $onWebPlugin);
 
