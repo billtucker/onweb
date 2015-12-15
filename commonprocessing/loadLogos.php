@@ -8,6 +8,7 @@
  * Method to get the company small image from [WEB] Login layout, write file name with extension to disk, and
  * dynamically create the tdc-app-conf.php with variable assigned as to the page of company logo.
  * Note: This is a one time event
+ * Note: This only works with JPEG images for sure. FileMaker makes a copy of image for download as data.jpg
  *
  * Refactor Notes:
  *
