@@ -639,9 +639,10 @@ function printEnableDisable($url){
 }
 
 /**
- * Method will remove CR(s) and replace with "," to form array formated string
+ * Method will remove CR(s) and replace with "," to form array formatted string for FileMaker fields with CR(s)
+ * imbedded within the field
  * @param $textIn -- Multi text value FileMaker field
- * @return mixed - return comma delaminated strin g
+ * @return mixed - return comma delaminated string
  */
 function stripControlChars($textIn){
     return str_replace("\n", ",", $textIn);
