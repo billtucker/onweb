@@ -257,8 +257,8 @@ function setSessionData($userRecord, $site_prefix){
 
         if(!empty($_SESSION['forwardingUrl'])){
             $log->debug("setSessionData - User logged in and is being forwarded to: " .$_SESSION['forwardingUrl']);
-            header("location:" .$_SESSION['forwardingUrl']);
             unset($_SESSION['forwardingUrl']);
+            header("location:" .$_SESSION['forwardingUrl']);
             exit;
         }else{
             $log->debug("setSessionData - No previous forwarding is defined so go to index page");
