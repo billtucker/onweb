@@ -14,6 +14,8 @@
  * 2. Added redirects to a dynamic error accessError page to report in English (For Now) an error has occurred
  * 3. 10/30/2015 integrated Spot Viewer in to onweb site start date
  * 4. 11/03/2015 Modified pageURL generation adding dynamic port detection from onweb-config.php
+ * 5. 01/12/2016 Modified code to address PHP Notice messages related PHP errors
+ * 6. 01/12/2016 Finally made change to fully use spot path from database over path manipulation
  */
 
 include_once("onspot-config.php");
@@ -68,7 +70,7 @@ $downloadLink = false;
 $userHasNotes = false;
 
 if(isset($_SESSION['accessLevel'])){
-	$log->debug("Access level is set to: " .$_SESSION['accessLevel']);
+	$log->debug("Access level is set to: " .gettype($_SESSION['accessLevel']));
 }else{
 	$log->debug("Session is started but nothing is set for the print opertion.");
 }
@@ -139,19 +141,10 @@ $spots = $spotRecords->getRecords();
 $record = $spots[0];
 
 
-//This is a work around for 192.168.0.16 server due to old version of FileMaker
-//TODO: Remeber to comment this workaround out before goiing live
+//This will now extract Spot Image full path from FileMaker without injecting path information manually
 $fullPathField = "z_ONSPOT_Rough_Full_Path_ct";
-$fullPath_name = $record->getField($fullPathField);
-$prefix = $site ."media/";
-$fullPath_ct = $prefix .$fullPath_name;
+$fullPath_ct = $record->getField($fullPathField);
 $log->debug("New Full Path value: " .$fullPath_ct);
-
-//Now get video path for viewer and download link if enabled
-//TODO: Remember to uncomment this workaround out before going live
-//$fullPathField = "z_ONSPOT_Rough_Full_Path_ct";
-//$fullPath_ct = $record->getField($fullPathField);
-//logger("spotedit.php - New Full Path value: " .$fullPath_ct);
 
 //----> At this point if viewOnly is true then we want to skip the query for user notes or loading any value lists. <----////
 

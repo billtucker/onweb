@@ -36,7 +36,7 @@ $dn = "CN=Users,DC=thoughtdev,DC=com";
 //TODO replace all the $homepage references with $site_prefix as the homepage is used in many pages
 $port = ($_SERVER['SERVER_PORT'] == '80' ? "http://" : "https://" );
 $siteRoot = "onweb";
-$homepage = $port .$_SERVER[HTTP_HOST] ."/" .$siteRoot ."/";
+$homepage = $port .$_SERVER['HTTP_HOST'] ."/" .$siteRoot ."/";
 $site_prefix = $homepage;
 
 
@@ -62,6 +62,9 @@ $log = Logger::getLogger("ONAIRPRO_Logger");
 //The package/plugin from Thought-Development
 $onWebPlugin = "ON-WEB";
 $onSpotPlugin = "ON-SPOT";
+
+//added this variable to deal with canModify related to Request edit commands
+$okModify = "RequestModify";
 
 //Sub-directory site definition for Request and Spot viewer
 $spotRoot = $root ."onspot/";
