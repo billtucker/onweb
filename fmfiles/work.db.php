@@ -15,7 +15,7 @@
 include_once($_SERVER["DOCUMENT_ROOT"] ."/onweb/onweb-config.php");
 require_once($fmfiles .'FileMaker/FileMaker.php');
 
-$DB_HOST = 'http://192.168.0.16';
+$DB_HOST = 'http://192.168.0.14';
 $DB_NAME = 'PRO_WORK';
 $DB_USER = 'php';
 $DB_PASS = 'php';

@@ -139,7 +139,7 @@ function authenticateLdapUserFM($dbHandle, $userName, $site_prefix){
     //More than one user record with the same username value is a serious error
     //TODO: redirect this error to the access error page as this is not something the user can correct on their own
     if ($loginResult->getFoundSetCount() > 1) {
-        $error = "Contact System Adminstrator";
+        $error = "Contact System Administrator";
         $log->error("authenticateUserFM - More than 1 username Error: " . $error . " username: " . $userName);
         header("location: " . $site_prefix . "login.php?error=" .$error);
         exit();

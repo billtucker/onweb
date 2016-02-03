@@ -20,7 +20,7 @@ if(isset($_GET['url'])){
 
 if(isset($url) && !empty($url)){
 
-    $fileType = getFileMakerFileType($url);
+    $fileType = getFileMakerContainerFileExtension($url);
 
     if($fileType == 'jpg'){
         header("Content-type: image/jpeg");

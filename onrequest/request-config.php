@@ -20,7 +20,6 @@ $onWebPlugin = "ON-WEB";
 $onRequestPlugin = "ON-REQUEST";
 $siteSection = "Request";
 $onRequestModify = "Modify";
-
 $okModify = "RequestModify";
 
 $request_site_prefix = $site_prefix ."onrequest/";

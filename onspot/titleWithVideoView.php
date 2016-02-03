@@ -92,7 +92,7 @@ if(!session_id()){
     <div class="row">
         <div class="col-md-12 col-xs-12">
             <video height="100%" width="100%" controls>
-                <source src="<?php echo $fullPath_ct ?>">
+                <source src="<?php echo($fullVideoLink); ?>" type="<?php echo($videoType); ?>">
                 Your browser does not support displaying HTML5 video.
             </video>
             <?php
@@ -102,8 +102,8 @@ if(!session_id()){
                     echo "<div style='display: none;'><!-- Video Link Start hidden  -->";
                 }
             ?>
-                <a href="<?php echo $fullPath_ct ?>">
-                    <?php echo $fullPath_ct ?>
+                <a href="<?php echo $fullVideoLink ?>">
+                    <?php echo $fullVideoLink ?>
                 </a>
             </div><!-- Video Link End -->
         </div>

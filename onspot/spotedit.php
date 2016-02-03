@@ -140,11 +140,27 @@ if (FileMaker::isError($spotRecords)) {
 $spots = $spotRecords->getRecords();
 $record = $spots[0];
 
+//init the videoPath to use to point to video URL
+$videoPath = "";
+$videoType = "";
+$fullVideoLink = "";
 
+//TODO modify this record to use the container if URL exists for container if not then use full path ct field
+if(!empty($record->getField('z_ONSPOT_Rough_Media_Store_con'))){
+    $container_url = $record->getField('z_ONSPOT_Rough_Media_Store_con');
+    $ext = getFileMakerContainerFileExtension($container_url);
+    $videoType = getVideoSourceType($ext);
+    $fullVideoLink = $fmWorkDB->getContainerDataURL($container_url);
+    $log->debug("URL from Container value: " .$fullVideoLink ." video type: " .$videoType);
+}else{
+    $fullPathField = "z_ONSPOT_Rough_Full_Path_ct";
+    $fullVideoLink = $record->getField($fullPathField);
+    $ext = getFileExtensionFromURL($fullVideoLink);
+    $videoType = getVideoSourceType($ext);
+    $log->debug("URL from field Full Path value: " .$fullVideoLink ." video type: " .$videoType);
+}
 //This will now extract Spot Image full path from FileMaker without injecting path information manually
-$fullPathField = "z_ONSPOT_Rough_Full_Path_ct";
-$fullPath_ct = $record->getField($fullPathField);
-$log->debug("New Full Path value: " .$fullPath_ct);
+
 
 //----> At this point if viewOnly is true then we want to skip the query for user notes or loading any value lists. <----////
 

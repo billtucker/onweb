@@ -476,17 +476,6 @@ function validatePlugin($userName, $installedPlugins, $pluginName){
 }
 
 /**
- * Strip extension from image file name and returns the value to calling method.
- * Note: this method will 'Only' work on FileMaker container URL(s) and not plain file name
- * @param $fileUrl String representation of location in FileMaker where image file is stored
- * @return string String extension of image file (png, jpg, gif, etc...)
- */
-function getFileMakerFileType($fileUrl){
-    $fileUrl = substr($fileUrl, 0, strpos($fileUrl,"?"));
-    return substr($fileUrl, strpos($fileUrl, ".") + 1);
-}
-
-/**
  * This purely a test method to track at microseconds of any given operation/function/page load 
  * @return mixed returns an String representation of time
  */
@@ -646,6 +635,54 @@ function printEnableDisable($url){
  */
 function stripControlChars($textIn){
     return str_replace("\n", ",", $textIn);
+}
+
+/**
+ * Method to take in full URL path to a file and return extension of file. This method is used when using a hardcoded
+ * URL within a FileMaker layout and NOT the FileMaker container object
+ * @param $pathToFile String value of URL with file extension
+ * @return mixed extension from pathInfo array
+ */
+function getFileExtensionFromURL($pathToFile){
+    $pathInfo = pathinfo($pathToFile);
+
+    return $pathInfo['extension'];
+}
+
+/**
+ * From file extension return video type attribute to caller
+ * @param $extension String value ofd file extension
+ * @return null|string type attribute for HTML5 <source> tag or null if no match is detected
+ */
+function getVideoSourceType($extension){
+
+    switch($extension){
+        case "mp4":
+            return "video/mp4";
+            break;
+        case "webm":
+            return "video/webm";
+            break;
+        case "ogv":
+            return "video/ogv";
+            break;
+        case "mov":
+            return "video/mov";
+            break;
+        default :
+            return null;
+    }
+}
+
+/**
+ * Strip extension from image file name and returns the value to calling method.
+ * Note: this method will 'Only' work on FileMaker container URL(s) and not plain file name
+ * @param $fileUrl String representation of location in FileMaker where image file is stored
+ * @return string String extension of image file (png, jpg, gif, etc...)
+ */
+function getFileMakerContainerFileExtension($fileUrl){
+    $fileUrl = substr($fileUrl, 0, strpos($fileUrl,"?"));
+    return substr($fileUrl, strpos($fileUrl, ".") + 1);
 }
 
 ?>

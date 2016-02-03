@@ -1,8 +1,8 @@
 <?php
 /**
- * FileMaker API configuration file.
+ * FileMaker API for PHP configuration file.
  *
- * All settings are put into the $__FM_CONFIG array to maintain a
+ * All settings are in the $__FM_CONFIG array to maintain a
  * clean global namespace.
  */
 
@@ -27,14 +27,13 @@ $__FM_CONFIG['logLevel'] = FILEMAKER_LOG_ERR;
  * as it can cause peformance loss. DO NOT include /fmi/xml in this string.
  */
 $__FM_CONFIG['hostspec'] = 'http://127.0.0.1';
-//$__FM_CONFIG['hostspec'] = 'https://192.168.0.16';
 
 /**
  * Specify any additional curl options - SSL certificates, etc. - in
  * an associative array, with curl option names as the keys, and
  * option values as the values.
  */
-//$__FM_CONFIG['curlOptions'] = array(CURLOPT_SSL_VERIFYPEER => false);
+// $__FM_CONFIG['curlOptions'] = array(CURLOPT_SSL_VERIFYPEER => false);
 
 /**
  * The PHP class to use for representing Records
@@ -42,6 +41,6 @@ $__FM_CONFIG['hostspec'] = 'http://127.0.0.1';
 $__FM_CONFIG['recordClass'] = 'FileMaker_Record';
 
 /**
- * Do prevalidation (validate in PHP) on Record data?
+ * Do pre-validation (validate in PHP engine) on Record data?
  */
 $__FM_CONFIG['prevalidate'] = false;

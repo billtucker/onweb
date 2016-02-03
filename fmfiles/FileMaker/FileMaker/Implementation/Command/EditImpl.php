@@ -20,21 +20,32 @@ $this->_fields[$V06e3d36f] = $V2063c160;
  function & execute() { 
  $V21ffce5b = $this->_getCommandParams(); 
  if (empty ($this->_recordId)) {
- $Vcb5e100e = & new FileMaker_Error($this->_fm, 'Edit commands require a record id.');
+ $Vcb5e100e = new FileMaker_Error($this->_fm, 'Edit commands require a record id.');
 return $Vcb5e100e;
 } 
  if (!count($this->_fields)) {  
  if ($this->V6d6e1fd2== null) {
- $Vcb5e100e = & new FileMaker_Error($this->_fm, 'There are no changes to make.');
+ $Vcb5e100e = new FileMaker_Error($this->_fm, 'There are no changes to make.');
 return $Vcb5e100e;
 }
 }  
- if ($this->_fm->getProperty('prevalidate')) {
- $V9f7d0ee8 = $this->validate();
-if (FileMaker :: isError($V9f7d0ee8)) {
- return $V9f7d0ee8;
+
+if ($this->_fm->getProperty('prevalidate')) {
+$Vcb5e111f = & $this->_fm->getLayout($this->_layout);
+$Vb0689411 = new FileMaker_Error_Validation($this->_fm);
+foreach ($Vcb5e111f->getFields() as $V9f7d0ff7 => $Vc6140945) {
+if (isset ($this->_fields[$V9f7d0ff7])) {
+$V6d6e1ff1 = $this->_fields[$V9f7d0ff7];
+foreach ($V6d6e1ff1 as $V6d6e1ff2) {
+$Vb0689411 = $Vc6140945->validate($V6d6e1ff2);
+if (FileMaker :: isError($Vb0689411)) {
+return $Vb0689411;
 }
-} 
+}
+}
+}
+}
+
  $Vc6140495 = & $this->_fm->getLayout($this->_layout);
 if (FileMaker :: isError($Vc6140495)) {
  return $Vc6140495;

@@ -37,7 +37,7 @@ function writeFilesDynamically($userRecordHandle, $imageDir, $imageSmallFileName
     $log->debug("--> Start Configuration write and get images from FileMaker");
     $log->debug("Get Small image from FileMaker");
     $logoSmallUrl = $userRecordHandle->getField('z_SYS_Client_Logo_Print_Small_cc');
-    $fileTypeSmall = getFileMakerFileType($logoSmallUrl);
+    $fileTypeSmall = getFileMakerContainerFileExtension($logoSmallUrl);
     $log->debug("Small Logo URL: " .$logoSmallUrl);
     $fullSmallImagePath = $imageDir ."/" .$imageSmallFileName .$fileTypeSmall;
     $fullSmallImageWritePath = $root .$imageDir ."/" .$imageSmallFileName .$fileTypeSmall;
@@ -48,7 +48,7 @@ function writeFilesDynamically($userRecordHandle, $imageDir, $imageSmallFileName
 
     $log->debug("Get Splash image from FileMaker");
     $logoSplashURL = $userRecordHandle->getField("z_SYS_Client_Logo_Splash_Screen_cc");
-    $fileTypeSplash = getFileMakerFileType($logoSplashURL);
+    $fileTypeSplash = getFileMakerContainerFileExtension($logoSplashURL);
     $fullSplashImagePath = $imageDir ."/" .$imageSplashFileName .$fileTypeSplash;
     $fullSplashImageWritePath = $root .$imageDir ."/" .$imageSplashFileName .$fileTypeSplash;
 
