@@ -172,6 +172,7 @@ function isSuffixNumeric($numericStr){
 //(i.e. NS 66CTT 5UCX4 29ARW SK7E9 is passed in to method NS 66CTT 5UCX4 29ARW SK7E9_1, NS 66CTT 5UCX4 29ARW SK7E9_d1,
 //and NS 66CTT 5UCX4 29ARW SK7E9_h1 are returned)
 function getRowPerPkId($_POSTArray, $target){
+    global $log;
     $results = array();
 
     if(isset($_POSTArray)){
@@ -187,6 +188,7 @@ function getRowPerPkId($_POSTArray, $target){
             }
         }
     }
+    $log->debug("GetRowPerPkId method array size: " .count($results));
     return $results;
 }
 

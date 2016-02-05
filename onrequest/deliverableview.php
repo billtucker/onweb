@@ -105,19 +105,28 @@ $showCodeName = 'Show_Code_t';
 $webShowCodesFind = $fmOrderDB->newFindCommand($webShowCodesLayoutName);
 $webShowCodesFind->addFindCriterion($programmingName,'==' .$request->getField($programmingName));
 $webShowCodesFind->addFindCriterion($showCodeName,'==' .$request->getField($showCodeName));
-$webShowCodesFind->addSortRule($showCodeFieldName, 1, FILEMAKER_SORT_ASCEND);
+$webShowCodesFind->addSortRule($showCodeName, 1, FILEMAKER_SORT_ASCEND);
+
+$log->debug("Search Programming_Type_t using: " .$request->getField($programmingName) ." To search field: " .$programmingName);
+$log->debug("Search Show_code_t using: " .$request->getField($showCodeName) ." to search field: " .$showCodeName);
+
 $webShowCodesResults = $webShowCodesFind->execute();
 
 if(FileMaker::isError($webShowCodesResults)){
-    $log->error("Tag Search Error Message: " .$tagsResults->getMessage() ." Error String: " .$tagsResults->getErrorString()
-        . " Page URL: " .$pageUrl ." PK ID: " .$deliverablePkId);
-    $errorTitle = "FileMaker Error";
-    processError($tagsResults->getMessage(), $tagsResults->getErrorString(), $pageUrl, $deliverablePkId, $errorTitle);
-    exit;
+    if($webShowCodesResults->getMessage() == "No records match the request"){
+        $log->debug("No matching records for search of show codes");
+    }else{
+        $log->error("Search For Show Codes Error: " .$webShowCodesResults->getMessage() ." Error String: " .$webShowCodesResults->getErrorString()
+            . " Page URL: " .$pageUrl ." PK ID: " .$deliverablePkId);
+        $errorTitle = "FileMaker Error";
+        processError($webShowCodesResults->getMessage(), $webShowCodesResults->getErrorString(), $pageUrl, $deliverablePkId, $errorTitle);
+        exit;
+    }
+}else{
+    $webShowCodeRecords = $webShowCodesResults->getRecords();
+    $webShowCodeRecord = $webShowCodesResults->getFirstRecord();
 }
 
-$webShowCodeRecords = $webShowCodesResults->getRecords();
-$webShowCodeRecord = $webShowCodesResults->getFirstRecord();
 $log->debug("End find of show codes for deliverable view");
 
 /** Project Type uses UI_Spot_Types_ValueList_ct field a special Pipe Delimited values **/
@@ -142,11 +151,15 @@ $tagsFind->addFindCriterion("_fk_Deliverable_pk_ID", '==' . $deliverablePkId);
 $tagsResults = $tagsFind->execute();
 
 if (FileMaker::isError($tagsResults)) {
-    $log->error("Tag Search Error Message: " .$tagsResults->getMessage() ." Error String: " .$tagsResults->getErrorString()
-        . " Page URL: " .$pageUrl ." PK ID: " .$deliverablePkId);
-    $errorTitle = "FileMaker Error";
-    processError($tagsResults->getMessage(), $tagsResults->getErrorString(), $pageUrl, $deliverablePkId, $errorTitle);
-    exit;
+    if($tagsResults->getMessage() == "No records match the request"){
+        $log->debug("No matching Tag records found found for deliveriable PKID: " .$deliverablePkId);
+    }else{
+        $log->error("Tag Search Error Message: " .$tagsResults->getMessage() ." Error String: " .$tagsResults->getErrorString()
+            . " Page URL: " .$pageUrl ." PK ID: " .$deliverablePkId);
+        $errorTitle = "FileMaker Error";
+        processError($tagsResults->getMessage(), $tagsResults->getErrorString(), $pageUrl, $deliverablePkId, $errorTitle);
+        exit;
+    }
 }
 
 $tagRecords = $tagsResults->getRecords();
@@ -160,11 +173,12 @@ $deliverableTagsField = "UI_ValueList_Tag_Vers_ct";
 $deliverableTagList = $deliverableRecord->getField($deliverableTagsField);
 
 //TODO ddd this back in when FM script is fixed
-foreach(convertPipeToArray($deliverableTagList) as $tag){
-    array_push($promoCodeVersionValueList, $tag);
-    array_push($promoCodeVersionDisplayList, convertTagDisplay($tag));
+if(!empty($deliverableTagList)){
+    foreach(convertPipeToArray($deliverableTagList) as $tag){
+        array_push($promoCodeVersionValueList, $tag);
+        array_push($promoCodeVersionDisplayList, convertTagDisplay($tag));
+    }
 }
-
 $headerToUse = getHeaderIncludeFileName(urldecode($pageUrl));
 include_once($headerFooter .$headerToUse);
 
@@ -261,7 +275,11 @@ echo("\n<script type='text/javascript' src='../js/tdc-deliverable-save-scroll-bu
             <tr>
                 <td><!-- Series Title -->
                     <?php
-                    echo($webShowCodeRecord->getField($webShowCodeTitle));
+                    if(isset($webShowCodeRecord)){
+                        echo($webShowCodeRecord->getField($webShowCodeTitle));
+                    }else{
+                        echo "&nbsp;";
+                    }
                     ?>
                 </td>
                 <td><!-- Episode # ala Number -->

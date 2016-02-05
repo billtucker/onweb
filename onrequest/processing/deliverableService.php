@@ -25,7 +25,7 @@ validateUser($site_prefix, $pageUrl, $siteSection, $onRequestModify, $onRequestP
 $canModify = userCanModifyRequest($okModify);
 
 $deliverablePkId = $_POST['del_pk_id'];
-$itemId = $_POST['itemId'];
+$itemId = ""; //$_POST['itemId'];
 
 if(!$canModify){
     $message = "Page is read only";
