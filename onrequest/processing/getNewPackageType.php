@@ -15,7 +15,7 @@ include_once("../request-config.php");
 include_once($fmfiles ."order.db.php");
 include_once($errors .'errorProcessing.php');
 
-$typePkId = urldecode($_GET['typePkId']);
+$typePkId = urldecode($_GET['pkId']);
 
 $newProjectType = $fmOrderDB->newPerformScriptCommand('[WEB] Project Request Types','NewProjectRequest(RequestType_pk_ID)',$typePkId);
 $newProjectTypeResults = $newProjectType->execute();
@@ -33,6 +33,6 @@ $projectId = $typeRecord->getField('__pk_ID');
 header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
 header('Pragma: no-cache');
-header('Location: ' .$site_prefix . '/request.php?pkId=' .urlencode($projectId));
+header('Location: ' .$site_prefix . 'onrequest/request.php?pkId=' .urlencode($projectId));
 ?>
 

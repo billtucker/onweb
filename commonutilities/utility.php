@@ -84,7 +84,7 @@ function isPipeDelaminatedArray($item){
  */
 function getButtonCode($buttonLabel, $pkId){
     $button = '<div class="col-xs-2 col-lg-2"><button type="button" class="btn btn-primary btn-block"
-        onclick="location.href=\'onrequest/processing/getNewProject.php?pkId=' .$pkId .'\'">' .$buttonLabel .'</button>';
+        onclick="location.href=\'onrequest/processing/getNewPackageType.php?pkId=' .urlencode($pkId) .'\'">' .$buttonLabel .'</button>';
     echo $button ."\n";
 }
 

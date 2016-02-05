@@ -111,6 +111,8 @@ $projectReqDelRelatedSets = $deliverableResults->getRecords();
     header('Pragma: no-cache');
     header('Location: ' .$request_site_prefix . 'request.php?pkId=' .urlencode($pkId) .'&message=success');
 }elseif(isset($_POST['add-deliverable'])){
+
+    $log->debug("Adding deliverable record start with PKID: " .$pkId);
 	
 	//This is new definition of calling a script in FM from API 11-16-2015
     $scriptLayout = "[WEB] Project Request";
@@ -125,6 +127,8 @@ $projectReqDelRelatedSets = $deliverableResults->getRecords();
         processError($addProjectResult->getMessage(), $addProjectResult->getErrorString(), "processRequest.php", $pkId, $errorTitle);
     }
 
+    $log->debug("Adding deliverable record to Request ID: " .$pkId);
+
     header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
     header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
     header('Pragma: no-cache');
@@ -132,6 +136,7 @@ $projectReqDelRelatedSets = $deliverableResults->getRecords();
     header('Location: ' . $request_site_prefix . 'request.php?pkId=' .urlencode($pkId) .'&message=delvAdded');
 }else{
     //TODO This should go to a clean Error page like error404.php
+    $log->debug("This is a error condition and the script or processing never happened");
     header('Location: ' . $request_site_prefix . 'request.php?pkId=' .urlencode($pkId) .'&message=Error');
 }
 ?>
