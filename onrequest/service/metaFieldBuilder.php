@@ -35,38 +35,37 @@ function buildMetaComponent($metaRelatedRecords, $canModify){
         $input_values_pipe_ct = $metaItem -> getField('Input_Values_Pipe_ct');
 
 
-        switch ($input_type) {
-            case "Text":
+        switch (strtolower($input_type)) {
+            case "text":
                 processTextField($label, $order_n, $name, $value_required_n, $instructions, $answer_values_pipe_ct);
                 break;
-            case "Radio Button":
+            case "radio button":
                 processRadioButton($input_values_pipe_ct, $name, $label, $order_n, $value_required_n, $answer_values_pipe_ct);
                 break;
-            case "Date Calendar":
+            case "date calendar":
                 processDatePicker($name, $label, $order_n, $value_required_n, $instructions, $answer_values_pipe_ct);
                 break;
-            case "Pop-up Menu":
+            case "pop-up menu":
                 processDropDown($input_values_pipe_ct, $name, $label, $order_n, $value_required_n, $answer_values_pipe_ct);
                 break;
-            case 'Drop-Down List':
+            case 'drop-down list':
                 processDropDown($input_values_pipe_ct, $name, $label, $order_n, $value_required_n, $answer_values_pipe_ct);
                 break;
-            case "CheckBox":
+            case "checkbox":
                 processCheckBox($input_values_pipe_ct, $label, $order_n, $value_required_n, $answer_values_pipe_ct, $name);
                 break;
-            case "File":
+            case "file":
                 $fileUrl = $metaItem->getField('Answer_Container_Data_r');
                 $fileName = $metaItem->getField('Upload_Filename_Original_t');
                 processFilePicker($label, $order_n, $value_required_n, $fileName, $name, $fileUrl, $canModify);
                 break;
-            case "Image":
+            case "image":
                 $imageUrl = $metaItem->getField('Answer_Container_Data_r');
                 $fileName = $metaItem->getField('Upload_Filename_Original_t');
                 processImagePicker($label, $order_n, $value_required_n, $fileName, $name, $imageUrl, $canModify);
                 break;
             default:
                 $log->warn("This Field was not defined input type: " .$input_type ." field");
-                //echo('<div class="row col-lg-12">This Field was not defined input type: ' .$input_type .' field</div>');
                 break;
         }
     }

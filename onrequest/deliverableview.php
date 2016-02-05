@@ -153,6 +153,7 @@ $tagsResults = $tagsFind->execute();
 if (FileMaker::isError($tagsResults)) {
     if($tagsResults->getMessage() == "No records match the request"){
         $log->debug("No matching Tag records found found for deliveriable PKID: " .$deliverablePkId);
+        $tagRecords = array();
     }else{
         $log->error("Tag Search Error Message: " .$tagsResults->getMessage() ." Error String: " .$tagsResults->getErrorString()
             . " Page URL: " .$pageUrl ." PK ID: " .$deliverablePkId);
@@ -160,11 +161,14 @@ if (FileMaker::isError($tagsResults)) {
         processError($tagsResults->getMessage(), $tagsResults->getErrorString(), $pageUrl, $deliverablePkId, $errorTitle);
         exit;
     }
+}else{
+    $tagRecords = $tagsResults->getRecords();
+    $tagRecordCount = $tagsResults->getFoundSetCount();
+    $log->debug("End find tags command record count: " .$tagRecordCount);
+
 }
 
-$tagRecords = $tagsResults->getRecords();
-$tagRecordCount = $tagsResults->getFoundSetCount();
-$log->debug("End find tags command");
+$log->debug("End of tag query of FileMaker");
 
 $promoCodeVersionValueList = array();
 $promoCodeVersionDisplayList = array();

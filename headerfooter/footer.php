@@ -12,7 +12,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
-                <p class="text-center text-muted">&copy; Copyright 2015, Thought Development Corporation &middot; All rights reserved</p>
+                <p class="text-center text-muted">&copy; Copyright 2016, Thought Development Corporation &middot; All rights reserved</p>
             </div>
         </div>
     </div>

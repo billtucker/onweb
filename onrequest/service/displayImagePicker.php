@@ -62,7 +62,7 @@ function processImagePicker($label, $questionNum, $required, $fileName, $name, $
     <script type="text/javascript">
         $('<?php echo('#'.$name); ?>').fileinput({
             <?php if(isset($imageUrl) && (strlen($imageUrl) > 0)){ ?>
-                initialPreview : ["<img src='readImage.php?url=<?php echo(urlencode($imageUrl)); ?>' class='file-preview-image'"],
+                initialPreview : ["<img src='../readImage.php?url=<?php echo(urlencode($imageUrl)); ?>' class='file-preview-image'"],
                 'showUpload' : false,
                 'showCaption' : true,
                 'browseLabel' : 'Select Image',
