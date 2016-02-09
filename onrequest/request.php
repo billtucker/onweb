@@ -54,7 +54,9 @@ $deliverableFind ->addFindCriterion('_fk_Request_pk_ID', '==' .$requestPkId);
 $deliverableResults = $deliverableFind -> execute();
 
 if(FileMaker::isError($deliverableResults)){
+    $errorTitle = "FileMaker Error";
     $log->error($deliverableResults->getMessage(), $deliverableResults->getErrorString(), $pageUrl, $requestPkId, $site_prefix);
+    processError($deliverableResults->getMessage(), $deliverableResults->getErrorString(), $pageUrl, $requestPkId, $errorTitle);
     exit;
 }
 

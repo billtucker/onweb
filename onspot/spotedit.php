@@ -210,7 +210,7 @@ if(!$bypass){
 
     $headerToUse = getHeaderIncludeFileName(urldecode($pageUrl));
     include_once($headerFooter .$headerToUse);
-    include_once("titleWithVideoView.php");
+    include_once($spotRoot ."titleWithVideoView.php");
 
     //put the if switch here as to which file to include
     //OnSpotView must be enabled to view page this will be caught in user validation and the user will be redirected
@@ -218,18 +218,18 @@ if(!$bypass){
     //If the user falls through the tests then only the upper header with video will appear
     if(($spotNotesView || $spotNotesEdit) && $approvalView){
         $log->debug("Display notesAndApprovalView PHP Code");
-        include_once("notesAndApproveView.php");
+        include_once($spotRoot ."notesAndApproveView.php");
     }elseif(($spotNotesView || $spotNotesEdit) && !$approvalView){
         $log->debug("Display notesView PHP Code");
-        include_once("notesView.php");
+        include_once($spotRoot ."notesView.php");
     }elseif((!$spotNotesView && !$spotNotesEdit) && $approvalView){
         $log->debug("Display approveView PHP Code");
-        include_once("approveView.php");
+        include_once($spotRoot ."approveView.php");
     }
 }else{
     $headerToUse = getHeaderIncludeFileName(urldecode($pageUrl));
     include_once($headerFooter .$headerToUse);
-    include_once("titleWithVideoView.php");
+    include_once($spotRoot ."titleWithVideoView.php");
 }
 
 
