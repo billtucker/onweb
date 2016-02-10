@@ -192,6 +192,12 @@ function getRowPerPkId($_POSTArray, $target){
     return $results;
 }
 
+/**
+ * This method is simply to insert two HTML spaces for formatting. This method is subject to change as formatting
+ * will more likely change over time.
+ * @param $line a tag line DDD separated by a space now add two HTML spaces for formatting
+ * @return string return String constructed line
+ */
 function convertTagDisplay($line){
     $sep = " &nbsp; &nbsp; ";
     //$sep = " &emsp; &emsp; ";

@@ -16,6 +16,7 @@
  * 4. 11/03/2015 Modified pageURL generation adding dynamic port detection from onweb-config.php
  * 5. 01/12/2016 Modified code to address PHP Notice messages related PHP errors
  * 6. 01/12/2016 Finally made change to fully use spot path from database over path manipulation
+ * 7. 02/09/2016 Add full path to all include statements
  */
 
 include_once("onspot-config.php");
@@ -170,7 +171,8 @@ if(!$bypass){
     //TODO Uncomment field when the field is available -- Workaround to remove usage of getValueListTwoFields
 //    $layout = $fmDB->getLayout($spotViewerLayout);
 //    $approvalvalues = $layout->getValueListTwoFields('Approval_List');
-    
+
+    //TODO get these selections from FM and not using these hard coded values (see TODO above)
     $pipedApprovalList = "Yes|No|Re-do";
     $approvalvalues  = convertPipeToArray($pipedApprovalList);
 

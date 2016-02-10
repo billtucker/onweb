@@ -53,7 +53,7 @@ $noteType = "Approval Notes";
 // persisted to FileMaker for each section
 if(isset($_POST['userApprover'])){
     $log->debug("Processing approver selection");
-    $spotViewerFind = $fmDB->newFindCommand($spotViewerLayout);
+    $spotViewerFind = $fmWorkDB->newFindCommand($spotViewerLayout);
     $spotViewerFind->addFindCriterion('__pk_ID', '==' . $pkId);
     $spotResult = $spotViewerFind->execute();
 
@@ -103,7 +103,7 @@ if(isset($_POST['userNote'])){
 
     //If the notes record has data then create the record in the layout (No empty record need to be created)
     if(isset($notes) && !empty($notes)){
-        $newNoteRecord = $fmDB->createRecord($userNotesLayout);
+        $newNoteRecord = $fmWorkDB->createRecord($userNotesLayout);
         $newNoteRecord->setField('Note_Type_t', $noteType);
         $newNoteRecord->setField('_fk_LinkedObject_ID',$pkId);
         $newNoteRecord->setField('Note_Text_t', $notes);
@@ -119,7 +119,7 @@ if(isset($_POST['userNote'])){
             exit;
         }
 
-        $log->debug("Added record to databasse with user name: " .$_SESSION['userName']);
+        $log->debug("Added record to database with user name: " .$_SESSION['userName']);
     }
 }
 
