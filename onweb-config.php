@@ -29,11 +29,14 @@ define("LDAP_PORT", 389);
 //These configuration items are custom per site
 $memberOfList = array("Employees", "Remote Desktop Users");
 $ldapKeySearch = "memberof";
+
+//$useLdap switch is off when set to false and forces all login validation to FileMaker only
 $usesLdap = false;
 //This DN is for Thought Development only!!!!
 $dn = "CN=Users,DC=thoughtdev,DC=com";
 
-//TODO replace all the $homepage references with $site_prefix as the homepage is used in many pages
+//This section dynamically sets site address so few hardcoded values are required.
+// The $siteRoot is the only concrete value
 $port = ($_SERVER['SERVER_PORT'] == '80' ? "http://" : "https://" );
 $siteRoot = "onweb";
 $homepage = $port .$_SERVER['HTTP_HOST'] ."/" .$siteRoot ."/";
@@ -53,6 +56,7 @@ $imageSplashFileName = "company_logo_splash.";
 
 
 //set Logger class, setup Log4php configuration, and get Logger that is/can be used on any PHP page
+//current configuration "config.xml" is setup for 1 MB max size log file that rolls file name onweb.log
 include_once('vendor/apache/log4php/src/main/php/Logger.php');
 Logger::configure($root ."/config.xml");
 $log = Logger::getLogger("ONAIRPRO_Logger");
