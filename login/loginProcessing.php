@@ -257,6 +257,8 @@ function setSessionData($userRecord, $site_prefix){
 
         if(!empty($_SESSION['forwardingUrl'])){
             $log->debug("setSessionData - User logged in and is being forwarded to: " .$_SESSION['forwardingUrl']);
+            //added this fix to forward user to page they expected to see prior to login. Assigned session item to var
+            //then unset session item then forward user
             $forwardingUrl = $_SESSION['forwardingUrl'];
             unset($_SESSION['forwardingUrl']);
             header("location:" .$forwardingUrl);
