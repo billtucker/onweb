@@ -24,7 +24,7 @@ if(isset($_GET['p1']) && validatePassThrough($_GET['p1'])){
 }
 
 if($validateUser) {
-	$log->debug("Now validate if Plugin: (" .$onRequestPlugin .") is installed");
+    $log->debug("Now validate if Plugin: (" .$onRequestPlugin .") is installed");
     //validate user then check if plugin license if active to access on this page
     validateUser($site_prefix, $pageUrl, $siteSection, $onRequestModify, $onRequestPlugin);
     $canModify = userCanModifyRequest($okModify);
@@ -54,14 +54,18 @@ $deliverableFind ->addFindCriterion('_fk_Request_pk_ID', '==' .$requestPkId);
 $deliverableResults = $deliverableFind -> execute();
 
 if(FileMaker::isError($deliverableResults)){
-    $errorTitle = "FileMaker Error";
-    $log->error($deliverableResults->getMessage(), $deliverableResults->getErrorString(), $pageUrl, $requestPkId, $site_prefix);
-    processError($deliverableResults->getMessage(), $deliverableResults->getErrorString(), $pageUrl, $requestPkId, $errorTitle);
-    exit;
+    if($deliverableResults->getMessage() == "No records match the request"){
+        $log->debug("No match deliverable records found Request PK: " .$requestPkId);
+    }else{
+        $errorTitle = "FileMaker Error";
+        $log->error($deliverableResults->getMessage(), $deliverableResults->getErrorString(), $pageUrl, $requestPkId, $site_prefix);
+        processError($deliverableResults->getMessage(), $deliverableResults->getErrorString(), $pageUrl, $requestPkId, $errorTitle);
+        exit;
+    }
+}else{
+    $projectReqDelRelatedSets = $deliverableResults->getRecords();
+    $deliverableRecord = $deliverableResults->getFirstRecord();
 }
-
-$projectReqDelRelatedSets = $deliverableResults->getRecords();
-$deliverableRecord = $deliverableResults->getFirstRecord();
 
 $log->debug("End now have Deliverable record. Start get Show Codes");
 
@@ -318,60 +322,132 @@ $log->debug("Now have quired all fields now build HTML");
         <br>
 
         <!-- <div class="row"> --><!-- Start Requested Project List header row-->
-        <table class="table table-bordered"><!-- Start Requested Project List Table -->
-            <thead>
-            <tr>
-                <th class="text-left" colspan="6"><strong>Requested Project</strong></th>
-                <th colspan="2" class="tableTDHeaderDef text-center">Live/Flight Dates</th><!-- Live/Flight Dates Label -->
-                <th>&nbsp;</th>
-            </tr>
-            </thead>
-            <thead class="tableTDHeaderDef">
-            <tr><!-- TODO add test for canChange return here -- Added 03242015 -->
-                <th class="col-xs-1 col-md-1"><!-- Blue plus icon to add deliverable to project via FM script   -->
-                    <?php if($canModify){ ?>
-                        <button id="add-deliverable" name="add-deliverable" value="add-deliverable" type="submit"
-                                class="input-group-addon tdc-glyphicon-control tdc-cell-spacing"
-                                style="color:lightskyblue;border: none" aria-hidden="true">
-                            <span class="glyphicon glyphicon-plus"></span>
-                        </button>
-                    <?php } else { ?>
-                        <button id="add-deliverable" name="add-deliverable" value="add-deliverable" type="submit"
-                                class="input-group-addon tdc-glyphicon-control tdc-cell-spacing"
-                                style="color:lightskyblue;border: none" aria-hidden="true" disabled>
-                            <span class="glyphicon glyphicon-plus"></span>
-                        </button>
-                    <?php } ?>
-                </th>
-                <!-- Project Type -->
-                <th class="col-xs-1 col-md-1"><?php echo($labelRecord->getField('Spot_Type_t')); ?></th>
-                <!-- Lgth -->
-                <th class="col-xs-1 col-md-1"><?php echo($labelRecord->getField('Length_Short')); ?></th>
-                <!-- Prj Notes -->
-                <th class="col-xs-4 col-md-4"><?php echo($labelRecord->getField('Tag_Group_Notes_t')); ?></th>
-                <th class="col-xs-1 col-md-1">Creative To Requester</th>
-                <!-- Final Due -->
-                <th class="col-xs-1 col-md-1"><?php echo($labelRecord->getField('Final_Due')); ?></th>
-                <!-- Start -->
-                <th class="col-xs-1 col-md-1"><?php echo($labelRecord->getField('Start')); ?></th>
-                <!-- End -->
-                <th class="col-xs-1 col-md-1"><?php echo($labelRecord->getField('End')); ?></th>
-                <th class="col-xs-1 col-md-1">Edit</th>
-            </tr>
-            </thead>
+        <?php if(isset($projectReqDelRelatedSets) && !empty($projectReqDelRelatedSets)){ ?>
+            <table class="table table-bordered"><!-- Start Requested Project List Table -->
+                <thead>
+                <tr>
+                    <th class="text-left" colspan="6"><strong>Requested Project</strong></th>
+                    <th colspan="2" class="tableTDHeaderDef text-center">Live/Flight Dates</th><!-- Live/Flight Dates Label -->
+                    <th>&nbsp;</th>
+                </tr>
+                </thead>
+                <thead class="tableTDHeaderDef">
+                <tr><!-- TODO add test for canChange return here -- Added 03242015 -->
+                    <th class="col-xs-1 col-md-1"><!-- Blue plus icon to add deliverable to project via FM script   -->
+                        <?php if($canModify){ ?>
+                            <button id="add-deliverable" name="add-deliverable" value="add-deliverable" type="submit"
+                                    class="input-group-addon tdc-glyphicon-control tdc-cell-spacing"
+                                    style="color:lightskyblue;border: none" aria-hidden="true" title="Add Deliverable to the Request">
+                                <span class="glyphicon glyphicon-plus"></span>
+                            </button>
+                        <?php } else { ?>
+                            <button id="add-deliverable" name="add-deliverable" value="add-deliverable" type="submit"
+                                    class="input-group-addon tdc-glyphicon-control tdc-cell-spacing"
+                                    style="color:lightskyblue;border: none" aria-hidden="true" disabled title="Disabled">
+                                <span class="glyphicon glyphicon-plus"></span>
+                            </button>
+                        <?php } ?>
+                    </th>
+                    <!-- Project Type -->
+                    <th class="col-xs-1 col-md-1"><?php echo($labelRecord->getField('Spot_Type_t')); ?></th>
+                    <!-- Lgth -->
+                    <th class="col-xs-1 col-md-1"><?php echo($labelRecord->getField('Length_Short')); ?></th>
+                    <!-- Prj Notes -->
+                    <th class="col-xs-4 col-md-4"><?php echo($labelRecord->getField('Tag_Group_Notes_t')); ?></th>
+                    <th class="col-xs-1 col-md-1">Creative To Requester</th>
+                    <!-- Final Due -->
+                    <th class="col-xs-1 col-md-1"><?php echo($labelRecord->getField('Final_Due')); ?></th>
+                    <!-- Start -->
+                    <th class="col-xs-1 col-md-1"><?php echo($labelRecord->getField('Start')); ?></th>
+                    <!-- End -->
+                    <th class="col-xs-1 col-md-1"><?php echo($labelRecord->getField('End')); ?></th>
+                    <th class="col-xs-1 col-md-1">Edit</th>
+                </tr>
+                </thead>
 
-            <?php
-            $requestedProjectListCounter = 1;
-            $underLine = "_"; //Used for selects to assign name and ID(s) for elements
+                <?php
+                $requestedProjectListCounter = 1;
+                $underLine = "_"; //Used for selects to assign name and ID(s) for elements
 
-            if(isset($projectReqDelRelatedSets)){
-                foreach($projectReqDelRelatedSets as $projectRelatedSet){ ?>
-                    <tr><!-- Start of data row for Project List -->
+                if(isset($projectReqDelRelatedSets) && !empty($projectReqDelRelatedSets)){
+                    foreach($projectReqDelRelatedSets as $projectRelatedSet){ ?>
+                        <tr><!-- Start of data row for Project List -->
+                            <td>
+                                <?php echo($projectRelatedSet->getField('#')); ?>
+                            </td>
+                            <td><!-- Project Type Dropdown Field -->
+                                <select class="tdc-request-list-height" name="<?php echo($spotTypeName .$underLine .$requestedProjectListCounter);?>"
+                                        id="<?php echo($spotTypeName .$underLine .$requestedProjectListCounter);?>">
+                                    <?php
+                                    $fmSpotType = $projectRelatedSet->getField('Spot_Type');  //$request->getField('Spot_Type');
+                                    if(isset($fmSpotType) && (strlen($fmSpotType) > 0)){
+                                        buildRequestDropDownListWithValue(convertPipeToArray($spotTypePipeList), $fmSpotType);
+                                    }else{
+                                        buildRequestDropDownList(convertPipeToArray($spotTypePipeList));
+                                    }
+                                    ?>
+                                </select>
+                            </td>
+                            <td><!-- Length Dropdown List Field -->
+                                <select class="tdc-request-list-height" id="<?php echo($lengthName .$underLine .$requestedProjectListCounter); ?>"
+                                        name="<?php echo($lengthName .$underLine .$requestedProjectListCounter); ?>">
+                                    <?php
+                                    $fmLength = $projectRelatedSet->getField('Length');
+                                    if(isset($fmLength) && (strlen($fmLength) > 0)){
+                                        buildRequestDropDownListWithValue($lengthItems, $fmLength);
+                                    }else{
+                                        buildRequestDropDownList($lengthItems);
+                                    }
+                                    ?>
+                                </select>
+                            </td>
+                            <td><!-- Project Notes Field -->
+                                <textarea rows="3" cols="70" name=<?php echo("Notes" .$underLine .$requestedProjectListCounter);?> id=<?php echo("Notes" .$underLine .$requestedProjectListCounter);?>><?php echo($projectRelatedSet->getField('Notes')); ?></textarea>
+                            </td>
+                            <td><!-- To Creator field -->
+                                <?php
+                                $roughCutValue = $projectRelatedSet->getField('Rough_Cut_Due_d');
+                                buildDateOnlyField("Rough_Cut_Due_d",$roughCutValue, $requestedProjectListCounter);
+                                ?>
+                            </td>
+                            <td><!-- Final Due Date Field -->
+                                <?php
+                                $finalDueDate = $projectRelatedSet->getField('Final_Due_Date');
+                                buildDateOnlyField("Final_Due_Date", $finalDueDate, $requestedProjectListCounter);
+                                ?>
+                            </td>
+                            <td><!-- Start Field -->
+                                <?php
+                                $startDate = $projectRelatedSet->getField('Flight_Date_Start');
+                                buildDateOnlyField("Flight_Date_Start", $startDate, $requestedProjectListCounter);
+                                ?>
+                            </td>
+                            <td><!-- End Field -->
+                                <?php
+                                $endDate = $projectRelatedSet->getField('Flight_Date_End');
+                                buildDateOnlyField("Flight_Date_End", $endDate, $requestedProjectListCounter);
+                                ?>
+                            </td>
+                            <td>
+                                <a href="deliverableview.php?pKid=<?php echo(urlencode($projectRelatedSet->getField('__pk_ID')));?>&itemId=<?php echo($requestedProjectListCounter);?>">
+                                    <span class="input-group-addon tdc-glyphicon-control tdc-cell-spacing icon-red">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                    </span>
+                                </a>
+                                <input type="hidden" name="<?php echo('__pk_ID' .$underLine .$requestedProjectListCounter)?>" id="<?php echo('__pk_ID' .$underLine .$requestedProjectListCounter)?>" value="<?php echo(rawurldecode($projectRelatedSet->getField('__pk_ID')));?>">
+                            </td>
+                        </tr>
+                        <?php $requestedProjectListCounter += 1; ?>
+                    <?php } ?><!-- end foreach loop on related sets -->
+
+                <?php }else{ ?>
+                    <tr><!-- (TODO Check if this empty row fails on load) Start of data row for Project List Empty Project Row-->
                         <td>
-                            <?php echo($projectRelatedSet->getField('#')); ?>
+                            <?php echo($requestedProjectListCounter); ?><br>
+                            <button class="btn btn-sm btn-primary"></button>
                         </td>
-                        <td><!-- Project Type Dropdown Field -->
-                            <select class="tdc-request-list-height" name="<?php echo($spotTypeName .$underLine .$requestedProjectListCounter);?>"
+                        <td colspan="3"><!-- Project Type Dropdown Field -->
+                            <select class="form-control" name="<?php echo($spotTypeName .$underLine .$requestedProjectListCounter);?>"
                                     id="<?php echo($spotTypeName .$underLine .$requestedProjectListCounter);?>">
                                 <?php
                                 $fmSpotType = $projectRelatedSet->getField('Spot_Type');  //$request->getField('Spot_Type');
@@ -384,20 +460,22 @@ $log->debug("Now have quired all fields now build HTML");
                             </select>
                         </td>
                         <td><!-- Length Dropdown List Field -->
-                            <select class="tdc-request-list-height" id="<?php echo($lengthName .$underLine .$requestedProjectListCounter); ?>"
+                            <select id="<?php echo($lengthName .$underLine .$requestedProjectListCounter); ?>"
                                     name="<?php echo($lengthName .$underLine .$requestedProjectListCounter); ?>">
                                 <?php
-                                $fmLength = $projectRelatedSet->getField('Length');
+                                $fmLength = $request->getField('Length');
                                 if(isset($fmLength) && (strlen($fmLength) > 0)){
-                                    buildRequestDropDownListWithValue($lengthItems, $fmLength);
+                                    buildRequestDropDownMapWithValue($lengthItems, $fmLength);
                                 }else{
-                                    buildRequestDropDownList($lengthItems);
+                                    buildRequestDropDownMap($lengthItems);
                                 }
                                 ?>
                             </select>
                         </td>
-                        <td><!-- Project Notes Field -->
-                            <textarea rows="3" cols="70" name=<?php echo("Notes" .$underLine .$requestedProjectListCounter);?> id=<?php echo("Notes" .$underLine .$requestedProjectListCounter);?>><?php echo($projectRelatedSet->getField('Notes')); ?></textarea>
+                        <td colspan="4"><!-- Project Notes Field -->
+                            <input class="form-control" type="text" value="<?php echo($projectRelatedSet->getField('Notes')); ?>"
+                                   name=<?php echo("Notes" .$underLine .$requestedProjectListCounter);?>
+                                   id=<?php echo("Notes" .$underLine .$requestedProjectListCounter);?> >
                         </td>
                         <td><!-- To Creator field -->
                             <?php
@@ -424,91 +502,44 @@ $log->debug("Now have quired all fields now build HTML");
                             ?>
                         </td>
                         <td>
-                            <a href="deliverableview.php?pKid=<?php echo(urlencode($projectRelatedSet->getField('__pk_ID')));?>&itemId=<?php echo($requestedProjectListCounter);?>">
+                            <a href="deliverableview.php?pKid=<?php echo(rawurldecode($projectRelatedSet->getField('__pk_ID')));?>&itemId=<?php echo($requestedProjectListCounter);?>">
                                     <span class="input-group-addon tdc-glyphicon-control tdc-cell-spacing icon-red">
                                         <span class="glyphicon glyphicon-pencil"></span>
                                     </span>
                             </a>
-                            <input type="hidden" name="<?php echo('__pk_ID' .$underLine .$requestedProjectListCounter)?>" id="<?php echo('__pk_ID' .$underLine .$requestedProjectListCounter)?>" value="<?php echo(rawurldecode($projectRelatedSet->getField('__pk_ID')));?>">
+                            <input type="hidden" name=<?php echo("del_pk_id" .$underLine .$requestedProjectListCounter)?>
+                            id=<?php echo("del_pk_id" .$underLine .$requestedProjectListCounter)?>
+                                   value="<?php echo(rawurldecode($projectRelatedSet->getField('__pk_ID')));?>">
                         </td>
                     </tr>
-                    <?php $requestedProjectListCounter += 1; ?>
-                <?php } ?><!-- end foreach loop on related sets -->
-
-            <?php }else{ ?>
-                <tr><!-- (TODO Check if this empty row fails on load) Start of data row for Project List Empty Project Row-->
-                    <td>
-                        <?php echo($requestedProjectListCounter); ?><br>
-                        <button class="btn btn-sm btn-primary"></button>
-                    </td>
-                    <td colspan="3"><!-- Project Type Dropdown Field -->
-                        <select class="form-control" name="<?php echo($spotTypeName .$underLine .$requestedProjectListCounter);?>"
-                                id="<?php echo($spotTypeName .$underLine .$requestedProjectListCounter);?>">
-                            <?php
-                            $fmSpotType = $projectRelatedSet->getField('Spot_Type');  //$request->getField('Spot_Type');
-                            if(isset($fmSpotType) && (strlen($fmSpotType) > 0)){
-                                buildRequestDropDownListWithValue(convertPipeToArray($spotTypePipeList), $fmSpotType);
-                            }else{
-                                buildRequestDropDownList(convertPipeToArray($spotTypePipeList));
-                            }
-                            ?>
-                        </select>
-                    </td>
-                    <td><!-- Length Dropdown List Field -->
-                        <select id="<?php echo($lengthName .$underLine .$requestedProjectListCounter); ?>"
-                                name="<?php echo($lengthName .$underLine .$requestedProjectListCounter); ?>">
-                            <?php
-                            $fmLength = $request->getField('Length');
-                            if(isset($fmLength) && (strlen($fmLength) > 0)){
-                                buildRequestDropDownMapWithValue($lengthItems, $fmLength);
-                            }else{
-                                buildRequestDropDownMap($lengthItems);
-                            }
-                            ?>
-                        </select>
-                    </td>
-                    <td colspan="4"><!-- Project Notes Field -->
-                        <input class="form-control" type="text" value="<?php echo($projectRelatedSet->getField('Notes')); ?>"
-                               name=<?php echo("Notes" .$underLine .$requestedProjectListCounter);?>
-                               id=<?php echo("Notes" .$underLine .$requestedProjectListCounter);?> >
-                    </td>
-                    <td><!-- To Creator field -->
-                        <?php
-                        $roughCutValue = $projectRelatedSet->getField('Rough_Cut_Due_d');
-                        buildDateOnlyField("Rough_Cut_Due_d",$roughCutValue, $requestedProjectListCounter);
-                        ?>
-                    </td>
-                    <td><!-- Final Due Date Field -->
-                        <?php
-                        $finalDueDate = $projectRelatedSet->getField('Final_Due_Date');
-                        buildDateOnlyField("Final_Due_Date", $finalDueDate, $requestedProjectListCounter);
-                        ?>
-                    </td>
-                    <td><!-- Start Field -->
-                        <?php
-                        $startDate = $projectRelatedSet->getField('Flight_Date_Start');
-                        buildDateOnlyField("Flight_Date_Start", $startDate, $requestedProjectListCounter);
-                        ?>
-                    </td>
-                    <td><!-- End Field -->
-                        <?php
-                        $endDate = $projectRelatedSet->getField('Flight_Date_End');
-                        buildDateOnlyField("Flight_Date_End", $endDate, $requestedProjectListCounter);
-                        ?>
-                    </td>
-                    <td>
-                        <a href="deliverableview.php?pKid=<?php echo(rawurldecode($projectRelatedSet->getField('__pk_ID')));?>&itemId=<?php echo($requestedProjectListCounter);?>">
-                                    <span class="input-group-addon tdc-glyphicon-control tdc-cell-spacing icon-red">
-                                        <span class="glyphicon glyphicon-pencil"></span>
-                                    </span>
-                        </a>
-                        <input type="hidden" name=<?php echo("del_pk_id" .$underLine .$requestedProjectListCounter)?>
-                        id=<?php echo("del_pk_id" .$underLine .$requestedProjectListCounter)?>
-                               value="<?php echo(rawurldecode($projectRelatedSet->getField('__pk_ID')));?>">
+                <?php }?>
+            </table><!-- End Requested Project List Table -->
+        <?php }else{ ?>
+            <!-- <div class="row"> -->
+            <!-- Start deliverable items when there is no deliveriable records-->
+            <table class="table table-bordered"><!-- Start Requested Project List Table -->
+                <thead>
+                <tr>
+                    <td class="col-md-12 text-left">
+                        <?php if($canModify){ ?>
+                            <button id="add-deliverable" name="add-deliverable" value="add-deliverable" type="submit"
+                                    class="input-group-addon tdc-glyphicon-control tdc-cell-spacing"
+                                    style="color:lightskyblue;border: none" aria-hidden="true" title="Add Deliverable to the Request">
+                                <span class="glyphicon glyphicon-plus"></span>
+                            </button>
+                        <?php } else { ?>
+                            <button id="add-deliverable" name="add-deliverable" value="add-deliverable" type="submit"
+                                    class="input-group-addon tdc-glyphicon-control tdc-cell-spacing"
+                                    style="color:lightskyblue;border: none" aria-hidden="true" tite="Disabled" disabled>
+                                <span class="glyphicon glyphicon-plus"></span>
+                            </button>
+                        <?php } ?>
                     </td>
                 </tr>
-            <?php }?>
-        </table><!-- End Requested Project List Table -->
+                </thead>
+
+            </table><!-- End Requested Project List Table -->
+        <?php } ?>
         <!-- </div > --><!-- End of DIV for ROW holding Requested Projects -->
     </form><!-- End Request form -->
 <?php

@@ -50,6 +50,7 @@ if(FileMaker::isError($deliverableResults)){
 }
 
 $deliverableRecords = $deliverableResults->getRecords();
+$log->debug("Found record count: " .$deliverableResults->getFetchCount());
 $deliverableRecord = $deliverableRecords[0];
 $requestPkId = $deliverableRecord->getField('_fk_Request_pk_ID');
 
