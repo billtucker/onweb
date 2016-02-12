@@ -25,7 +25,9 @@ validateUser($site_prefix, $pageUrl, $siteSection, $onRequestModify, $onRequestP
 $canModify = userCanModifyRequest($okModify);
 
 $deliverablePkId = $_POST['del_pk_id'];
-$itemId = ""; //$_POST['itemId'];
+$itemId =  ""; //$_POST['itemId'];
+
+$log->debug("Now Save processing PK: " .$deliverablePkId);
 
 if(!$canModify){
     $message = "Page is read only";
@@ -46,11 +48,13 @@ if(FileMaker::isError($deliverableResults)){
     $errorTitle = "FileMaker Error";
     $log->error("deliverableService.php - Failure to open " .$deliverableView ." " .$deliverableResults->getMessage() ." " .$deliverableResults->getCode());
     processError($deliverableResults->getMessage(), $deliverableResults->getErrorString(), "deliverableService.php", $deliverablePkId, $errorTitle);
-	exit;
+    exit;
 }
 
 $deliverableRecords = $deliverableResults->getRecords();
+
 $log->debug("Found record count: " .$deliverableResults->getFetchCount());
+
 $deliverableRecord = $deliverableRecords[0];
 $requestPkId = $deliverableRecord->getField('_fk_Request_pk_ID');
 
@@ -113,27 +117,10 @@ if(isset($metaRelatedRecords)){
     }
 }
 
-if(!isset($error)){
-    $message = "Success";
-    header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
-    header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-    header('Pragma: no-cache');
-    header('Location: ' .$request_site_prefix . 'deliverableview.php?pKid=' .urlencode($deliverablePkId) .'&itemId=' .$itemId .'&message=' .$message);
-}//TODO add else statement here to redirect user to an error page
+$message = "Success";
+header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+header('Pragma: no-cache');
+header('Location: ' .$request_site_prefix . 'deliverableview.php?pKid=' .urlencode($deliverablePkId) .'&itemId=' .$itemId .'&message=' .$message);
 
 ?>
-
-<html>
-<head>
-    <title>Error Save Deliverable Items</title>
-</head>
-<body>
-<br>
-<!-- TODO replace this and actual Error.php page -->
-<h2>Failure Message on Save Deliverable and Meta Items Only</h2>
-<p>This message will be replaced by an actual error page</p>
-<br>
-    <?php echo("<p> Error Message If Any: " .$error);?> ."</p>");
-
-</body>
-</html>

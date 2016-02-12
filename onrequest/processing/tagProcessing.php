@@ -19,6 +19,9 @@ include_once($errors .'errorProcessing.php');
 function processDeliverableTags($post, $deliverablePkId, $orderDBHandle){
     global $log;
 
+    //set this to make sure the tag processor does not fail
+    $tagRecords = array();
+
     $tagsLayout = "[WEB] Project Deliverable Tags";
 
     $tagsFind = $orderDBHandle->newFindCommand($tagsLayout);
@@ -26,13 +29,18 @@ function processDeliverableTags($post, $deliverablePkId, $orderDBHandle){
     $tagsResults = $tagsFind->execute();
 
     if (FileMaker::isError($tagsResults)) {
-        $errorTitle = "FileMaker Error";
-        $log->error("Failure to open (processDeliverableTags() ) " .$tagsLayout ." " .$tagsResults->getMessage() ." " .$tagsResults->getCode());
-        processError($tagsResults->getMessage(), $tagsResults->getErrorString(), "tagProcessing.php", $deliverablePkId, $errorTitle);
-        exit;
-    }
+        if($tagsResults->getMessage() == "No records match the request"){
+            $log->debug("No Tag records found");
+        }else{
+            $errorTitle = "FileMaker Error";
+            $log->error("Failure to open (processDeliverableTags() ) " .$tagsLayout ." " .$tagsResults->getMessage() ." " .$tagsResults->getCode());
+            processError($tagsResults->getMessage(), $tagsResults->getErrorString(), "tagProcessing.php", $deliverablePkId, $errorTitle);
+            exit;
+        }
 
-    $tagRecords = $tagsResults->getRecords();
+    }else{
+        $tagRecords = $tagsResults->getRecords();
+    }
 
     //Get __pk_ID from FM tag layout feed PK to POST array to get values
     foreach ($tagRecords as $tagRecord) {
