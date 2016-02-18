@@ -683,14 +683,13 @@ function getVideoSourceType($extension){
 }
 
 /**
- * Strip extension from image file name and returns the value to calling method.
- * Note: this method will 'Only' work on FileMaker container URL(s) and not plain file name
+ * Method to process FM 11/12/13 container url(s) as well as FM 14 url styles
  * @param $fileUrl String representation of location in FileMaker where image file is stored
  * @return string String extension of image file (png, jpg, gif, etc...)
  */
 function getFileMakerContainerFileExtension($fileUrl){
-    $fileUrl = substr($fileUrl, 0, strpos($fileUrl,"?"));
-    return substr($fileUrl, strpos($fileUrl, ".") + 1);
+    $urlPath = parse_url($fileUrl, PHP_URL_PATH);
+    return substr($urlPath, strpos($urlPath, ".") + 1);
 }
 
 ?>

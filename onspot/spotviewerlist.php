@@ -32,7 +32,6 @@ $spotViewerLayout = "[WEB] cwp_spotviewer_browse";
 
 $quickListFilter = "1";
 $spotList = $fmWorkDB->newFindCommand($spotViewerLayout);
-//TODO check out why this criterion is adding 11 seconds to the query
 $spotList->addFindCriterion("z_QuickList_RoughCutsToApprove_cn", "==" .$quickListFilter);
 $spotResults = $spotList->execute();
 

@@ -99,7 +99,7 @@ if($validateUser){
 //Now load the record fields from FileMaker load
 include_once($fmfiles ."work.db.php");
 
-// formats for dates and times
+// formats for dates and times TODO remove this if it the code is not used
 $displayDateFormat = '%m/%d/%Y';
 $displayTimeFormat = '%I:%M:%S %P';
 $displayDateTimeFormat = '%m/%d/%Y %I:%M:%S %P';
