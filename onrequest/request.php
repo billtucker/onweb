@@ -79,14 +79,20 @@ $webShowCodesFind->addSortRule($showCodeFieldName, 1, FILEMAKER_SORT_ASCEND);
 $webShowCodesResults = $webShowCodesFind->execute();
 
 if(FileMaker::isError($webShowCodesResults)){
-    $errorTitle = "FileMaker Error";
-    $log->error($webShowCodesResults->getMessage(), $webShowCodesResults->getErrorString(), $pageUrl, $requestPkId, $site_prefix);
-    processError($webShowCodesResults->getMessage(), $webShowCodesResults->getErrorString(), $pageUrl, $requestPkId, $errorTitle);
-    exit;
+    if($webShowCodesResults->getMessage() == "No records match the request" ){
+        $log->debug("No matching show codes results find");
+        //Init an empty array for the builder
+        $showCodeItems = array();
+    }else {
+        $errorTitle = "FileMaker Error";
+        $log->error($webShowCodesResults->getMessage(), $webShowCodesResults->getErrorString(), $pageUrl, $requestPkId, $site_prefix);
+        processError($webShowCodesResults->getMessage(), $webShowCodesResults->getErrorString(), $pageUrl, $requestPkId, $errorTitle);
+        exit;
+    }
+}else{
+    //Now get all the records needed to populate dropdown 02/12/2015
+    $showCodeItems = $webShowCodesResults->getRecords();
 }
-
-//Now get all the records needed to populate dropdown 02/12/2015
-$showCodeItems = $webShowCodesResults->getRecords();
 
 $log->debug("End get Show Codes and have record");
 
