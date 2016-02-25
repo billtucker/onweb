@@ -113,7 +113,7 @@ $columnWidthTotal = 8; ?>
             if(($columnTypeIndex + $maxTypesPerRow) > $projectTypeRecordCount) {
                 $columnWidthTotal -= $decrementColumnBy;//decrement column counter
                 getButtonCode($projectTypeRecords[$columnTypeIndex]->getField('Request Type'), $projectTypeRecords[$columnTypeIndex]->getField('__pk_ID'));
-                $items = convertPipeToArray($projectTypeRecords[$columnTypeIndex]->getField('Examples_List_Pipe'));
+                $items = convertPipeToArray($projectTypeRecords[$columnTypeIndex]->getField('Examples List_Pipe_ct'));
                 if(is_array($items)){
                     echo("<p class='text-muted'>");
                     foreach($items as $item){
@@ -128,7 +128,7 @@ $columnWidthTotal = 8; ?>
                 }
             }else{
                 getButtonCode($projectTypeRecords[$columnTypeIndex]->getField('Request Type'), $projectTypeRecords[$columnTypeIndex]->getField('__pk_ID'));
-                $items = convertPipeToArray($projectTypeRecords[$columnTypeIndex]->getField('Examples_List_Pipe'));
+                $items = convertPipeToArray($projectTypeRecords[$columnTypeIndex]->getField('Examples List_Pipe_ct'));
                 if(is_array($items)){
                     echo("<p class='text-muted'>");
                     foreach($items as $item){

@@ -11,8 +11,10 @@ include_once("request-config.php");
 include_once($utilities ."utility.php");
 
 function processCheckBox($rawItems, $question, $questionNum, $required, $answerItem, $name){
+    global $log;
+    $log->debug("Inside processCheckBox method");
     $items = convertPipeToArray($rawItems);
-    $convertedAnswer = convertAnswerToValue($answerItem);
+    $convertedAnswer = $answerItem;
     ?>
     <br> 
     <div class="row">

@@ -692,4 +692,14 @@ function getFileMakerContainerFileExtension($fileUrl){
     return substr($urlPath, strpos($urlPath, ".") + 1);
 }
 
+/**
+ * Method takes in CR delimited string and returns array. This method is primarily used to build of Meta fields
+ * checkboxes however not exclusively.
+ * @param $crArray CR delimited string
+ * @return exploded array of string input
+ */
+function explodedCrString($crArray){
+    return explode("\n", $crArray);
+}
+
 ?>

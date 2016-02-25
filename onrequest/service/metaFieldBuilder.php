@@ -33,26 +33,27 @@ function buildMetaComponent($metaRelatedRecords, $canModify){
         $value_required_n = $metaItem -> getField('Value_Required_n');
         $answer_values_pipe_ct = $metaItem -> getField('Answer_Values_Pipe_ct');
         $input_values_pipe_ct = $metaItem -> getField('Input_Values_Pipe_ct');
+        $answer = $metaItem->getField('Answer');
 
 
         switch (strtolower($input_type)) {
             case "text":
-                processTextField($label, $order_n, $name, $value_required_n, $instructions, $answer_values_pipe_ct);
+                processTextField($label, $order_n, $name, $value_required_n, $instructions, $answer);
                 break;
             case "radio button":
-                processRadioButton($input_values_pipe_ct, $name, $label, $order_n, $value_required_n, $answer_values_pipe_ct);
+                processRadioButton($input_values_pipe_ct, $name, $label, $order_n, $value_required_n, $answer);
                 break;
             case "date calendar":
-                processDatePicker($name, $label, $order_n, $value_required_n, $instructions, $answer_values_pipe_ct);
+                processDatePicker($name, $label, $order_n, $value_required_n, $instructions, $answer);
                 break;
             case "pop-up menu":
-                processDropDown($input_values_pipe_ct, $name, $label, $order_n, $value_required_n, $answer_values_pipe_ct);
+                processDropDown($input_values_pipe_ct, $name, $label, $order_n, $value_required_n, explodedCrString($answer));
                 break;
             case 'drop-down list':
-                processDropDown($input_values_pipe_ct, $name, $label, $order_n, $value_required_n, $answer_values_pipe_ct);
+                processDropDown($input_values_pipe_ct, $name, $label, $order_n, $value_required_n, explodedCrString($answer));
                 break;
             case "checkbox":
-                processCheckBox($input_values_pipe_ct, $label, $order_n, $value_required_n, $answer_values_pipe_ct, $name);
+                processCheckBox($input_values_pipe_ct, $label, $order_n, $value_required_n, explodedCrString($answer), $name);
                 break;
             case "file":
                 $fileUrl = $metaItem->getField('Answer_Container_Data_r');
