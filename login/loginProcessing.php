@@ -236,7 +236,7 @@ function setSessionData($userRecord, $site_prefix){
         $_SESSION['contact_pk'] = $userRecord->getField('User_Contact__pk_ID_ct');
 
         //System preference apply if 1 or else value is null
-        $_SESSION['system_preference'] = $userRecord->getField('z_PRO_SeparateWorkByPrograming_on');
+        $_SESSION['system_preference'] = $userRecord->getField('z_PRO_SeparateWorkByPrograming_cn');
 
         //Accounts associated with user in cr delaminated field
         $_SESSION['user_accounts'] = array(stripControlChars($userRecord->getField('User_Contact_Programming_Type_Associations_ct')));
