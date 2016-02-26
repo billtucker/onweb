@@ -75,7 +75,7 @@ include_once($headerFooter .$headerToUse);
 <br>
 <div class="row">
     <div class="col-xs-12 col-lg-12">
-        <img class="img-responsive center-block tdc-splash-image-size" src="<?php echo($companyLogoSplash); ?>" alt="Login Splash Screen Image" align="center">
+        <img class="img-responsive center-block" src="<?php echo($companyLogoSplash); ?>" alt="Login Splash Screen Image" align="center">
     </div>
 </div>
 <br>
