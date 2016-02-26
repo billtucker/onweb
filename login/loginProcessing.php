@@ -233,7 +233,7 @@ function setSessionData($userRecord, $site_prefix){
 
         //New values to capture from [WEB] Login view to be used when determining which users can view Spots
         // based on account name and we also need to capture PK for the contact ID
-        $_SESSION['contact_pk'] = $userRecord->getField('User_Contact_pk_ID_ct');
+        $_SESSION['contact_pk'] = $userRecord->getField('User_Contact__pk_ID_ct');
 
         //System preference apply if 1 or else value is null
         $_SESSION['system_preference'] = $userRecord->getField('z_PRO_SeparateWorkByPrograming_on');
