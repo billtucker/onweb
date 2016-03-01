@@ -17,7 +17,9 @@ require_once($fmfiles .'FileMaker/FileMaker.php');
 
 $DB_HOST = 'http://192.168.0.14';
 $DB_NAME = 'PRO_WORK';
-$DB_USER = 'php';
-$DB_PASS = 'php';
+$DB_USER = '0ap$Admin';
+$DB_PASS = 'gui39vp4s';
+//$DB_USER = 'php';
+//$DB_PASS = 'php';
 
 $fmWorkDB = new FileMaker($DB_NAME, $DB_HOST, $DB_USER, $DB_PASS);
