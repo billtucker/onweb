@@ -8,8 +8,9 @@
  * FileMaker php connection file to connect to PRO_WORK databases and specifically login tables For Spot Viewer
  * operations
  *
- * Note: The IP used in this file are related to Fox Sports. Since the configuration for FOX is a simple
- * server (single) server setup. The setting IP should read 127.0.0.1.!!!!!!
+ *  Note: The IP used in this file 127.0.0.1 is for a local port 80 connection. The IP should be modified to
+ * reflect the actual IP of the server
+ *
  */
 
 include_once($_SERVER["DOCUMENT_ROOT"] ."/onweb/onweb-config.php");
