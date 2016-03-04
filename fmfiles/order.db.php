@@ -10,7 +10,7 @@
  *
  * Note: The IP used in this file 127.0.0.1 is for a local port 80 connection. The IP should be modified to
  * reflect the actual IP of the server
- * 
+ *
  */
 
 include_once($_SERVER["DOCUMENT_ROOT"] ."/onweb/onweb-config.php");

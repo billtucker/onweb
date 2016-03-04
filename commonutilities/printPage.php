@@ -53,5 +53,5 @@ header('Content-Disposition: inline; filename="print_page.pdf"');
 try{
     echo $snappy->getOutput($url);
 }catch (Exception $e){
-    $log->error("printPage.php - Execute PDF Generation error: " .$e->getMessage());
+    $log->error("Exception thrown PDF Generation error: " .$e->getMessage());
 }
