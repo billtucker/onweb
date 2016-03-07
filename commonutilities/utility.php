@@ -702,4 +702,39 @@ function explodedCrString($crArray){
     return explode("\n", $crArray);
 }
 
+/**
+* Method takes in file 'Image' extension and returns header type
+* i.e. image type is inserted in to placeholder header('Content-Type: {image/gif}')
+* @param $extension string extension of currently gif, png, jpg
+* @return null|string returns image/(type)
+*/
+function getImageHeaderType($extension){
+
+    switch( $extension ) {
+        case "gif":
+            return "image/gif";
+            break;
+        case "png":
+            return "image/png";
+            break;
+        case "jpg":
+            return "image/jpeg";
+            break;
+        case "bmp":
+            return "image/bmp";
+            break;
+        case "ico":
+            return "image/ico";
+            break;
+        case "jpeg": //on the off chance we gif this jpeg extension
+            return "image/jpeg";
+            break;
+        case "tif":
+            return "image/tiff";
+            break;
+        default:
+            return "application/octet-stream"; //this default should cover most image types not defined
+    }
+}
+
 ?>
