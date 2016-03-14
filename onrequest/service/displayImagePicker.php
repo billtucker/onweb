@@ -43,6 +43,7 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
             </h6>
         </div>
     </div>
+    <div class="row">
     <input type="hidden" id="<?php echo($primaryKeyId);?>" name="<?php echo($primaryKeyId);?>" value="<?php echo($pkId); ?>">
     <?php if(!empty($containerUrl)){?> <!-- container has data so display image in Lightbox-->
         <div class="col-xs-6 col-md-6 image_container"><!-- move this outside of if() test to line 190 -->
@@ -55,7 +56,8 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
         </div>
         <div class="col-xs-6 col-md-6">
             <div class="row">
-                <form action="<?php echo($site_prefix .'uploaders/imageUploader.php'); ?>" class="dropzone decoration" id="<?php echo ($formDropzoneId); ?>"></form>
+                <!-- <form action="<?php echo($site_prefix .'uploaders/imageUploader.php'); ?>" class="dropzone decoration" id="<?php echo ($formDropzoneId); ?>"></form> -->
+                <div id="<?php echo ($formDropzoneId); ?>" class="decoration  dropzone"></div>
             </div>
             <div class="row pull-right upload-btn-position">
                 <button id="<?php echo($submitImageButtonId); ?>" class="btn btn-primary"><?php echo($uploadButtonLabel); ?></button>
@@ -69,7 +71,8 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
         </div>
         <div class="col-xs-6 col-md-6">
             <div class="row">
-                <form action="<?php echo($site_prefix .'uploaders/imageUploader.php'); ?>" class="dropzone decoration" id="<?php echo ($formDropzoneId); ?>"></form>
+                <!-- <form action="<?php echo($site_prefix .'uploaders/imageUploader.php'); ?>" class="dropzone decoration" id="<?php echo ($formDropzoneId); ?>"></form> -->
+                <div id="<?php echo ($formDropzoneId); ?>" class="decoration  dropzone"></div>
             </div>
             <div class="row pull-right upload-btn-position">
                 <button id="<?php echo($submitImageButtonId); ?>" class="btn btn-primary"><?php echo($uploadButtonLabel); ?></button>
@@ -79,7 +82,8 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
     <?php } else { ?><!-- No container data or filename just display Dropzone box -->
         <div class="col-xs-12 col-md-12">
             <div class="row">
-                <form action="<?php echo($site_prefix .'uploaders/imageUploader.php'); ?>" class="dropzone decoration" id="<?php echo ($formDropzoneId); ?>"></form>
+                <!-- <form action="<?php echo($site_prefix .'uploaders/imageUploader.php'); ?>" class="dropzone decoration" id="<?php echo ($formDropzoneId); ?>"></form> -->
+                <div id="<?php echo ($formDropzoneId); ?>" class="decoration  dropzone"></div>
             </div>
             <div class="row pull-right upload-btn-position">
                 <button id="<?php echo($submitImageButtonId); ?>" class="btn btn-primary"><?php echo($uploadButtonLabel); ?></button>
@@ -98,6 +102,9 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
         });
 
         Dropzone.options.<?php echo(getCamelCase($formDropzoneId)); ?> = {
+            //URL to submit the for
+            url: <?php echo($site_prefix .'uploaders/imageUploader.php'); ?>,
+
             //Prevent dropzone from uploading files immediately
             autoProcessQueue: false,
 

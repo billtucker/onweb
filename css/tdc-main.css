@@ -221,3 +221,65 @@ table td {
     height: 300px;
 }
 
+/** Start of adding lightbox and dropzone css **/
+
+/* When FM container image has FM image */
+div.image_container {
+    border: 1px solid #888;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    height: 250px;
+}
+
+/* When an empty FM image container is shown setup apperance for message */
+div.empty_image_container {
+    border: 1px solid #888;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    height: 250px;
+    padding-top: 40px;
+    font-size: 14px;
+    color: #0c0c0c;
+}
+
+/* Setup dropzone box decoration */
+.decoration {
+    border: 1px dashed #888;
+    background: #f2f2f2;
+    border-top-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+
+/* Remove icon hover and color */
+.glyphicon:hover, .glyphicon:focus {
+    cursor: pointer;
+    color: red;
+    opacity: 0.7;
+}
+
+/* Set image remove button from FM image display */
+.remove-cross {
+    opacity: 0.2;
+}
+
+/* Override min height from Dropzone CSS */
+.dropzone{
+    min-height: 250px !important;
+}
+
+/* Not sure this works */
+.preview-image {
+    display: table;
+    margin: 8px;
+    height: 200px;
+    width: 160px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    padding: 5px;
+}
+
+/* This adds a bit separation between Dropbox and upload reset buttons to success include messages */
+.upload-btn-position {
+    padding-top: 5px;
+}
+
