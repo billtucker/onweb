@@ -39,6 +39,8 @@ if(file_exists($root .$appConfigName)){
     <link href="css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen" type="text/css">
     <link href="css/fileinput.css" media="all" rel="stylesheet" type="text/css" />
     <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.1.6/nprogress.css" rel="stylesheet" type="text/css">
+    <link href="css/lightbox.min.css" rel="stylesheet" media="screen" type="text/css">
+    <link href="css/dropzone.css" rel="stylesheet" media="screen" type="text/css">
     <link href="css/tdc-main.css" rel="stylesheet" media="screen">
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js" type="text/javascript"></script>
@@ -52,6 +54,7 @@ if(file_exists($root .$appConfigName)){
 	<script type="text/javascript" src="js/jquery.are-you-sure.js"></script>
     <script type="text/javascript" src="js/ays-beforeunload-shim.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.1.6/nprogress.js"></script>
+    <script type="text/javascript" src="js/dropzone.js"></script>
     <script type="text/javascript" src="js/tdc.app.js"></script>
 
     <!--[if lt IE 9]>
@@ -60,6 +63,8 @@ if(file_exists($root .$appConfigName)){
     <![endif]-->
 </head>
 <body>
+<!-- add this javascript library here because it must be seen in  the DOM -->
+<script src="js/lightbox.min.js" type="text/javascript"></script>
 <div class="container-fluid"><!-- start site navigation bar -->
     <div class="row tdc-nav-bar-background-grad">
         <div class="col-xs-1 col-md-1 tdc-nav-bar-header-margin-padding-right">

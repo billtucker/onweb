@@ -19,7 +19,7 @@ include_once($requestService .'displayDatePicker.php');
 include_once($requestService .'displayDropDown.php');
 include_once($requestService .'displayCheckbox.php');
 include_once($requestService .'displayFilePicker.php');
-include_once($requestService .'displayImagePicker.php');
+include_once($requestService .'displayImagePicker_old.php');
 
 function buildMetaComponent($metaRelatedRecords, $canModify){
     global $log;

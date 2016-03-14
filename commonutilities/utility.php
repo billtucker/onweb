@@ -737,4 +737,47 @@ function getImageHeaderType($extension){
     }
 }
 
+
+/**
+ * TODO This method may be a duplicate so search must be performed going live
+ * @param $fmUrl String container URL
+ * @return string String return filename be used in Lightbox full image display
+ */
+function getLightBoxCaption($fmUrl){
+    $pathUrl = parse_url($fmUrl, PHP_URL_PATH);
+    $pathArray = pathinfo($pathUrl);
+    return $pathArray['filename'] ."." .$pathArray['extension'];
+}
+
+/**
+ * Pass in String value 'image_dropzone7' returns camelcase 'imageDropzone7'
+ * @param $str
+ * @return mixed|string
+ */
+function getCamelCase($str){
+    $noStrip = array(); //This method requires this
+
+    // non-alpha and non-numeric characters become spaces
+    $str = preg_replace('/[^a-z0-9' . implode("", $noStrip) . ']+/i', ' ', $str);
+    $str = trim($str);
+
+    // uppercase the first character of each word
+    $str = ucwords($str);
+    $str = str_replace(" ", "", $str);
+    $str = lcfirst($str);
+
+    return $str;
+}
+
+/**
+ * Method takes actual file name (i.e. berry.jpg) to PKID (i.e. 123-456-78900-9999.jpg)
+ * @param $actual String actual file name
+ * @param $metapkId String pkId assigned to record
+ * @return string String transformed filename to juse pkId
+ */
+function transformFilename($actual, $metapkId){
+    $ext = pathinfo($actual, PATHINFO_EXTENSION);
+    return $metapkId ."." .$ext;
+}
+
 ?>
