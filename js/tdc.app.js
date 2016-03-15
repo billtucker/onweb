@@ -176,12 +176,12 @@ function skipNProgress(values){
     var itemValues = values.split(' ');
     if(Array.isArray(itemValues)){
         for(var i = 0; i < itemValues.length; i++){
-            if((itemValues[i].indexOf('fileinput-remove') == 0) || (itemValues[i].indexOf('delgrp') == 0)){
+            if((itemValues[i].indexOf('fileinput-remove') == 0) || (itemValues[i].indexOf('delgrp') == 0) || (itemValues[i].indexOf('upload-btn') == 0)){
                 return true;
             }
         }
     }else{
-        if((itemValues.indexOf('fileinput-remove') == 0) || (itemValues.indexOf('delgrp') == 0)){
+        if((itemValues.indexOf('fileinput-remove') == 0) || (itemValues.indexOf('delgrp') == 0) || (itemValues[i].indexOf('upload-btn') == 0)){
             return true;
         }
     }

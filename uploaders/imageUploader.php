@@ -18,8 +18,14 @@ if(isset($_FILES) && !empty($_FILES)){
     $name = $_FILES['file']['name'];
 
     $log->debug("The file name is as follows: " .$name);
-    $filenameTemp = transformFilename($_FILES['file']['name'], $_POST['pkId']);
-    $log->debug("The Temp filename is " .$filenameTemp);
 
+    if(isset($_POST['pkId'])){
+        $filenameTemp = transformFilename($_FILES['file']['name'], $_POST['pkId']);
+        $log->debug("The Temp filename is " .$filenameTemp);
+    }else{
+        $log->debug("POST array was no set fix the issue");
+    }
 
+}else{
+    $log->debug("The FILES array was not set");
 }

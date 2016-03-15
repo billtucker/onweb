@@ -48,9 +48,9 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
     <?php if(!empty($containerUrl)){?> <!-- container has data so display image in Lightbox-->
         <div class="col-xs-6 col-md-6 image_container"><!-- move this outside of if() test to line 190 -->
             <span class="glyphicon glyphicon-remove pull-right remove-cross" title="Remove Image" id="<?php echo($glyphiconRemoveId); ?>"></span>
-            <a href="readImage.php?url=<?php echo(urlencode($containerUrl)); ?>" alt="Full Image" data-lightbox="<?php echo($pkId); ?>"
+            <a href="../readImage.php?url=<?php echo(urlencode($containerUrl)); ?>" alt="Full Image" data-lightbox="<?php echo($pkId); ?>"
                data-title="<?php echo($imageCaption) ?>">
-                <img class="img-responsive preview-image" src="readImage.php?url=<?php echo(urlencode($containerUrl)); ?>"
+                <img class="img-responsive preview-image" src="../readImage.php?url=<?php echo(urlencode($containerUrl)); ?>"
                      align="left" id="<?php echo ($fullImageId); ?>">
             </a>
         </div>
@@ -60,8 +60,12 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
                 <div id="<?php echo ($formDropzoneId); ?>" class="decoration  dropzone"></div>
             </div>
             <div class="row pull-right upload-btn-position">
-                <button id="<?php echo($submitImageButtonId); ?>" class="btn btn-primary"><?php echo($uploadButtonLabel); ?></button>
-                &nbsp;<button id="<?php echo($removeImageButtonId); ?>" class="btn btn-danger"><?php echo ($removeButtonLabel); ?></button>
+                <button type="button" id="<?php echo($submitImageButtonId); ?>" class="btn btn-primary upload-btn"><?php echo($uploadButtonLabel); ?></button>
+                &nbsp;<button type="button" id="<?php echo($removeImageButtonId); ?>" class="btn btn-danger upload-btn"><?php echo ($removeButtonLabel); ?></button>
+            </div>
+            <div class="row text-right text-success tdc-display-none" id="<?php echo($uploadSuccessId); ?>">
+                <strong>Image Successfully Uploaded</strong><br>
+                <i class="text-info"><strong>The preview of the image is not immediate available.</strong></i>
             </div>
         </div>
     <?php }else if(empty($containerUrl) && !empty($fmFilename)){ ?><!-- container is empty but the filename field exists -->
@@ -75,8 +79,12 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
                 <div id="<?php echo ($formDropzoneId); ?>" class="decoration  dropzone"></div>
             </div>
             <div class="row pull-right upload-btn-position">
-                <button id="<?php echo($submitImageButtonId); ?>" class="btn btn-primary"><?php echo($uploadButtonLabel); ?></button>
-                &nbsp;<button id="<?php echo($removeImageButtonId); ?>" class="btn btn-danger"><?php echo ($removeButtonLabel); ?></button>
+                <button type="button" id="<?php echo($submitImageButtonId); ?>" class="btn btn-primary upload-btn"><?php echo($uploadButtonLabel); ?></button>
+                &nbsp;<button type="button" id="<?php echo($removeImageButtonId); ?>" class="btn btn-danger upload-btn"><?php echo ($removeButtonLabel); ?></button>
+            </div>
+            <div class="row text-right text-success tdc-display-none" id="<?php echo($uploadSuccessId); ?>">
+                <strong>Image Successfully Uploaded</strong><br>
+                <i class="text-info"><strong>The preview of the image is not immediate available.</strong></i>
             </div>
         </div>
     <?php } else { ?><!-- No container data or filename just display Dropzone box -->
@@ -86,8 +94,12 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
                 <div id="<?php echo ($formDropzoneId); ?>" class="decoration  dropzone"></div>
             </div>
             <div class="row pull-right upload-btn-position">
-                <button id="<?php echo($submitImageButtonId); ?>" class="btn btn-primary"><?php echo($uploadButtonLabel); ?></button>
-                &nbsp;<button id="<?php echo($removeImageButtonId); ?>" class="btn btn-danger"><?php echo ($removeButtonLabel); ?></button>
+                <button type="button" id="<?php echo($submitImageButtonId); ?>" class="btn btn-primary upload-btn"><?php echo($uploadButtonLabel); ?></button>
+                &nbsp;<button type="button" id="<?php echo($removeImageButtonId); ?>" class="btn btn-danger upload-btn"><?php echo ($removeButtonLabel); ?></button>
+            </div>
+            <div class="row text-right text-success tdc-display-none" id="<?php echo($uploadSuccessId); ?>">
+                <strong>Image Successfully Uploaded</strong><br>
+                <i class="text-info"><strong>The preview of the image is not immediate available.</strong></i>
             </div>
         </div>
     <?php } ?>
@@ -103,7 +115,8 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
 
         Dropzone.options.<?php echo(getCamelCase($formDropzoneId)); ?> = {
             //URL to submit the for
-            url: <?php echo($site_prefix .'uploaders/imageUploader.php'); ?>,
+            //TODO make this more dynamic Remove all hardcoded path elements in this page
+            url: '../uploaders/imageUploader.php',
 
             //Prevent dropzone from uploading files immediately
             autoProcessQueue: false,
