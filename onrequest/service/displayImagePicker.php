@@ -122,7 +122,7 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
             autoProcessQueue: false,
 
             //Dropzone accepts images and video file only
-            acceptedFiles: "image/*, video/*",
+            acceptedFiles: "image/*,
 
             init: function(){
                 var submitButton = document.querySelector('<?php echo('#' .$submitImageButtonId);?>');
