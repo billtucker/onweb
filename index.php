@@ -44,7 +44,7 @@ if($validateUser) {
 }
 
 $projectTypesFind = $fmOrderDB->newFindCommand('[WEB] Project Request Types');
-$projectTypesFind->addFindCriterion("Request Type", "*");
+$projectTypesFind->addFindCriterion("Request_Type", "*");
 $projectTypesResults = $projectTypesFind->execute();
 
 if(FileMaker::isError($projectTypesResults)){
