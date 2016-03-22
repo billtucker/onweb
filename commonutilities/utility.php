@@ -780,4 +780,34 @@ function transformFilename($actual, $metapkId){
     return $metapkId ."." .$ext;
 }
 
+/**
+ * Method returns the src value used to display an icon of the file type dropped in Dropzone container.
+ * Note: Hardcoding of image file locations and names should be moved to a property file to simplify maintenance
+ * @param $ext String file extension (i.e. pdf, txt, xls, xlsx, doc, docx)
+ * @return string return src value to display a file type icon in place of a pure link in anchor tag
+ */
+function getFileIcon($ext){
+    $imageExcel = "images/excel-icon-128px.png";
+    $imageDoc   = "images/Office-Word-icon_128px_blue.png";
+    $imageText  = "images/text-icon_128px.png";
+    $imagePdf   = "images/PDF-icon_128px_red.png";
+
+    switch($ext){
+        case stripos($ext, "xls") !== false:
+            return $imageExcel;
+            break;
+        case stripos($ext, "doc") !== false:
+            return $imageDoc;
+            break;
+        case "pdf":
+            return $imagePdf;
+            break;
+        case "txt":
+            return $imageText;
+            break;
+        default:
+            return "";
+    }
+}
+
 ?>
