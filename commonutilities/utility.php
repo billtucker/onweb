@@ -787,10 +787,10 @@ function transformFilename($actual, $metapkId){
  * @return string return src value to display a file type icon in place of a pure link in anchor tag
  */
 function getFileIcon($ext){
-    $imageExcel = "images/excel-icon-128px.png";
-    $imageDoc   = "images/Office-Word-icon_128px_blue.png";
-    $imageText  = "images/text-icon_128px.png";
-    $imagePdf   = "images/PDF-icon_128px_red.png";
+    $imageExcel = "../images/excel-icon-128px.png";
+    $imageDoc   = "../images/Office-Word-icon_128px_blue.png";
+    $imageText  = "../images/text-icon_128px.png";
+    $imagePdf   = "../images/PDF-icon_128px_red.png";
 
     switch($ext){
         case stripos($ext, "xls") !== false:

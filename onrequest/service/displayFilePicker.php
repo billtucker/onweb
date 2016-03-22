@@ -6,8 +6,8 @@
  * Time: 1:28 PM
  */
 
-include_once("onweb-config.php");
-include_once("utility.php");
+include_once("request-config.php");
+include_once($utilities ."utility.php");
 
 function processFilePicker($label, $questionNum, $required, $fileName, $pkId, $containerUrl, $canModify){
     global $log, $site_prefix;
@@ -160,14 +160,14 @@ function processFilePicker($label, $questionNum, $required, $fileName, $pkId, $c
                     console.log("File Extension for added file: " + ext);
 
                     if(ext == 'pdf'){
-                        $(file.previewElement).find(".dz-image img").attr("src", "images/PDF-icon_128px_red.png");
+                        $(file.previewElement).find(".dz-image img").attr("src", "../images/PDF-icon_128px_red.png");
                     }else if(ext.indexOf('doc') != -1) { //this test was doc or docx
-                        $(file.previewElement).find(".dz-image img").attr("src", "images/Office-Word-icon_128px_blue.png");
+                        $(file.previewElement).find(".dz-image img").attr("src", "../images/Office-Word-icon_128px_blue.png");
                     }else if(ext.indexOf('xls') != -1) { //this test was xls or xslx
                         console.log("Show excel icon");
-                        $(file.previewElement).find(".dz-image img").attr("src", "images/excel-icon-128px.png");
+                        $(file.previewElement).find(".dz-image img").attr("src", "../images/excel-icon-128px.png");
                     }else if(ext == 'txt'){
-                        $(file.previewElement).find(".dz-image img").attr("src", "images/text-icon_128px.png");
+                        $(file.previewElement).find(".dz-image img").attr("src", "../images/text-icon_128px.png");
                     }
 
                     $('<?php echo('#' .$removeFileButtonId); ?>').show();
