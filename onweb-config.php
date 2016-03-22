@@ -42,6 +42,9 @@ $siteRoot = "onweb";
 $homepage = $port .$_SERVER['HTTP_HOST'] ."/" .$siteRoot ."/";
 $site_prefix = $homepage;
 
+//use this to replace the container URL for videos if required for videos
+$serverIP = $_SERVER['SERVER_NAME'];
+
 
 //place holder for property used in header_top.php to display the small logo and splash logo on index. This property
 // will be overridden by property in dynamically generated tdc-app-config.php

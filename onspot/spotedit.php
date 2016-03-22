@@ -151,7 +151,7 @@ if(!empty($record->getField('z_ONSPOT_Rough_Media_Store_con'))){
     $container_url = $record->getField('z_ONSPOT_Rough_Media_Store_con');
     $ext = getFileMakerContainerFileExtension($container_url);
     $videoType = getVideoSourceType($ext);
-    $fullVideoLink = $fmWorkDB->getContainerDataURL($container_url);
+    $fullVideoLink = getUserVideoUrl($fmWorkDB->getContainerDataURL($container_url, $serverIP));
     $log->debug("URL from Container value: " .$fullVideoLink ." video type: " .$videoType);
 }else{
     $fullPathField = "z_ONSPOT_Rough_Full_Path_ct";
@@ -235,8 +235,24 @@ if(!$bypass){
 }
 
 
-
 include_once($headerFooter ."footer.php");
 $log->debug("Completed spotedit.php code now display HTML code".PHP_EOL);
+
+//TODO move this host replacement method to utility.php after testing
+/**
+ * This method replaces server name or IP with public exposed name or IP to play videos
+ * @param $containerUrl String url from FileMaker with host and IP
+ * @param $hostIp String IP or name used to access site by user
+ * @return mixed String of URL fullVideoLink to be used in spotViewer
+ */
+function getUserVideoUrl($containerUrl, $hostIp){
+
+    $urlParts = parse_url($containerUrl);
+    $videoHost = $urlParts['host'];
+    if(stripos($containerUrl, $hostIp) === false){
+        return str_replace($videoHost, $hostIp, $containerUrl);
+    }
+    return $containerUrl;
+}
 
 ?>
