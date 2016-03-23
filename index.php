@@ -44,6 +44,7 @@ if($validateUser) {
 }
 
 $projectTypesFind = $fmOrderDB->newFindCommand('[WEB] Project Request Types');
+//Note: Locally 192.168.0.14 this field is 'Request Type' however in main line the field is 'Request_Type'
 $projectTypesFind->addFindCriterion("Request_Type", "*");
 $projectTypesResults = $projectTypesFind->execute();
 
@@ -112,7 +113,7 @@ $columnWidthTotal = 8; ?>
         if($columnTypeIndex < ($projectTypeRecordCount)) {
             if(($columnTypeIndex + $maxTypesPerRow) > $projectTypeRecordCount) {
                 $columnWidthTotal -= $decrementColumnBy;//decrement column counter
-                getButtonCode($projectTypeRecords[$columnTypeIndex]->getField('Request Type'), $projectTypeRecords[$columnTypeIndex]->getField('__pk_ID'));
+                getButtonCode($projectTypeRecords[$columnTypeIndex]->getField('Request_Type'), $projectTypeRecords[$columnTypeIndex]->getField('__pk_ID'));
                 $items = convertPipeToArray($projectTypeRecords[$columnTypeIndex]->getField('Examples List_Pipe_ct'));
                 if(is_array($items)){
                     echo("<p class='text-muted'>");
@@ -127,7 +128,7 @@ $columnWidthTotal = 8; ?>
                     echo("<div class='" .$dynamicColumnXsClassText .$columnWidthTotal  ." " .$dynamicColumnLgClassText .$columnWidthTotal ."'>&nbsp;</div>\n");//Empty row dynamic column width text
                 }
             }else{
-                getButtonCode($projectTypeRecords[$columnTypeIndex]->getField('Request Type'), $projectTypeRecords[$columnTypeIndex]->getField('__pk_ID'));
+                getButtonCode($projectTypeRecords[$columnTypeIndex]->getField('Request_Type'), $projectTypeRecords[$columnTypeIndex]->getField('__pk_ID'));
                 $items = convertPipeToArray($projectTypeRecords[$columnTypeIndex]->getField('Examples List_Pipe_ct'));
                 if(is_array($items)){
                     echo("<p class='text-muted'>");

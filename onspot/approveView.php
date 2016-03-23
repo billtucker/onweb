@@ -40,7 +40,7 @@ if(!session_id()){
                     }
                     ?>
                     <?php foreach($approvalvalues as $value){ ?>
-                        <input class="approval" name="approval" type="radio" value="<?php echo $value; ?>"
+                        <input class="approval" name="approval" type="radio" value="<?php echo $value; ?>" onChange='this.form.submit();'
                             <?php if($value == $record->getField('Rough_Cut_Approval_YN_t')) { echo " Checked"; }?>>
                         <?php if($value == "No") { echo '<span style="color:#9E1818;">Killed</span>';}
                         else { if($value == "Yes") { echo '<span style="color:#005EEF;">Approved</span>';}

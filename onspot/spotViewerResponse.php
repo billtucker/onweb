@@ -16,6 +16,7 @@
 include_once("onspot-config.php");
 include_once($fmfiles ."work.db.php");
 include_once($utilities ."utility.php");
+include_once($errors .'errorProcessing.php');
 
 include_once($validation ."user_validation.php");
 
@@ -23,9 +24,10 @@ if (isset($_GET['pkId'])) {
     $pkId = urldecode($_GET['pkId']);
 }else{
     $messageType = "d";
+    $errorTitle = "Serious Error";
     $log->error("Serious Error: PK Missing at save time User " .$_SESSION['userName']);
     $message = "A serious error has occurred and you should immediately contact Thought-Development Support for assistance.";
-    header("Location: accessError.php?errorMessage=" .$message ."&type=" .$messageType);
+    processError("Missing Primary Key", $message, "spotViewerResponse.php", "", $errorTitle);
     exit;
 }
 
@@ -58,10 +60,10 @@ if(isset($_POST['userApprover'])){
     $spotResult = $spotViewerFind->execute();
 
     if(FileMaker::isError($spotResult)){
-        $messageType = "d";
+        $errorTitle = "FileMaker Error";
         $log->error("Search of Spot Viewer record failed on PKID: " .$pkId . " Error: " .$spotResult->getMessage() ." User: " .$_SESSION['userName']);
         $message = "A serious error has occurred and you should immediately contact Thought-Development Support for assistance.";
-        header("Location: accessError.php?errorMessage=" .$message ."&type=" .$messageType);
+        processError($spotResult->getMessage(), $spotResult->getErrorString(), "spotViewerResponse.php", $pkId, $errorTitle);
         exit;
     }
 
@@ -83,10 +85,10 @@ if(isset($_POST['userApprover'])){
         $spotSave = $spotRecord->commit();
 
         if(FileMaker::isError($spotSave)){
-            $messageType = "d";
+            $errorTitle = "FileMaker Error";
             $log->error("Spot Viewer Save operation save failed: " .$spotSave->getMessage() ." User: " .$_SESSION['userName']);
             $message = "A serious error has occurred and you should immediately contact Thought-Development Support for assistance.";
-            header("Location: accessError.php?errorMessage=" .$message ."&type=" .$messageType);
+            processError($spotSave->getMessage(), $spotSave->getErrorString(), "spotViewerResponse.php", $pkId, $errorTitle);
             exit;
         }
     }
@@ -112,10 +114,11 @@ if(isset($_POST['userNote'])){
         $addNote = $newNoteRecord->commit();
 
         if(FileMaker::isError($addNote)){
+            $errorTitle = "FileMaker Error";
             $messageType = "d";
             $log->error("Save user note Error: " .$addNote->getMessage() ." User: " .$_SESSION['userName']);
             $message = "A serious error has occurred and you should immediately contact Thought-Development Support for assistance.";
-            header("Location: accessError.php?errorMessage=" .$message ."&type=" .$messageType);
+            processError($addNote->getMessage(), $addNote->getErrorString(), "spotViewerResponse.php", $pkId, $errorTitle);
             exit;
         }
 

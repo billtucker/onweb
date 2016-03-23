@@ -22,6 +22,7 @@
 include_once("onspot-config.php");
 include_once($utilities ."utility.php");
 include_once($validation ."user_validation.php");
+include_once($errors .'errorProcessing.php');
 
 $pageUrl = urlencode($port ."$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
 
@@ -49,11 +50,12 @@ if($bypass){
 if (isset($_GET['pkId'])) {
     $pkId = urldecode($_GET['pkId']);
 }else{
+    $errorTitle = "FileMaker Error";
     $messageType = "w";
     $message = "You have attempted to access the ON-Spot Viewer without a valid URL or address The ON-Spot Viewer";
     $message .= " is unable to display the spot requested. Please contact the person who sent the URL or address ask";
     $message .= " them to resend or validate what they sent.";
-    header('Location: ' .$site_prefix .'errors/accessError.php?errorMessage=' .$message ."&type=" .$messageType);
+    processError("Missing Primary Key", $message, $pageUrl, "", $errorTitle);
     exit;
 }
 
@@ -122,16 +124,18 @@ $spotRecords = $spot->execute();
 if (FileMaker::isError($spotRecords)) {
     if($spotRecords->getMessage() == "No records match the request"){
         $messageType="w";
+        $errorTitle = "No matching records found";
         $log->info("No matching records for __pk_ID: " .$pkId ." User: " .$_SESSION['userName']);
         $message = "No ON-Spot Viewer records were found using the criteria supplied. Please consult with FileMaker,";
         $message .= "Thought Development Support or your system administrator to assist with rectifying the issue.";
-        header('Location:accessError.php?errorMessage=' .$message ."&type=" .$messageType);
+        processError($spotRecords->getMessage(), $spotRecords->getErrorString(), $pageUrl, $pkId, $errorTitle);
         exit;
     }else{
+        $errorTitle = "FileMaker Error";
         $messageType = "d";
         $message = "A serious error has occurred, please contact Thought Development Support to correct the issue.";
         $log->error("Customer Message: " .$message ." FileMaker Error: " .$spotRecords->getMessage() ." User: " .$_SESSION['userName']);
-        header('Location:accessError.php?errorMessage=' .$message ."&type=" .$messageType);
+        processError($spotRecords->getMessage(), $spotRecords->getErrorString(), $pageUrl, $pkId, $errorTitle);
         exit;
 
     }
@@ -151,7 +155,8 @@ if(!empty($record->getField('z_ONSPOT_Rough_Media_Store_con'))){
     $container_url = $record->getField('z_ONSPOT_Rough_Media_Store_con');
     $ext = getFileMakerContainerFileExtension($container_url);
     $videoType = getVideoSourceType($ext);
-    $fullVideoLink = getUserVideoUrl($fmWorkDB->getContainerDataURL($container_url, $serverIP));
+    $getContainerUrl = $fmWorkDB->getContainerDataURL($container_url);
+    $fullVideoLink = getUserVideoUrl($getContainerUrl, $serverIP);
     $log->debug("URL from Container value: " .$fullVideoLink ." video type: " .$videoType);
 }else{
     $fullPathField = "z_ONSPOT_Rough_Full_Path_ct";
@@ -194,10 +199,11 @@ if(!$bypass){
     //Check for errors and no records found is not a true error as it is possible that no comments have been made
     if (FileMaker::isError($noteRecords)) {
         if ($noteRecords->getMessage() != "No records match the request") {
+            $errorTitle = "FileMaker Error";
             $messageType = "d";
             $log->error("Serous  Note Error: " . $noteRecords->getMessage() ." User " .$_SESSION['userName']);
             $message = "A serious error has occurred and you should immediately contact Thought-Development Support for assistance.";
-            header("Location: accessError.php?errorMessage=" .$message ."&type=" .$messageType);
+            processError($noteRecords->getMessage(), $noteRecords->getErrorString(), $pageUrl, $pkId, $errorTitle);
             exit;
         } elseif ($noteRecords->getMessage() == "No records match the request") {
             $processNotes = false;
