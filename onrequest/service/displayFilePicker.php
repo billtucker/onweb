@@ -24,14 +24,19 @@ function processFilePicker($label, $questionNum, $required, $fileName, $pkId, $c
     $removeButtonLabel = "Remove File";
     $primaryKeyId = "pkid-" .$questionNum;
 
-    $extension = getFileMakerContainerFileExtension($containerUrl);
-    $fileTypeIcon = getFileIcon($extension);
+    $fileTypeIcon = "";
 
-    if(!isset($fileName) || empty($fileName)){
+    if(isset($containerUrl) && !empty($containerUrl)){
+        $extension = getFileMakerContainerFileExtension($containerUrl);
+        $fileTypeIcon = getFileIcon($extension);
+    }
+
+
+    if((!isset($fileName) || empty($fileName)) && (isset($containerUrl) && !empty($containerUrl))){
         $fileName = getLightBoxCaption($containerUrl);
     }
 
-    ?>
+?>
 
     <br>
     <div class="row">
@@ -46,7 +51,8 @@ function processFilePicker($label, $questionNum, $required, $fileName, $pkId, $c
         </div>
     </div>
     <div class="row">
-        <input type="hidden" id="<?php echo($primaryKeyId);?>" name="<?php echo($primaryKeyId);?>" value="<?php echo($pkId); ?>">
+    <input type="hidden" id="<?php echo($primaryKeyId);?>" name="<?php echo($primaryKeyId);?>" value="<?php echo($pkId); ?>">
+    <?php if($canModify) { ?>
         <?php if(!empty($containerUrl)){?> <!-- container has data so display image in Lightbox-->
             <div class="col-xs-6 col-md-6 image_container"><!-- move this outside of if() test to line 190 -->
                 <span class="glyphicon glyphicon-remove pull-right remove-cross" title="Remove Image" id="<?php echo($glyphiconRemoveId); ?>"></span>
@@ -103,6 +109,19 @@ function processFilePicker($label, $questionNum, $required, $fileName, $pkId, $c
                 </div>
             </div>
         <?php } ?>
+    <?php } else { ?>
+    <!-- The user cannot remove or add the file downloaded from FileMaker or else just show empty bordered DIV -->
+        <?php if($containerUrl){ ?>
+            <div class="col-xs-12 col-md-12 image_container">
+                <a href="<?php echo($containerUrl); ?>" alt="Full File">
+                    <img class="img-responsive preview-image" src="<?php echo($fileTypeIcon); ?>"
+                        align="left" id="<?php echo ($fullFileId); ?>">
+                    <p class="text-center" style="padding-left: 20px;"><?php echo(urldecode($fileName)); ?></p>
+                </a>
+        <?php } else { ?>
+            <div class="col-xs-12 col-md-12 image_container"></div>
+        <?php } ?>
+    <?php } ?>
     </div>
 
     <script>
