@@ -79,6 +79,7 @@ function buildTagDeleteCell($index, $canModify){
     $tableId = "tag-table";
     $idNamePrefix = "delRowId" ."_" .$index;
     $titleText = "Click to delete this row";
+    $disabledBtn = "Delete row disabled";
     $spanIdName = "delRowSpan" ."_" .$index;
     $clickRowId = "this.parentNode.parentNode.rowIndex";
 
@@ -91,7 +92,7 @@ function buildTagDeleteCell($index, $canModify){
     }else{
         echo("<button class='btn btn-default btn-sm deleteRow tdc-tag-delete-icon delgrp' id='"
             .$idNamePrefix ."' name='" .$idNamePrefix ."' type='button'
-        onclick=delRow('" .$tableId ."'," .$clickRowId ."); title='" .$titleText ."' data-placement='bottom' disabled>\n");
+        onclick=delRow('" .$tableId ."'," .$clickRowId ."); title='" .$disabledBtn ."' data-placement='bottom' disabled>\n");
         echo("<span class='glyphicon glyphicon-remove-sign delgrp' id='" .$spanIdName ."'></span>\n");
         echo("</button>");
     }

@@ -425,7 +425,7 @@ echo("\n<script type='text/javascript' src='../js/tdc-deliverable-save-scroll-bu
                         <?php } else { ?>
                         <button class="input-group-addon addrow tdc-tag-add-icon" id="addRow" name="addRow" type="button"
                                 onclick="cloneTagRow('tag-table');"
-                                title="Click to add new row" data-placement="bottom" disabled>
+                                title="Add row button disabled" data-placement="bottom" disabled>
                             <span class="glyphicon glyphicon-plus" id="addRowSpan" style="align-content: center;"></span>
                         </button>
                         <?php } ?>
