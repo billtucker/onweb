@@ -10,7 +10,7 @@ More information about Thought Development can be found at http://thought-dev.co
 
 The motivation for this project is to deliver a web based version of the On-Air Pro product. Other considerations were
 to test the boundaries of the FileMaker API to include PHP. This project is a work in progress and is considered a
-prototype of a finalized version for structured release to the customer base.
+prototype of a finalized version for a structured release to the customer base.
 
 ## Project testing standards and practices
 
