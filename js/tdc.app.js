@@ -173,16 +173,18 @@ $(document).ready(function () {
 //class or multiple classes to determine if NProgress should run (Example class="btn btn-default delgrp" or
 //class="delgrp")
 function skipNProgress(values){
-    var itemValues = values.split(' ');
-    if(Array.isArray(itemValues)){
-        for(var i = 0; i < itemValues.length; i++){
-            if((itemValues[i].indexOf('fileinput-remove') == 0) || (itemValues[i].indexOf('delgrp') == 0) || (itemValues[i].indexOf('upload-btn') == 0)){
+    if(values){
+        var itemValues = values.split(' ');
+        if(Array.isArray(itemValues)){
+            for(var i = 0; i < itemValues.length; i++){
+                if((itemValues[i].indexOf('fileinput-remove') == 0) || (itemValues[i].indexOf('delgrp') == 0)){
+                    return true;
+                }
+            }
+        }else{
+            if((itemValues.indexOf('fileinput-remove') == 0) || (itemValues.indexOf('delgrp') == 0)){
                 return true;
             }
-        }
-    }else{
-        if((itemValues.indexOf('fileinput-remove') == 0) || (itemValues.indexOf('delgrp') == 0) || (itemValues[i].indexOf('upload-btn') == 0)){
-            return true;
         }
     }
     return false;
