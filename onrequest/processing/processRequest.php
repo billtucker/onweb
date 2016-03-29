@@ -39,8 +39,8 @@ if(isset($_POST['requestPkId'])){
     exit;
 }
 
-if (isset($_POST['requestsubmit'])) {
-$requestFieldArray = array('Work_Order_Title_t', 'Programming_Type_t', 'Work_Order_Notes_t', 'Request_Approver_List_t',
+if (isset($_POST['requestsubmit']) || isset($_POST['saveDataLink'])) {
+    $requestFieldArray = array('Work_Order_Title_t', 'Programming_Type_t', 'Work_Order_Notes_t', 'Request_Approver_List_t',
     'Contact_Company_t', 'Contact_Department_t', 'Contact_Phone_t', 'Show_Code_t', 'Show_EpisodeNumber_t',
     'Show_Episode_Title_t', 'Show_AirDate_t', 'Show_AirTime_ti');
 
@@ -106,10 +106,27 @@ $projectReqDelRelatedSets = $deliverableResults->getRecords();
         }
     }
 
-	header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
-    header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-    header('Pragma: no-cache');
-    header('Location: ' .$request_site_prefix . 'request.php?pkId=' .urlencode($pkId) .'&message=success');
+    if($_POST['saveDataLink']){
+        if(isset($_POST['pkToUse'])) {
+            $deliverablePk = $_POST['pkToUse'];
+        }
+
+
+        $log->debug("**** Form data was changed so save data from the form and forward ****");
+        $log->debug("With Deliverable PK: " .$deliverablePk);
+        header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header('Pragma: no-cache');
+        header("Location: " .$request_site_prefix ."deliverableview.php?pkId=" .$deliverablePk);
+    }else{
+        $log->debug("----- Saved Request form data now return to request form ----");
+        header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header('Pragma: no-cache');
+        header('Location: ' .$request_site_prefix . 'request.php?pkId=' .urlencode($pkId) .'&message=success');
+    }
+
+
 }elseif(isset($_POST['add-deliverable'])){
 
     $log->debug("Adding deliverable record start with PKID: " .$pkId);

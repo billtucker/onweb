@@ -303,3 +303,37 @@ function disabledPrintBtnMessage(){
     alert("The PDF Print button is disabled for this page.\n Please use the keyboard to print this page.");
     return false;
 }
+
+
+/**
+ * Function to forward from Request pencil link to Deliverable View when form is not dirty (pure anchor link)
+ * @param deliverablePkId - FileMaker Deliverable primary key String
+ */
+function forwardDeliveriable(deliverablePkId){
+    var forwardingUrl = "deliverableview.php?pkId=" + deliverablePkId;
+    window.location.href = forwardingUrl;
+}
+
+/**
+ * Function to add 2 elements to a Request form used during PHP save processing. One adds the fact that a link
+ * was clicked and the form is dirty so save the data forward to deliverable view
+ * Note: This function is related to the pencil link on the request form "Only"
+ * @param linkNum The numeric value of the anchor tag clicked
+ */
+function addHiddenLinkFields(linkNum){
+
+    var fieldName = "__pk_ID_" + linkNum;
+
+    var input = document.createElement("input");
+    input.setAttribute("type", "hidden");
+    input.setAttribute("name", "saveDataLink");
+    input.setAttribute("value", "linkPushed");
+
+    var pkToUse = document.createElement("input");
+    pkToUse.setAttribute("type", "hidden");
+    pkToUse.setAttribute("name", "pkToUse");
+    pkToUse.setAttribute("value", document.getElementById(fieldName).value);
+
+    document.getElementById("request-form").appendChild(input);
+    document.getElementById("request-form").appendChild(pkToUse);
+}
