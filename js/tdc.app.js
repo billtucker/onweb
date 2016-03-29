@@ -307,10 +307,15 @@ function disabledPrintBtnMessage(){
 
 /**
  * Function to forward from Request pencil link to Deliverable View when form is not dirty (pure anchor link)
+ * This function was modified to provide full url to forwarding page
  * @param deliverablePkId - FileMaker Deliverable primary key String
  */
 function forwardDeliveriable(deliverablePkId){
-    var forwardingUrl = "deliverableview.php?pkId=" + deliverablePkId;
+    var pathDataUrl = "onrequest/deliverableview.php?pkId=" + deliverablePkId;
+    //This code was added for 'possible' inconsistent forwarding within an DMZ (This code builds full URL to page)
+    var hostSiteName = window.location.protocol + "//" + window.location.host;
+    var pathArray = window.location.pathname.split( '/' );
+    var forwardingUrl = hostSiteName + "/" + pathArray[1] + "/" + pathDataUrl;
     window.location.href = forwardingUrl;
 }
 
