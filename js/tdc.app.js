@@ -312,7 +312,8 @@ function disabledPrintBtnMessage(){
  */
 function forwardDeliveriable(deliverablePkId){
     var pathDataUrl = "onrequest/deliverableview.php?pkId=" + deliverablePkId;
-    //This code was added for 'possible' inconsistent forwarding within an DMZ (This code builds full URL to page)
+    //This code was added for a 'possible' inconsistent forwarding issue within an DMZ
+    // (This code builds a full URL to page)
     var hostSiteName = window.location.protocol + "//" + window.location.host;
     var pathArray = window.location.pathname.split( '/' );
     var forwardingUrl = hostSiteName + "/" + pathArray[1] + "/" + pathDataUrl;
