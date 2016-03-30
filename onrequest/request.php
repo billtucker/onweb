@@ -8,6 +8,7 @@
  */
 
 include_once("request-config.php");
+include_once($requestService .'displayLinkWithJavaScript.php');
 
 //validate user prior to access on this page
 include_once("$validation" ."user_validation.php");
@@ -435,12 +436,7 @@ $log->debug("Now have quired all fields now build HTML");
                                 ?>
                             </td>
                             <td>
-                                <a href="deliverableview.php?pKid=<?php echo(urlencode($projectRelatedSet->getField('__pk_ID')));?>&itemId=<?php echo($requestedProjectListCounter);?>">
-                                    <span class="input-group-addon tdc-glyphicon-control tdc-cell-spacing icon-red">
-                                        <span class="glyphicon glyphicon-pencil"></span>
-                                    </span>
-                                </a>
-                                <input type="hidden" name="<?php echo('__pk_ID' .$underLine .$requestedProjectListCounter)?>" id="<?php echo('__pk_ID' .$underLine .$requestedProjectListCounter)?>" value="<?php echo(rawurldecode($projectRelatedSet->getField('__pk_ID')));?>">
+                                <?php displayPencilLinkWithJavaScript($requestedProjectListCounter, $projectRelatedSet->getField('__pk_ID')); ?>
                             </td>
                         </tr>
                         <?php $requestedProjectListCounter += 1; ?>

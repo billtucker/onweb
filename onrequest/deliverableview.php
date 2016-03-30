@@ -42,8 +42,8 @@ include_once($errors .'errorProcessing.php');
 
 
 /** Assign primary key and item number to be used the db query */
-if(isset($_GET['pKid']) && !empty($_GET['pKid'])){
-    $deliverablePkId = urldecode($_GET['pKid']);
+if(isset($_GET['pkId']) && !empty($_GET['pkId'])){
+    $deliverablePkId = urldecode($_GET['pkId']);
     $itemId = $_GET['itemId'];
     $log->debug("Deliverable PK: " .$deliverablePkId ." and Item Number: " .$itemId);
 }else{

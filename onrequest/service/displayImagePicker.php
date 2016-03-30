@@ -44,65 +44,80 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
         </div>
     </div>
     <div class="row">
-    <input type="hidden" id="<?php echo($primaryKeyId);?>" name="<?php echo($primaryKeyId);?>" value="<?php echo($pkId); ?>">
-    <?php if(!empty($containerUrl)){?> <!-- container has data so display image in Lightbox-->
-        <div class="col-xs-6 col-md-6 image_container"><!-- move this outside of if() test to line 190 -->
-            <span class="glyphicon glyphicon-remove pull-right remove-cross" title="Remove Image" id="<?php echo($glyphiconRemoveId); ?>"></span>
-            <a href="../readImage.php?url=<?php echo(urlencode($containerUrl)); ?>" alt="Full Image" data-lightbox="<?php echo($pkId); ?>"
-               data-title="<?php echo($imageCaption) ?>">
-                <img class="img-responsive preview-image" src="../readImage.php?url=<?php echo(urlencode($containerUrl)); ?>"
-                     align="left" id="<?php echo ($fullImageId); ?>">
-            </a>
-        </div>
-        <div class="col-xs-6 col-md-6">
-            <div class="row">
-                <!-- <form action="<?php echo($site_prefix .'uploaders/imageUploader.php'); ?>" class="dropzone decoration" id="<?php echo ($formDropzoneId); ?>"></form> -->
-                <div id="<?php echo ($formDropzoneId); ?>" class="decoration  dropzone"></div>
-            </div>
-            <div class="row pull-right upload-btn-position">
-                <button type="button" id="<?php echo($submitImageButtonId); ?>" class="btn btn-primary upload-btn"><?php echo($uploadButtonLabel); ?></button>
-                &nbsp;<button type="button" id="<?php echo($removeImageButtonId); ?>" class="btn btn-danger upload-btn"><?php echo ($removeButtonLabel); ?></button>
-            </div>
-            <div class="row text-right text-success tdc-display-none" id="<?php echo($uploadSuccessId); ?>">
-                <strong>Image Successfully Uploaded</strong><br>
-                <i class="text-info"><strong>The preview of the image is not immediate available.</strong></i>
-            </div>
-        </div>
-    <?php }else if(empty($containerUrl) && !empty($fmFilename)){ ?><!-- container is empty but the filename field exists -->
-        <div class="col-xs-6 col-md-6 empty_image_container"><!-- move this outside of if() test to line 190 -->
-            <p class="text-center">Import still processing file <?php echo($fmFilename); ?>.</p>
-            <p class="text-center"> Reload page when complete.</p>
-        </div>
-        <div class="col-xs-6 col-md-6">
-            <div class="row">
-                <!-- <form action="<?php echo($site_prefix .'uploaders/imageUploader.php'); ?>" class="dropzone decoration" id="<?php echo ($formDropzoneId); ?>"></form> -->
-                <div id="<?php echo ($formDropzoneId); ?>" class="decoration  dropzone"></div>
-            </div>
-            <div class="row pull-right upload-btn-position">
-                <button type="button" id="<?php echo($submitImageButtonId); ?>" class="btn btn-primary upload-btn"><?php echo($uploadButtonLabel); ?></button>
-                &nbsp;<button type="button" id="<?php echo($removeImageButtonId); ?>" class="btn btn-danger upload-btn"><?php echo ($removeButtonLabel); ?></button>
-            </div>
-            <div class="row text-right text-success tdc-display-none" id="<?php echo($uploadSuccessId); ?>">
-                <strong>Image Successfully Uploaded</strong><br>
-                <i class="text-info"><strong>The preview of the image is not immediate available.</strong></i>
-            </div>
-        </div>
-    <?php } else { ?><!-- No container data or filename just display Dropzone box -->
-        <div class="col-xs-12 col-md-12">
-            <div class="row">
-                <!-- <form action="<?php echo($site_prefix .'uploaders/imageUploader.php'); ?>" class="dropzone decoration" id="<?php echo ($formDropzoneId); ?>"></form> -->
-                <div id="<?php echo ($formDropzoneId); ?>" class="decoration  dropzone"></div>
-            </div>
-            <div class="row pull-right upload-btn-position">
-                <button type="button" id="<?php echo($submitImageButtonId); ?>" class="btn btn-primary upload-btn"><?php echo($uploadButtonLabel); ?></button>
-                &nbsp;<button type="button" id="<?php echo($removeImageButtonId); ?>" class="btn btn-danger upload-btn"><?php echo ($removeButtonLabel); ?></button>
-            </div>
-            <div class="row text-right text-success tdc-display-none" id="<?php echo($uploadSuccessId); ?>">
-                <strong>Image Successfully Uploaded</strong><br>
-                <i class="text-info"><strong>The preview of the image is not immediate available.</strong></i>
-            </div>
-        </div>
-    <?php } ?>
+        <input type="hidden" id="<?php echo($primaryKeyId);?>" name="<?php echo($primaryKeyId);?>" value="<?php echo($pkId); ?>">
+        <?php if($canModify) {?>
+            <?php if(!empty($containerUrl)){?> <!-- container has data so display image in Lightbox-->
+                <div class="col-xs-6 col-md-6 image_container"><!-- move this outside of if() test to line 190 -->
+                    <span class="glyphicon glyphicon-remove pull-right remove-cross" title="Remove Image" id="<?php echo($glyphiconRemoveId); ?>"></span>
+                    <a href="../readImage.php?url=<?php echo(urlencode($containerUrl)); ?>" alt="Full Image" data-lightbox="<?php echo($pkId); ?>"
+                       data-title="<?php echo($imageCaption) ?>">
+                        <img class="img-responsive preview-image" src="../readImage.php?url=<?php echo(urlencode($containerUrl)); ?>"
+                             align="left" id="<?php echo ($fullImageId); ?>">
+                    </a>
+                </div>
+                <div class="col-xs-6 col-md-6">
+                    <div class="row">
+                        <!-- <form action="<?php echo($site_prefix .'uploaders/imageUploader.php'); ?>" class="dropzone decoration" id="<?php echo ($formDropzoneId); ?>"></form> -->
+                        <div id="<?php echo ($formDropzoneId); ?>" class="decoration  dropzone"></div>
+                    </div>
+                    <div class="row pull-right upload-btn-position">
+                        <button type="button" id="<?php echo($submitImageButtonId); ?>" class="btn btn-primary upload-btn"><?php echo($uploadButtonLabel); ?></button>
+                        &nbsp;<button type="button" id="<?php echo($removeImageButtonId); ?>" class="btn btn-danger upload-btn"><?php echo ($removeButtonLabel); ?></button>
+                    </div>
+                    <div class="row text-right text-success tdc-display-none" id="<?php echo($uploadSuccessId); ?>">
+                        <strong>Image Successfully Uploaded</strong><br>
+                        <i class="text-info"><strong>The preview of the image is not immediate available.</strong></i>
+                    </div>
+                </div>
+            <?php }else if(empty($containerUrl) && !empty($fmFilename)){ ?><!-- container is empty but the filename field exists -->
+                <div class="col-xs-6 col-md-6 empty_image_container"><!-- move this outside of if() test to line 190 -->
+                    <p class="text-center">Import still processing file <?php echo($fmFilename); ?>.</p>
+                    <p class="text-center"> Reload page when complete.</p>
+                </div>
+                <div class="col-xs-6 col-md-6">
+                    <div class="row">
+                        <!-- <form action="<?php echo($site_prefix .'uploaders/imageUploader.php'); ?>" class="dropzone decoration" id="<?php echo ($formDropzoneId); ?>"></form> -->
+                        <div id="<?php echo ($formDropzoneId); ?>" class="decoration  dropzone"></div>
+                    </div>
+                    <div class="row pull-right upload-btn-position">
+                        <button type="button" id="<?php echo($submitImageButtonId); ?>" class="btn btn-primary upload-btn"><?php echo($uploadButtonLabel); ?></button>
+                        &nbsp;<button type="button" id="<?php echo($removeImageButtonId); ?>" class="btn btn-danger upload-btn"><?php echo ($removeButtonLabel); ?></button>
+                    </div>
+                    <div class="row text-right text-success tdc-display-none" id="<?php echo($uploadSuccessId); ?>">
+                        <strong>Image Successfully Uploaded</strong><br>
+                        <i class="text-info"><strong>The preview of the image is not immediate available.</strong></i>
+                    </div>
+                </div>
+            <?php } else { ?><!-- No container data or filename just display Dropzone box -->
+                <div class="col-xs-12 col-md-12">
+                    <div class="row">
+                        <!-- <form action="<?php echo($site_prefix .'uploaders/imageUploader.php'); ?>" class="dropzone decoration" id="<?php echo ($formDropzoneId); ?>"></form> -->
+                        <div id="<?php echo ($formDropzoneId); ?>" class="decoration  dropzone"></div>
+                    </div>
+                    <div class="row pull-right upload-btn-position">
+                        <button type="button" id="<?php echo($submitImageButtonId); ?>" class="btn btn-primary upload-btn"><?php echo($uploadButtonLabel); ?></button>
+                        &nbsp;<button type="button" id="<?php echo($removeImageButtonId); ?>" class="btn btn-danger upload-btn"><?php echo ($removeButtonLabel); ?></button>
+                    </div>
+                    <div class="row text-right text-success tdc-display-none" id="<?php echo($uploadSuccessId); ?>">
+                        <strong>Image Successfully Uploaded</strong><br>
+                        <i class="text-info"><strong>The preview of the image is not immediate available.</strong></i>
+                    </div>
+                </div>
+            <?php } ?>
+        <?php } else{ ?>
+            <?php if(!empty($containerUrl)){?> <!-- container has data so display image in Lightbox-->
+                <div class="col-xs-12 col-md-12 image_container"><!-- move this outside of if() test to line 190 -->
+                    <a href="../readImage.php?url=<?php echo(urlencode($containerUrl)); ?>" alt="Full Image" data-lightbox="<?php echo($pkId); ?>"
+                       data-title="<?php echo($imageCaption) ?>">
+                        <img class="img-responsive preview-image" src="../readImage.php?url=<?php echo(urlencode($containerUrl)); ?>"
+                             align="left" id="<?php echo ($fullImageId); ?>">
+                    </a>
+                </div>
+            <?php } else { ?>
+                <div class="col-xs-12 col-md-12 image_container"></div>
+            <?php } ?>
+        <?php } ?>
+
     </div>
 
     <script>

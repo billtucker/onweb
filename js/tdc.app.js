@@ -173,16 +173,18 @@ $(document).ready(function () {
 //class or multiple classes to determine if NProgress should run (Example class="btn btn-default delgrp" or
 //class="delgrp")
 function skipNProgress(values){
-    var itemValues = values.split(' ');
-    if(Array.isArray(itemValues)){
-        for(var i = 0; i < itemValues.length; i++){
-            if((itemValues[i].indexOf('fileinput-remove') == 0) || (itemValues[i].indexOf('delgrp') == 0) || (itemValues[i].indexOf('upload-btn') == 0)){
+    if(values){
+        var itemValues = values.split(' ');
+        if(Array.isArray(itemValues)){
+            for(var i = 0; i < itemValues.length; i++){
+                if((itemValues[i].indexOf('fileinput-remove') == 0) || (itemValues[i].indexOf('delgrp') == 0)){
+                    return true;
+                }
+            }
+        }else{
+            if((itemValues.indexOf('fileinput-remove') == 0) || (itemValues.indexOf('delgrp') == 0)){
                 return true;
             }
-        }
-    }else{
-        if((itemValues.indexOf('fileinput-remove') == 0) || (itemValues.indexOf('delgrp') == 0) || (itemValues[i].indexOf('upload-btn') == 0)){
-            return true;
         }
     }
     return false;
@@ -300,4 +302,44 @@ function addHiddenTagField(fieldId){
 function disabledPrintBtnMessage(){
     alert("The PDF Print button is disabled for this page.\n Please use the keyboard to print this page.");
     return false;
+}
+
+
+/**
+ * Function to forward from Request pencil link to Deliverable View when form is not dirty (pure anchor link)
+ * This function was modified to provide full url to forwarding page
+ * @param deliverablePkId - FileMaker Deliverable primary key String
+ */
+function forwardDeliveriable(deliverablePkId){
+    var pathDataUrl = "onrequest/deliverableview.php?pkId=" + deliverablePkId;
+    //This code was added for a 'possible' inconsistent forwarding issue within an DMZ
+    // (This code builds a full URL to page)
+    var hostSiteName = window.location.protocol + "//" + window.location.host;
+    var pathArray = window.location.pathname.split( '/' );
+    var forwardingUrl = hostSiteName + "/" + pathArray[1] + "/" + pathDataUrl;
+    window.location.href = forwardingUrl;
+}
+
+/**
+ * Function to add 2 elements to a Request form used during PHP save processing. One adds the fact that a link
+ * was clicked and the form is dirty so save the data forward to deliverable view
+ * Note: This function is related to the pencil link on the request form "Only"
+ * @param linkNum The numeric value of the anchor tag clicked
+ */
+function addHiddenLinkFields(linkNum){
+
+    var fieldName = "__pk_ID_" + linkNum;
+
+    var input = document.createElement("input");
+    input.setAttribute("type", "hidden");
+    input.setAttribute("name", "saveDataLink");
+    input.setAttribute("value", "linkPushed");
+
+    var pkToUse = document.createElement("input");
+    pkToUse.setAttribute("type", "hidden");
+    pkToUse.setAttribute("name", "pkToUse");
+    pkToUse.setAttribute("value", document.getElementById(fieldName).value);
+
+    document.getElementById("request-form").appendChild(input);
+    document.getElementById("request-form").appendChild(pkToUse);
 }

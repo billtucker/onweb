@@ -87,12 +87,14 @@ function WindowHasScrollbar() {
 
 function GlueButton(ledge) {
     var did = document.getElementById(ButtonId);
-    did.style.top = SpaceBetweenButtonAndTop + "px";
-    did.style.width = ButtonWidth + "px";
-    did.style.left = ledge + "px";
-    did.style.display = "block";
-    did.style.zIndex = "9999";
-    did.style.position = "fixed";
+    if(did) {
+        did.style.top = SpaceBetweenButtonAndTop + "px";
+        did.style.width = ButtonWidth + "px";
+        did.style.left = ledge + "px";
+        did.style.display = "block";
+        did.style.zIndex = "9999";
+        did.style.position = "fixed";
+    }
 }
 
 function PlaceTheButton() {
