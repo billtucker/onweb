@@ -8,11 +8,9 @@
 }
 	
 $(document).ready(function () {
-    /** Start JQuery methods related to Deliverable Tags **/
-    $('.addrow').tooltip(); //tooltip for adding a tag row
 
-    $('.delgrp').tooltip(); //tootip for delete tag row button
-    /** End JQuery methods related to Deliverable Tags **/
+    //Global tooltip enabled for Bootstrap
+    $('[data-toggle="tooltip"]').tooltip();
 
     /** Show message to user after save operation then fade for Request and Deliverable pages **/
     if($('#savemessage').length){
@@ -177,12 +175,14 @@ function skipNProgress(values){
         var itemValues = values.split(' ');
         if(Array.isArray(itemValues)){
             for(var i = 0; i < itemValues.length; i++){
-                if((itemValues[i].indexOf('fileinput-remove') == 0) || (itemValues[i].indexOf('delgrp') == 0)){
+                if((itemValues[i].indexOf('fileinput-remove') == 0) ||
+                    (itemValues[i].indexOf('delgrp') == 0) || (itemValues[i].indexOf('remove-cross') == 0)){
                     return true;
                 }
             }
         }else{
-            if((itemValues.indexOf('fileinput-remove') == 0) || (itemValues.indexOf('delgrp') == 0)){
+            if((itemValues.indexOf('fileinput-remove') == 0)
+                || (itemValues.indexOf('delgrp') == 0) || (itemValues[i].indexOf('remove-cross') == 0)){
                 return true;
             }
         }

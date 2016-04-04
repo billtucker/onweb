@@ -26,6 +26,10 @@ function processFilePicker($label, $questionNum, $required, $fileName, $pkId, $c
 
     $fileTypeIcon = "";
 
+    //support file delete from FileMaker functionality
+    $deleteSuccessId = "remove-success-" .$questionNum;
+    $removeMethodName = "removeFile" .$questionNum;
+
     if(isset($containerUrl) && !empty($containerUrl)){
         $extension = getFileMakerContainerFileExtension($containerUrl);
         $fileTypeIcon = getFileIcon($extension);
@@ -54,15 +58,23 @@ function processFilePicker($label, $questionNum, $required, $fileName, $pkId, $c
     <input type="hidden" id="<?php echo($primaryKeyId);?>" name="<?php echo($primaryKeyId);?>" value="<?php echo($pkId); ?>">
     <?php if($canModify) { ?>
         <?php if(!empty($containerUrl)){?> <!-- container has data so display image in Lightbox-->
-            <div class="col-xs-6 col-md-6 image_container"><!-- move this outside of if() test to line 190 -->
-                <span class="glyphicon glyphicon-remove pull-right remove-cross" title="Remove Image" id="<?php echo($glyphiconRemoveId); ?>"></span>
-                <a href="<?php echo($containerUrl); ?>" alt="Full File">
-                    <img class="img-responsive preview-image" src="<?php echo($fileTypeIcon); ?>"
+            <div class="col-xs-6 col-md-6"><!-- move this outside of if() test to line 190 -->
+                <span class="glyphicon glyphicon-remove pull-right remove-cross" title="Remove File From Server" data-toggle="tooltip"
+                      id="<?php echo($glyphiconRemoveId); ?>" onclick="<?php echo($removeMethodName); ?>('<?php echo($primaryKeyId);?>');"
+                      style="margin-right: 10px;">
+                </span>
+                <div class="image_container">
+                    <a href="<?php echo($containerUrl); ?>" alt="Full File">
+                        <img class="img-responsive preview-image" src="<?php echo($fileTypeIcon); ?>"
                          align="left" id="<?php echo ($fullFileId); ?>">
-                    <p class="text-center" style="padding-left: 20px;"><?php echo(urldecode($fileName)); ?></p></a>
-                </a>
+                        <!-- <p class="text-center" style="padding-left: 20px;"><?php echo(urldecode($fileName)); ?></p> -->
+                    </a>
+                </div>
+                <div class="row text-left text-success tdc-display-none" id="<?php echo($deleteSuccessId); ?>">
+                    <strong>File Successfully Deleted From FileMaker</strong><br>
+                </div>
             </div>
-            <div class="col-xs-6 col-md-6">
+            <div class="col-xs-6 col-md-6 tdc-cell-spacing">
                 <div class="row">
                     <div id="<?php echo ($formDropzoneId); ?>" class="decoration  dropzone"></div>
                 </div>
@@ -118,6 +130,7 @@ function processFilePicker($label, $questionNum, $required, $fileName, $pkId, $c
                         align="left" id="<?php echo ($fullFileId); ?>">
                     <p class="text-center" style="padding-left: 20px;"><?php echo(urldecode($fileName)); ?></p>
                 </a>
+            </div>
         <?php } else { ?>
             <div class="col-xs-12 col-md-12 image_container"></div>
         <?php } ?>
@@ -130,7 +143,31 @@ function processFilePicker($label, $questionNum, $required, $fileName, $pkId, $c
             $('<?php echo('#' .$submitFileButtonId);?>').hide();
             $('<?php echo('#' .$removeFileButtonId); ?>').hide();
             $('<?php echo('#' .$uploadSuccessId); ?>').hide();
+            $('<?php echo('#' .$deleteSuccessId); ?>').hide();
         });
+
+
+        function <?php echo($removeMethodName); ?>(elmId){
+            var pkid = document.getElementById(elmId).value;
+            console.log("PK: " + pkid);
+
+            $.ajax({
+                data: 'pkId=' + pkid,
+                url: 'processing/removeFileFM.php',
+                method: 'POST',
+                success: function(msg){
+                    console.log(msg);
+                },
+
+                error: function(msg){
+                    console.log("Error: " + msg);
+                }
+            });
+
+            var fileSelected = document.getElementById('<?php echo ($fullFileId); ?>');
+            fileSelected.parentNode.removeChild(fileSelected);
+            $('<?php echo('#' .$deleteSuccessId); ?>').fadeIn(100).delay(5000).fadeOut(500);
+        }
 
         Dropzone.options.<?php echo(getCamelCase($formDropzoneId)); ?> = {
             //URL to submit the for
@@ -204,6 +241,4 @@ function processFilePicker($label, $questionNum, $required, $fileName, $pkId, $c
         }
     </script>
 
-<?php }
-
-?>
+<?php } ?>

@@ -26,6 +26,10 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
     $removeButtonLabel = "Remove File";
     $primaryKeyId = "pkid-" .$questionNum;
 
+    //support file delete from FileMaker functionality
+    $deleteSuccessId = "remove-success-" .$questionNum;
+    $removeMethodName = "removeFile" .$questionNum;
+
     if(!empty($containerUrl)){
         $imageCaption = getLightBoxCaption($containerUrl);
     }
@@ -47,13 +51,19 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
         <input type="hidden" id="<?php echo($primaryKeyId);?>" name="<?php echo($primaryKeyId);?>" value="<?php echo($pkId); ?>">
         <?php if($canModify) {?>
             <?php if(!empty($containerUrl)){?> <!-- container has data so display image in Lightbox-->
-                <div class="col-xs-6 col-md-6 image_container"><!-- move this outside of if() test to line 190 -->
-                    <span class="glyphicon glyphicon-remove pull-right remove-cross" title="Remove Image" id="<?php echo($glyphiconRemoveId); ?>"></span>
-                    <a href="../readImage.php?url=<?php echo(urlencode($containerUrl)); ?>" alt="Full Image" data-lightbox="<?php echo($pkId); ?>"
-                       data-title="<?php echo($imageCaption) ?>">
-                        <img class="img-responsive preview-image" src="../readImage.php?url=<?php echo(urlencode($containerUrl)); ?>"
-                             align="left" id="<?php echo ($fullImageId); ?>">
-                    </a>
+                <div class="col-xs-6 col-md-6"><!-- move this outside of if() test to line 190 -->
+                    <span class="glyphicon glyphicon-remove pull-right remove-cross" title="Remove File From Server" data-toggle="tooltip"
+                          id="<?php echo($glyphiconRemoveId); ?>" onclick="<?php echo($removeMethodName); ?>('<?php echo($primaryKeyId);?>');"></span>
+                    <div class="row image_container">
+                        <a href="../readImage.php?url=<?php echo(urlencode($containerUrl)); ?>" alt="Full Image" data-lightbox="<?php echo($pkId); ?>"
+                           data-title="<?php echo($imageCaption) ?>">
+                            <img class="img-responsive preview-image" src="../readImage.php?url=<?php echo(urlencode($containerUrl)); ?>"
+                                 align="left" id="<?php echo ($fullImageId); ?>">
+                        </a>
+                    </div>
+                    <div class="row text-left text-success tdc-display-none" id="<?php echo($deleteSuccessId); ?>">
+                        <strong>File Successfully Deleted From FileMaker</strong><br>
+                    </div>
                 </div>
                 <div class="col-xs-6 col-md-6">
                     <div class="row">
@@ -126,7 +136,31 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
             $('<?php echo('#' .$submitImageButtonId);?>').hide();
             $('<?php echo('#' .$removeImageButtonId); ?>').hide();
             $('<?php echo('#' .$uploadSuccessId); ?>').hide();
+            $('<?php echo('#' .$deleteSuccessId); ?>').hide();
         });
+
+
+        function <?php echo($removeMethodName); ?>(elmId){
+            var pkid = document.getElementById(elmId).value;
+            console.log("PK: " + pkid);
+
+            $.ajax({
+                data: 'pkId=' + pkid,
+                url: 'processing/removeFileFM.php',
+                method: 'POST',
+                success: function(msg){
+                    console.log(msg);
+                },
+
+                error: function(msg){
+                    console.log("Error: " + msg);
+                }
+            });
+
+            var imageSelected = document.getElementById('<?php echo ($fullImageId); ?>');
+            imageSelected.parentNode.removeChild(imageSelected);
+            $('<?php echo('#' .$deleteSuccessId); ?>').fadeIn(100).delay(5000).fadeOut(500);
+        }
 
         Dropzone.options.<?php echo(getCamelCase($formDropzoneId)); ?> = {
             //URL to submit the for

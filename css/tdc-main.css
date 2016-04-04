@@ -260,6 +260,7 @@ div.empty_image_container {
 /* Set image remove button from FM image display */
 .remove-cross {
     opacity: 0.2;
+    margin-top: 10px;
 }
 
 /* Override min height from Dropzone CSS */
@@ -284,4 +285,9 @@ div.empty_image_container {
 }
 
 /** End of lightbox and dropzone CSS **/
+
+/* Tooltip with medium blue background and white text works better than default Bootstrap black on white */
+.red-tooltip + .tooltip > .tooltip-inner {
+    background-color: #517b96;
+}
 
