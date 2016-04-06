@@ -813,4 +813,89 @@ function getFileIcon($ext){
     }
 }
 
+/**
+* Method walks upload directory and gather a list of all files for a json return. Method also returns a list for a
+* given specific directory based on values passed in by calling party. If nothing was passed in then return an
+* error that no records were found
+* @param $dirArray Array of directories paths to onrequest and onspot
+* @return array full json convertible json array for each directories
+*/
+function getFullDirectoryList($dirArray){
+    $fixedOnRequest = "onrequest";
+    $fixedOnSpot = "onspot";
+    $finalOut = array();
+    $onRequestArray = array();
+    $onSpotArray = array();
+    array_push($onRequestArray, $fixedOnRequest);
+    array_push($onSpotArray, $fixedOnSpot);
+
+    $requestFileArray = array();
+    $spotFileArray = array();
+
+    $jsonKeyRequest = $fixedOnRequest;
+    $jsonKeySpot = $fixedOnSpot;
+
+    //if our directory array list is empty or otherwise unusable then return a failure
+    if(!isset($dirArray) || !is_array($dirArray) || empty($dirArray)){
+        return array("response" => array("Error" => "Internal code error searching"));
+    }
+
+    foreach($dirArray as $key => $value){
+        $allFiles = scandir($value);
+        foreach($allFiles as $file){
+            //remove . and .. hidden files from list as not useful
+            if(strlen(strstr($file, '.', true)) < 1) {
+                continue;
+            }else{
+                //load request data array or onspot data array (Could be dangerous)
+                if(strcmp($key, $jsonKeyRequest) == 0)
+                    array_push($requestFileArray, $file);
+                else if(strcmp($key, $jsonKeySpot) == 0)
+                    array_push($spotFileArray, $file);
+            }
+        }
+    }
+
+    if(!empty($requestFileArray) || !empty($spotFileArray)){
+        array_push($finalOut, 'response');
+    }
+
+    if(!empty($requestFileArray)){
+        array_push($onRequestArray, array($requestFileArray));
+        array_push($finalOut, array($onRequestArray));
+    }
+
+    if(!empty($spotFileArray)) {
+        array_push($onSpotArray, array($spotFileArray));
+        array_push($finalOut, array($onSpotArray));
+    }
+
+    if(empty($requestFileArray)  && empty($spotFileArray)){
+        $finalOut = array("response" => array("Result" => "No records found"));
+    }
+
+    return $finalOut;
+}
+
+/**
+ * Method to delete an uploaded file from web uploads directory. An array of the path to the uploads/onrequest and
+ * uploads/onbspot directories is passed to search both directories for the target file to delete
+ * @param $dirArray String array of the directory locations
+ * @param $target String target file name to delete
+ * @return array a json configured array to respond to caller
+ */
+function deleteUploadedFile($dirArray, $target){
+    foreach($dirArray as $dir){
+        $allFiles = scandir($dir);
+        foreach($allFiles as $fileName){
+            if(strcmp($fileName, $target) == 0){
+                unlink($dir ."\\" .$fileName);
+                return array("response" => "success");
+            }
+        }
+    }
+    return array("response"=>"failed");
+}
+
+
 ?>
