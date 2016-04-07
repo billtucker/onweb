@@ -12,15 +12,15 @@
 
 
 //$root represents file system root and is not related to TCP/IP protocol
-$root = $_SERVER["DOCUMENT_ROOT"] ."/" ."onweb" ."/";
+$root = dirname(__FILE__) .DIRECTORY_SEPARATOR;
 
-$headerFooter = $root ."headerfooter/";
-$utilities = $root ."commonutilities/";
-$errors = $root ."errors/";
-$fmfiles = $root ."fmfiles/";
-$login = $root ."login/";
-$commonprocessing = $root ."commonprocessing/";
-$validation = $root ."validation/";
+$headerFooter = $root ."headerfooter" .DIRECTORY_SEPARATOR;
+$utilities = $root ."commonutilities" .DIRECTORY_SEPARATOR;
+$errors = $root ."errors" .DIRECTORY_SEPARATOR;
+$fmfiles = $root ."fmfiles" .DIRECTORY_SEPARATOR;
+$login = $root ."login" .DIRECTORY_SEPARATOR;
+$commonprocessing = $root ."commonprocessing" .DIRECTORY_SEPARATOR;
+$validation = $root ."validation" .DIRECTORY_SEPARATOR;
 
 //LDAP Definitions to be used in AD login
 define("COMPANY_DOMAIN", "thoughtdev.com");

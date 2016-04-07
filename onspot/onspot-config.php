@@ -9,7 +9,7 @@
  * ************** site will use $spotRoot = $root ."onspot/" as head of directory **********
  */
 
-include_once($_SERVER["DOCUMENT_ROOT"] ."/onweb/onweb-config.php");
+include_once dirname(__DIR__) .DIRECTORY_SEPARATOR ."onweb-config.php";
 
 //Start privileges properties
 $siteSection = "OnSpot"; //Prefix for On Air On Spot Viewer privilege set so each item of the set will begin with OnSpot

@@ -7,12 +7,12 @@
  */
 
 //Get variables for top level "common" directories and setup local variables for On Request "Only"
-include_once($_SERVER["DOCUMENT_ROOT"] ."/onweb/onweb-config.php");
+include_once dirname(__DIR__) .DIRECTORY_SEPARATOR ."onweb-config.php";
 
 //add ON_REQUEST directory location relative to root and onweb-config
-$requestProcessing = $requestRoot ."processing/";
-$requestService = $requestRoot . "service/";
-$requestInclude = $requestRoot ."include/";
+$requestProcessing = $requestRoot ."processing" .DIRECTORY_SEPARATOR;
+$requestService = $requestRoot . "service" .DIRECTORY_SEPARATOR;
+$requestInclude = $requestRoot ."include" .DIRECTORY_SEPARATOR;
 
 //Must be enabled from FileMaker to access OnSpot web site. This is a new check to validate the customer purchased
 //The package/plugin from Thought-Development
