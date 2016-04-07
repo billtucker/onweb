@@ -4,6 +4,8 @@
  * User: Bill
  * Date: 9/22/2015
  * Time: 9:37 AM
+ *
+ * This file is used to simply test the connection to the FileMaker database and onweb site
  */
 
 include_once($_SERVER["DOCUMENT_ROOT"] ."/onweb" ."/onweb-config.php");
