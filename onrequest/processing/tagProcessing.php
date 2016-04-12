@@ -9,7 +9,7 @@
  */
 
 
-include_once("../request-config.php");
+include_once dirname(__DIR__) .DIRECTORY_SEPARATOR ."request-config.php";
 
 //validate user prior to access on this page
 include_once($fmfiles . 'order.db.php');

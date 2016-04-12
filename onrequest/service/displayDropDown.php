@@ -9,7 +9,7 @@
 
  */
 
-include_once("request-config.php");
+include_once dirname(__DIR__) .DIRECTORY_SEPARATOR ."request-config.php";
 include_once($utilities ."utility.php");
 
 function processDropDown($items, $name, $question, $question_num, $required, $answerItem){

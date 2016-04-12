@@ -8,7 +8,7 @@
  *
  */
 
-include_once("../request-config.php");
+include_once dirname(__DIR__) .DIRECTORY_SEPARATOR ."request-config.php";
 include_once("$validation" ."user_validation.php");
 include_once($errors ."errorProcessing.php");
 
@@ -106,7 +106,7 @@ $projectReqDelRelatedSets = $deliverableResults->getRecords();
         }
     }
 
-    if($_POST['saveDataLink']){
+    if(isset($_POST['saveDataLink'])){
         if(isset($_POST['pkToUse'])) {
             $deliverablePk = $_POST['pkToUse'];
         }

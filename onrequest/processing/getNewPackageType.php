@@ -6,12 +6,7 @@
  * Time: 1:23 PM
  */
 
-//TODO: figure out this error reporting and what is required /////
-//ini_set('displays_errors',1);
-// Report simple running errors
-error_reporting(E_ERROR | E_WARNING | E_PARSE);
-
-include_once("../request-config.php");
+include_once dirname(__DIR__) .DIRECTORY_SEPARATOR ."request-config.php";
 include_once($fmfiles ."order.db.php");
 include_once($errors .'errorProcessing.php');
 

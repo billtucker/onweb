@@ -6,7 +6,7 @@
  * Time: 4:43 PM
  */
 
-include_once("request-config.php");
+include_once dirname(__DIR__) .DIRECTORY_SEPARATOR ."request-config.php";
 include_once($utilities ."utility.php");
 
 function processRadioButton($rawRadioItems, $name, $label, $questionNum, $required, $answer){

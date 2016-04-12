@@ -70,6 +70,9 @@ $deliverableRecords = $deliverableResults->getRecords();
 $deliverableLayout = $deliverableResults->getLayout();
 $deliverableRecord = $deliverableRecords[0];
 
+//This is here to account for a for loop operation with a one to many operations
+$requestedProjectListCounter = 1;
+
 $requestPkId = $deliverableRecord->getField('_fk_Request_pk_ID');
 
 //Call function in requestConnection.php to get $request handle

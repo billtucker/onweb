@@ -4,10 +4,12 @@
  * User: Bill
  * Date: 12/10/2014
  * Time: 10:06 AM
+ *
+ * This file is responsible for saving The deliverable, meta, and meta tag record changes
  */
 
 
-include_once("../request-config.php");
+include_once dirname(__DIR__) .DIRECTORY_SEPARATOR ."request-config.php";
 
 //validate user prior to access on this page
 include_once("$validation" ."user_validation.php");
@@ -76,7 +78,7 @@ if(FileMaker::isError($metaResults)){
     $metaRelatedRecords = $metaResults->getRecords();
 }
 
-$deliverableArray = array('Notes','Rough_Cut_Due_d','Final_Due_Date','Flight_Date_Start','Flight_Date_End');
+$deliverableArray = array('Spot_Type','Notes','Rough_Cut_Due_d','Final_Due_Date','Flight_Date_Start','Flight_Date_End');
 $metaFieldName = 'Answer';
 $metaFieldType = 'Input_Type';
 
@@ -121,6 +123,6 @@ $message = "Success";
 header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
 header('Pragma: no-cache');
-header('Location: ' .$request_site_prefix . 'deliverableview.php?pKid=' .urlencode($deliverablePkId) .'&itemId=' .$itemId .'&message=' .$message);
+header('Location: ' .$request_site_prefix . 'deliverableview.php?pkId=' .urlencode($deliverablePkId) .'&itemId=' .$itemId .'&message=' .$message);
 
 ?>

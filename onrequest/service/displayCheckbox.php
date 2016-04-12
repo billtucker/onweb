@@ -7,7 +7,7 @@
  * A function to display checkbox elements dynamically from FileMaker On-Air Pro database
  */
 
-include_once("request-config.php");
+include_once dirname(__DIR__) .DIRECTORY_SEPARATOR ."request-config.php";
 include_once($utilities ."utility.php");
 
 function processCheckBox($rawItems, $question, $questionNum, $required, $answerItem, $name){

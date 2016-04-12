@@ -6,7 +6,7 @@
  * Time: 1:28 PM
  */
 
-include_once("request-config.php");
+include_once dirname(__DIR__) .DIRECTORY_SEPARATOR ."request-config.php";
 include_once($utilities ."utility.php");
 
 function processFilePicker($label, $questionNum, $required, $fileName, $pkId, $containerUrl, $canModify){

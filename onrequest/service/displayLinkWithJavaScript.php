@@ -10,7 +10,7 @@
  *
  */
 
-include_once("request-config.php");
+include_once dirname(__DIR__) .DIRECTORY_SEPARATOR ."request-config.php";
 include_once($utilities ."utility.php");
 
 /**
@@ -26,7 +26,7 @@ function displayPencilLinkWithJavaScript($itemNum, $deliverablePkId){
     $linkHtmlId = "anchorId_" .$itemNum;
     $deliverableHtmlId = "__pk_ID_" .$itemNum;
 
-    echo<<< DIVCODE
+echo<<< DIVCODE
     <a href="#" id="$linkHtmlId" name="$linkHtmlId" >
         <span class="input-group-addon tdc-glyphicon-control tdc-cell-spacing icon-red">
             <span class="glyphicon glyphicon-pencil"></span>
@@ -35,7 +35,7 @@ function displayPencilLinkWithJavaScript($itemNum, $deliverablePkId){
     <input type="hidden" name="$deliverableHtmlId" id="$deliverableHtmlId" value="$deliverablePkId">
 DIVCODE;
 
-    echo<<<JSCODE
+echo<<<JSCODE
  <script>
     $(document).ready(function () {
 

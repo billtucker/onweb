@@ -9,7 +9,7 @@
  * an existing image from FileMaker or image Drag-n-Drop image from the local system
  */
 
-include_once("request-config.php");
+include_once dirname(__DIR__) .DIRECTORY_SEPARATOR ."request-config.php";
 include_once($utilities ."utility.php");
 
 function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId, $containerUrl, $canModify){
