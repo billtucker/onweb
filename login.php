@@ -24,7 +24,7 @@ if(isset($_GET['error'])){
 ?>
 
 <br>
-<h4 class="text-center">ON-AIR PRO Login</h4>
+<h4 class="text-center">ON-AIR Pro Login</h4>
 <div class="row">
     <div class="col-xs-1 col-md-1">&nbsp;</div>
     <div class="col-xs-4 col-md-4">
@@ -35,7 +35,7 @@ if(isset($_GET['error'])){
             );
         }
         ?>
-        <p class="text-primary"><strong>Please enter your On-Air Pro credentials below</strong></p>
+        <p class="text-primary"><strong>Please enter your ON-AIR Pro credentials below</strong></p>
     </div>
     <div class="col-xs-7 col-md-7">&nbsp;</div>
 </div>

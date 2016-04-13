@@ -36,18 +36,24 @@ $spotList->addFindCriterion("z_QuickList_RoughCutsToApprove_cn", "==" .$quickLis
 $spotResults = $spotList->execute();
 
 if(FileMaker::isError($spotResults)){
-    $errorTitle = "FileMaker Error";
-    $log->error($spotResults->getMessage(), $spotResults->getErrorString(), $pageUrl, "N/A", $site_prefix);
-    processError($spotResults->getMessage(), $spotResults->getErrorString(), $pageUrl, "N/A", $errorTitle);
-    exit;
+    if($spotResults->getMessage() == "No records match the request"){
+        $spotRecords = array();
+    }else{
+        $errorTitle = "FileMaker Error";
+        $log->error($spotResults->getMessage(), $spotResults->getErrorString(), $pageUrl, "N/A", $site_prefix);
+        processError($spotResults->getMessage(), $spotResults->getErrorString(), $pageUrl, "N/A", $errorTitle);
+        exit;
+    }
+}else{
+    $spotRecords = $spotResults->getRecords();
 }
 
-$spotRecords = $spotResults->getRecords();
+
 
 $headerToUse = getHeaderIncludeFileName(urldecode($pageUrl));
 include_once($headerFooter .$headerToUse);
 
-$log->debug("Finished reading FM, got header, and now display HTML to display list");
+$log->debug("Finished with FM, got header, and now display HTML to display list or a empty table if no records found");
 
 ?>
 <br>
@@ -69,8 +75,8 @@ $log->debug("Finished reading FM, got header, and now display HTML to display li
         </thead>
         <tbody>
         <?php
-            foreach($spotRecords as $record) {
-        ?>
+        if(!empty($spotRecords)){
+            foreach($spotRecords as $record) { ?>
                 <tr>
                     <td><?php echo($record->getField("Work_Order_Num_n")); ?></td>
                     <td><?php echo($record->getField("Tag_Group_Number_n")); ?></td>
@@ -81,12 +87,23 @@ $log->debug("Finished reading FM, got header, and now display HTML to display li
                     <td><?php echo($record->getField('Rough_Cut_Approval_YN_t')); ?></td>
                     <td>
                         <a href="spotedit.php?pkId=<?php echo(urlencode($record->getField('__pk_ID')));?>">
-                        <img src="../images/leftarrow_icon.jpg" alt="Left Arrow Icon"></a>
+                            <img src="../images/leftarrow_icon.jpg" alt="Left Arrow Icon"></a>
                     </td>
                 </tr>
-        <?php
+            <?php
             }
-        ?>
+        } else { ?>
+            <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+        <?php } ?>
         </tbody>
     </table>
 </div>
