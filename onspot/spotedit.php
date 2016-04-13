@@ -122,7 +122,7 @@ $log->debug("We have the PK, DB access handle and now execute");
 $spotRecords = $spot->execute();
 
 if (FileMaker::isError($spotRecords)) {
-    if($spotRecords->getMessage() == "No records match the request"){
+    if($spotRecords->getCode() == $noRecordsFound){
         $messageType="w";
         $errorTitle = "No matching records found";
         $log->info("No matching records for __pk_ID: " .$pkId ." User: " .$_SESSION['userName']);
@@ -198,14 +198,14 @@ if(!$bypass){
 
     //Check for errors and no records found is not a true error as it is possible that no comments have been made
     if (FileMaker::isError($noteRecords)) {
-        if ($noteRecords->getMessage() != "No records match the request") {
+        if ($noteRecords->getCode() != $noRecordsFound) {
             $errorTitle = "FileMaker Error";
             $messageType = "d";
             $log->error("Serous  Note Error: " . $noteRecords->getMessage() ." User " .$_SESSION['userName']);
             $message = "A serious error has occurred and you should immediately contact Thought-Development Support for assistance.";
             processError($noteRecords->getMessage(), $noteRecords->getErrorString(), $pageUrl, $pkId, $errorTitle);
             exit;
-        } elseif ($noteRecords->getMessage() == "No records match the request") {
+        } elseif ($noteRecords->getCode() == $noRecordsFound) {
             $processNotes = false;
             $log->debug("Spot Viewer Notes No user records found using pk: " .$pkId ." User: " .$_SESSION['userName']);
         }

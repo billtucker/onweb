@@ -36,8 +36,9 @@ $spotList->addFindCriterion("z_QuickList_RoughCutsToApprove_cn", "==" .$quickLis
 $spotResults = $spotList->execute();
 
 if(FileMaker::isError($spotResults)){
-    if($spotResults->getMessage() == "No records match the request"){
+    if($spotResults->getCode == $noRecordsFound){
         $spotRecords = array();
+        $log->debug("No Spot Viewer records Found for list check that z_QuickList_RoughCutsToApprove_cn is set to 1");
     }else{
         $errorTitle = "FileMaker Error";
         $log->error($spotResults->getMessage(), $spotResults->getErrorString(), $pageUrl, "N/A", $site_prefix);

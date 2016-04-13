@@ -8,7 +8,7 @@
 
 
 include_once dirname(__DIR__) .DIRECTORY_SEPARATOR ."request-config.php";
-include_once($fmfiles .'work.db.php');
+include_once($fmfiles .'order.db.php');
 include_once($errors .'errorProcessing.php');
 
 $pageUrl = urlencode($port ."$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
@@ -21,11 +21,17 @@ $requestListFind->addSortRule($sortField, 1, FILEMAKER_SORT_DESCEND);
 $requestListFinds = $requestListFind -> execute();
 
 if(FileMaker::isError($requestListFinds)){
-    $log->error($requestFinds->getMessage(), $requestFinds->getErrorString(), $pageUrl, $pkId, $site_prefix);
-    processError($requestFinds->getMessage(), $requestFinds->getErrorString(), $pageUrl, "N?A", $errorTitle);
-    exit;
+    if($requestListFinds->getCode() == $noRecordsFound){
+        $requestList = array();
+        $log->debug("Request list is empty no records found. Now display empty Request table view");
+    }else{
+        $log->error($requestFinds->getMessage(), $requestFinds->getErrorString(), $pageUrl, "NA", $site_prefix);
+        processError($requestFinds->getMessage(), $requestFinds->getErrorString(), $pageUrl, "NA", $errorTitle);
+        exit;
+    }
+}else{
+    $requestList = $requestListFinds->getRecords();
 }
 
-$requestList = $requestListFinds->getRecords();
 
 ?>

@@ -76,3 +76,6 @@ $okModify = "RequestModify";
 //Sub-directory site definition for Request and Spot viewer
 $spotRoot = $root ."onspot/";
 $requestRoot = $root ."onrequest/";
+
+//FileMaker Error code no records found on search. Use this error over actual verbiage since least likely to change
+$noRecordsFound = "401";

@@ -55,10 +55,11 @@ include_once($requestInclude .'requestListConnection.php');
             </thead>
             <tbody>
             <?php
-            $requestCounter = 0;
-            foreach($requestList as $requestRecord){
-                $requestCounter++;
-                ?>
+            if(!empty($requestList)){
+                $requestCounter = 0;
+                foreach($requestList as $requestRecord){
+                    $requestCounter++;
+             ?>
                 <tr>
                     <td>
                         <?php echo($requestCounter);?>&nbsp;&nbsp;<a href="request.php?pkId=<?php echo(urlencode($requestRecord->getField('__pk_ID')));?>">
@@ -74,7 +75,19 @@ include_once($requestInclude .'requestListConnection.php');
                     <td><?php echo($requestRecord->getField('Request_Approver_List_t')) ;?></td>
                     <td><?php echo($requestRecord->getField('Request_Created_Date_d')) ;?></td>
                 </tr>
-
+          <?php }
+            } else { ?>
+                <tr>
+                    <td>&nbsp;</td><!-- Detail -->
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
             <?php } ?>
             </tbody>
         </table>
