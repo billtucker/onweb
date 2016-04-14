@@ -44,13 +44,10 @@ include_once($errors .'errorProcessing.php');
 /** Assign primary key and item number to be used the db query */
 if(isset($_GET['pkId']) && !empty($_GET['pkId'])){
     $deliverablePkId = urldecode($_GET['pkId']);
-    $itemId = "";
-    if(isset($_GET['itemId'])){
-        $itemId = $_GET['itemId'];
-    }
-    $log->debug("Deliverable PK: " .$deliverablePkId ." and Item Number: " .$itemId);
 }else{
-    echo "<p>No PK Issued with URL Stop Processing</p>";
+    $errorTitle = "FileMaker Error";
+    $log->error("No PK supplied for this deliverable record in query URL query string");
+    processError("No Primary Key supplied for this request", "No Primary Key supplied for this request","deliverableview.php", "NA", $errorTitle);
     exit;
 }
 
