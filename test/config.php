@@ -8,4 +8,4 @@
 
 $port = ($_SERVER['SERVER_PORT'] == '80' ? "http://" : "https://" );
 $siteRoot = "onweb";
-$sitePrefix = $port .$_SERVER[HTTP_HOST] ."/" .$siteRoot ."/";
+$sitePrefix = $port .$_SERVER['HTTP_HOST'] ."/" .$siteRoot ."/";
