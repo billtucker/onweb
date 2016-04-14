@@ -78,7 +78,7 @@ include_once($requestInclude .'requestListConnection.php');
           <?php }
             } else { ?>
                 <tr>
-                    <td>&nbsp;</td><!-- Detail -->
+                    <td>&nbsp;</td><!-- Display empty record row if not records were found -->
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>

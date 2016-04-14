@@ -86,8 +86,7 @@ $metaFind->addFindCriterion('_fk_Deliverable_pk_ID','==' .$deliverablePkId);
 $metaResults = $metaFind->execute();
 
 if(FileMaker::isError($metaResults)){
-    $errorCheck = 'No records match';
-    if(strstr($metaResults->getMessage(), $errorCheck) == false){
+    if($metaResults->getCode() != $noRecordsFound){
         $log->error("Meta Search " .$metaResults->getMessage() ." Error String " .$metaResults->getErrorString()
         ." Page URL: " .$pageUrl ." PKID " .$deliverablePkId);
         $errorTitle = "FileMaker Error";
@@ -116,7 +115,7 @@ $log->debug("Search Show_code_t using: " .$request->getField($showCodeName) ." t
 $webShowCodesResults = $webShowCodesFind->execute();
 
 if(FileMaker::isError($webShowCodesResults)){
-    if($webShowCodesResults->getMessage() == "No records match the request"){
+    if($webShowCodesResults->getCode() == $noRecordsFound){
         $log->debug("No matching records for search of show codes");
     }else{
         $log->error("Search For Show Codes Error: " .$webShowCodesResults->getMessage() ." Error String: " .$webShowCodesResults->getErrorString()
@@ -154,7 +153,7 @@ $tagsFind->addFindCriterion("_fk_Deliverable_pk_ID", '==' . $deliverablePkId);
 $tagsResults = $tagsFind->execute();
 
 if (FileMaker::isError($tagsResults)) {
-    if($tagsResults->getMessage() == "No records match the request"){
+    if($tagsResults->getCode() == $noRecordsFound){
         $log->debug("No matching Tag records found found for deliveriable PKID: " .$deliverablePkId);
         $tagRecords = array();
     }else{

@@ -95,7 +95,7 @@ $log->debug("Finished with FM, got header, and now display HTML to display list 
             }
         } else { ?>
             <tr>
-                <td>&nbsp;</td>
+                <td>&nbsp;</td><!-- Display empty record row if no records were found -->
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>

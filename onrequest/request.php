@@ -55,7 +55,7 @@ $deliverableFind ->addFindCriterion('_fk_Request_pk_ID', '==' .$requestPkId);
 $deliverableResults = $deliverableFind -> execute();
 
 if(FileMaker::isError($deliverableResults)){
-    if($deliverableResults->getMessage() == "No records match the request"){
+    if($deliverableResults->getCode() == $noRecordsFound){
         $log->debug("No match deliverable records found Request PK: " .$requestPkId);
     }else{
         $errorTitle = "FileMaker Error";
@@ -80,7 +80,7 @@ $webShowCodesFind->addSortRule($showCodeFieldName, 1, FILEMAKER_SORT_ASCEND);
 $webShowCodesResults = $webShowCodesFind->execute();
 
 if(FileMaker::isError($webShowCodesResults)){
-    if($webShowCodesResults->getMessage() == "No records match the request" ){
+    if($webShowCodesResults->getCode() == $noRecordsFound){
         $log->debug("No matching show codes results find");
         //Init an empty array for the builder
         $showCodeItems = array();
