@@ -16,9 +16,13 @@
 include_once($_SERVER["DOCUMENT_ROOT"] ."/onweb/onweb-config.php");
 require_once($fmfiles .'FileMaker/FileMaker.php');
 
+/*
+ * The username and password must be set to php until such time validation scripts are modified not not look for
+ * the php username
+ */
 $DB_HOST = 'http://127.0.0.1';
 $DB_NAME = 'PRO_WORK';
-$DB_USER = '0ap$Admin';
-$DB_PASS = 'gui39vp4s';
+$DB_USER = 'php';
+$DB_PASS = 'php';
 
 $fmWorkDB = new FileMaker($DB_NAME, $DB_HOST, $DB_USER, $DB_PASS);
