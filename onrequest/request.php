@@ -41,8 +41,13 @@ include_once($errors .'errorProcessing.php');
 include_once($fmfiles ."order.db.php");
 $log->debug("End including constants, request connection, and other files");
 
-if(isset($_GET['pkId'])){
+if(isset($_GET['pkId']) && !empty($_GET['pkId'])){
     $requestPkId = urldecode($_GET['pkId']);
+}else{
+    $errorTitle = "FileMaker Error";
+    $log->error("No PK supplied with this request in query string");
+    processError("No Primary Key Supplied for Request","No Primary Key Supplied for Request", $pageUrl, "NA", $errorTitle );
+    exit();
 }
 
 //Call function in requestConnection.php to get request handle

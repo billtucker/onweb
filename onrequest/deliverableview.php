@@ -30,17 +30,6 @@ if($validateUser) {
     $canModify = userCanModifyRequest($okModify);
 }
 
-$headerToUse = getHeaderIncludeFileName(urldecode($pageUrl));
-include_once($headerFooter .$headerToUse);
-
-include_once($requestInclude .'constants.php');
-include_once($requestInclude .'requestConnection.php');
-include_once($requestService .'requestFieldBuilder.php');
-include_once($requestService .'metaFieldBuilder.php');
-include_once($requestService .'deliverableTagFieldBuilder.php');
-include_once($errors .'errorProcessing.php');
-
-
 /** Assign primary key and item number to be used the db query */
 if(isset($_GET['pkId']) && !empty($_GET['pkId'])){
     $deliverablePkId = urldecode($_GET['pkId']);
@@ -50,6 +39,16 @@ if(isset($_GET['pkId']) && !empty($_GET['pkId'])){
     processError("No Primary Key supplied for this request", "No Primary Key supplied for this request","deliverableview.php", "NA", $errorTitle);
     exit;
 }
+
+$headerToUse = getHeaderIncludeFileName(urldecode($pageUrl));
+include_once($headerFooter .$headerToUse);
+
+include_once($requestInclude .'constants.php');
+include_once($requestInclude .'requestConnection.php');
+include_once($requestService .'requestFieldBuilder.php');
+include_once($requestService .'metaFieldBuilder.php');
+include_once($requestService .'deliverableTagFieldBuilder.php');
+include_once($errors .'errorProcessing.php');
 
 
 /** Open the Deliverable Layout and check for errors and assign record found by primary key */
