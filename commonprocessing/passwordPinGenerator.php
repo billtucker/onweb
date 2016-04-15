@@ -36,7 +36,7 @@ function manualPasswordPinGeneration($username, $dbHandle, $site_prefix){
 
     if(FileMaker::isError($loginResult)){
         $error = "Authentication Failure";
-        $log->error("passwordPinGenrator.php - manualPasswordPinGeneration() - Error: " .$loginResult->getMessage() ." username: " .$username);
+        $log->error("FileMaker loginResult - manualPasswordPinGeneration() - Error: " .$loginResult->getMessage() ." username: " .$username);
         header("location: " .$site_prefix ."admin/manualResult.php?message=" .$error ."&id=" .$username);
 		exit();
     }
@@ -44,7 +44,7 @@ function manualPasswordPinGeneration($username, $dbHandle, $site_prefix){
     //More than one user record with the same username value
     if($loginResult->getFoundSetCount() > 1){
         $error = "Contact System Adminstrator";
-        $log->error("passwordPinGenrator.php - manualPasswordPinGeneration() - Error: " .$loginResult->getMessage() ." username: " .$username);
+        $log->error("FoundSetCount - manualPasswordPinGeneration() - Error: " .$loginResult->getMessage() ." username: " .$username);
         header("location: " .$site_prefix ."admin/manualResult.php?message=" .$error ."&id=" .$username);
 		exit();
     }
@@ -55,7 +55,7 @@ function manualPasswordPinGeneration($username, $dbHandle, $site_prefix){
 
     if(empty($rawPassword) && empty($rawPin)){
         $error = "Missing Required Data";
-        $log->error("passwordPinGenrator.php - manualPasswordPinGeneration() - Error: " .$loginResult->getMessage() ." username: " .$username);
+        $log->error("No Password and Pin - manualPasswordPinGeneration() - Error: " .$loginResult->getMessage() ." username: " .$username);
         header("location: " .$site_prefix ."admin/manualResult.php?message=" .$error ."&id=" .$username);
 		exit();
     }
@@ -111,7 +111,7 @@ function generatePasswordPin($username, $dbHandle, $site_prefix){
 
     if(FileMaker::isError($loginResult)){
         $error = "Authentication Failure";
-        $log->error("passwordPinGenrator.php - generatePasswordPin() - Login Error: " .$loginResult->getMessage() ." Error String: " .$loginResult->getErrorString()  ." username " .$username);
+        $log->error("FileMaker loginResult - generatePasswordPin() - Login Error: " .$loginResult->getMessage() ." Error String: " .$loginResult->getErrorString()  ." username " .$username);
         header("location: " .$site_prefix ."login.php?error=" .$error);
 		exit();
     }
@@ -121,7 +121,7 @@ function generatePasswordPin($username, $dbHandle, $site_prefix){
     //More than one user record with the same username value
     if($loginResult->getFoundSetCount() > 1){
         $error = "Contact System Adminstrator";
-        $log->error("passwordPinGenrator.php - generatePasswordPin() - More than 1 username Error: " .$loginResult->getMessage() ." username " .$username);
+        $log->error("FoundSetCount - generatePasswordPin() - More than 1 username Error: " .$loginResult->getMessage() ." username " .$username);
         header("location: " .$site_prefix ."login.php?error=" .$error);
 		exit();
     }
@@ -132,7 +132,7 @@ function generatePasswordPin($username, $dbHandle, $site_prefix){
 
     if(empty($rawPassword) && empty($rawPin)){
         $error = "Missing Required Data";
-        $log->error("passwordPinGenrator.php - generatePasswordPin() - Encryption Check Error: " .$loginResult->getMessage() ." username " .$username);
+        $log->error("No Password and Pin - generatePasswordPin() - Encryption Check Error: " .$loginResult->getMessage() ." username " .$username);
         header("location: " .$site_prefix ."login.php?error=" .$error);
 		exit();
     }
@@ -156,7 +156,7 @@ function generatePasswordPin($username, $dbHandle, $site_prefix){
     if($commit){
         $loginRecordResult = $loginRecord->commit();
         if(FileMaker::isError($loginRecordResult)){
-            $error = "passwordPinGenrator.php - generatePasswordPin() - failed to write record to database with message: " .$loginRecordResult->getMessage() ." username " .$username;
+            $error = "loginRecordResult - generatePasswordPin() - failed to write record to database with message: " .$loginRecordResult->getMessage() ." username " .$username;
             $log->error($error);
             die($error);
         }
