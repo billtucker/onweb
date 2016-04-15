@@ -8,7 +8,7 @@
 
 include_once("config.php");
 $serverPort = $_SERVER['SERVER_PORT'];
-$pageURL = urlencode(($_SERVER['SERVER_PORT'] == '80' ? "http://" : "https://" ) ."$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
+$pageURL = urlencode($port ."$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
 
 ?>
 
@@ -16,7 +16,7 @@ $pageURL = urlencode(($_SERVER['SERVER_PORT'] == '80' ? "http://" : "https://" )
 <head><title>Page Protocol</title></head>
 <body>
     <h3>Server Port and Page URL</h3>
-    <p>Server Port: <?php echo($serverPort); ?></p>
+    <p>Server Port: <?php echo($port); ?></p>
     <p>Page URL no port: <?php echo(urldecode($pageURL)); ?></p>
     <p>Site Prefix: <?php echo($sitePrefix); ?></p>
 </body>
