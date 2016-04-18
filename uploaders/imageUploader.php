@@ -79,6 +79,8 @@ function pushImageToFM($originalName, $tempName, $pkId){
 
     $metaRecord->setField('Upload_Filename_Original_t', $originalName);
     $metaRecord->setField("Upload_Filename_Temp_t", $tempName);
+    //set container field within record to empty initially so FM script can upload the image or file to container
+    $metaRecord->setField("Answer_Container_Data_r", "");
 
     $result = $metaRecord->commit();
     if(FileMaker::isError($result)){
