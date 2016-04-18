@@ -10,12 +10,13 @@ include_once($_SERVER["DOCUMENT_ROOT"] ."/onweb/onweb-config.php");
 include_once($utilities ."utility.php");
 include_once($errors ."errorProcessing.php");
 include_once ($fmfiles ."order.db.php");
+include_once($errors .'errorProcessing.php');
 
-$log->debug("Upload Test was called");
+$log->debug("Upload a file was called start processing");
 
 $uploadDir = "../uploads/onrequest/";
 
-//executable and other dangerous file types NOT to upload
+//executable and other dangerous file types NOT to upload (block all these extensions)
 $blockedExt = array("exe", "php", "zip", "com", "rar", "bat", "scr", "pif", "hta", "sys", "cmd", "vb", "vbe", "ws",
     "js", "shs");
 
@@ -66,9 +67,11 @@ function pushImageToFM($originalName, $tempName, $pkId){
     $metaResults = $metaFind->execute();
 
     if(FileMaker::isError($metaResults)){
-        $error = "documentUploader.php - Meta Search Results Error: " .$metaResults->getMessage() ." " .$metaResults-getCode();
+        $errorTitle = "Failed To Upload File";
+        $error = "Meta Search Results Error: " .$metaResults->getMessage() ." " .$metaResults-getCode();
         $log->error($error);
-        die($error);
+        processError("Failed To upload File: " .$originalName,$metaResults->getMessage(), "imageUploader.php", $pkId, $errorTitle );
+        exit();
     }
 
     $metaRelatedRecords = $metaResults->getRecords();
@@ -79,8 +82,10 @@ function pushImageToFM($originalName, $tempName, $pkId){
 
     $result = $metaRecord->commit();
     if(FileMaker::isError($result)){
-        $error = "documentUploader.php - Error Saving Record " .$pkId ." Error Message: " .$result->getMessage() ." Error Code " .$result->getCode();
+        $errorTitle = "Failed To Upload File";
+        $error = "Error Saving Record " .$pkId ." Error Message: " .$result->getMessage() ." Error Code " .$result->getCode();
         $log->error($error);
-        die($error);
+        processError("Failed To upload File: " .$originalName,$result->getMessage(), "imageUploader.php", $pkId, $errorTitle );
+        exit();
     }
 }
