@@ -151,12 +151,15 @@ $(document).ready(function () {
 			//test line to write to console what was clicked
 			//console.log("Node ID: " + e.target.id + " Node Name: " + e.target.nodeName + " Class Name: " + $(e.target).attr('class'));
 
+            //TODO delete this after a successful test of the skipNprogressHasClassName() method as this is no longer needed
             //load class attribute to be used in the function skipNProgress()
             var classNames = $(e.target).attr('class');
 
             //test if addRow button was pushed to skip load progress bar
             //span ID must be tested since Chrome and Opera send node click as span and not button
-            if (e.target.id == 'addRow' || e.target.id == 'addRowSpan' || skipNProgress(classNames)){
+            //TODO delete this after a successful test of the skipNprogressHasClassName() method as this is no longer needed
+            //if (e.target.id == 'addRow' || e.target.id == 'addRowSpan' || skipNProgress(classNames)){
+            if (e.target.id == 'addRow' || e.target.id == 'addRowSpan' || skipNprogressHasClassName(e)){
                 return;
             }else {
                 NProgress.start();
@@ -165,6 +168,23 @@ $(document).ready(function () {
     });
 });/* End of document.ready */
 
+//This is a replacement method for skipNProgress() method to compact the code. All other comments remain true
+//This function simply looks for matching element target class attributes which returns one or more
+//in this case concern is set for two class groups where NProgess should not to run. The action
+//must not invoke the progress bar at the top of any given page. This function is setup to detect a single
+//class or multiple classes to determine if NProgress should run (Example class="btn btn-default delgrp" or
+//class="delgrp")
+function skipNprogressHasClassName(ele){
+    var classArray = ['fileinput-remove', 'delgrp', 'remove-cross','upload-btn'];
+    for(var x = 0; x < classArray.length; x++){
+        if($(ele.target).hasClass(classArray[x])){
+            return true;
+        }
+    }
+    return false;
+}
+
+//TODO: Test the skipNprogressHasClassName() method if not issues are found delete this method
 //This function simply looks for matching element target class attributes which returns one or more
 //in this case concern is set for two class groups where NProgess should not to run. The action
 //must not invoke the progress bar at the top of any given page. This function is setup to detect a single
