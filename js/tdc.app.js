@@ -79,6 +79,7 @@ $(document).ready(function () {
     });
 	
 	/* ------ Start of file upload script -------*/
+    //TODO - Start - remove all the upload JavaScript as the process is now dynamically generated in image or file meta builder
     var upload_document, uploadButtonDiv, pathDiv;
 
     /** This method processes images and documents **/
@@ -137,6 +138,7 @@ $(document).ready(function () {
         request.open('POST', 'processing/documentuploader.php');
         request.send(data);
     }/* End of script to upload file */
+    //TODO - End - remove all the upload JavaScript as the process is now dynamically generated in image or file meta builder
 
     /*
      * Function detects any click event within the body tag and presents NProgress bar after a click event
@@ -212,6 +214,7 @@ function skipNProgress(values){
     return false;
 }
 
+//TODO - remove all the upload JavaScript as the process is now dynamically generated in image or file meta builder
 /* function outside of document ready to upload a file */
 function fileUpload(imageElement, buttonElement, successPathDiv){
     runDocumentPost(imageElement, buttonElement, successPathDiv);
