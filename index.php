@@ -29,7 +29,7 @@ if(file_exists($root .$appConfigName)){
 
 $validateUser = true;
 $canModify = false;
-$siteSection = "homeIndex";
+$siteSection = "onweb";
 
 if(isset($_GET['p1']) && validatePassThrough($_GET['p1'])){
     $validateUser = false;

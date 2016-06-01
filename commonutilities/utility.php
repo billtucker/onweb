@@ -878,23 +878,60 @@ function getFullDirectoryList($dirArray){
 }
 
 /**
- * Method to delete an uploaded file from web uploads directory. An array of the path to the uploads/onrequest and
- * uploads/onbspot directories is passed to search both directories for the target file to delete
- * @param $dirArray String array of the directory locations
- * @param $target String target file name to delete
- * @return array a json configured array to respond to caller
+ * This method searches onrequest and onspot upload directories for target file to delete based on file name
+ * @param $dirArray directory where uploads are found on Filesystem for both onspot and onrequest
+ * @param $target String name of file to delete
+ * @return array removed json and now uses a single String
  */
 function deleteUploadedFile($dirArray, $target){
+    if(!isset($dirArray) || !is_array($dirArray) || empty($dirArray) || empty($target)){
+        return array("response"=> array("Error" => "failed"));
+    }
+
     foreach($dirArray as $dir){
         $allFiles = scandir($dir);
         foreach($allFiles as $fileName){
             if(strcmp($fileName, $target) == 0){
                 unlink($dir ."\\" .$fileName);
-                return array("response" => "success");
+                //Note: removed json response
+                //return array("response" => array("Success" => "File $target deleted"));
+                return "success";
             }
         }
     }
-    return array("response"=>"failed");
+
+    //Note: removed the json response
+    //return array("response"=>array("Error" => "$target Not Found"));
+    return "File Not Found";
+}
+
+/**
+ * Due to the lack of true json object parser this method will now return pipe deliminted string of file names
+ * for a given directory
+ * @param $dirName the directory String name passed in to query for files
+ * @param $directoryArray an array of fixed path names with directory name as key
+ * @return string pipe delimited string of file names
+ */
+function getDirectoryNoJson($dirName, $directoryArray){
+    global $log;
+    $delimString = array();
+
+    if(empty($dirName) || (strcmp($dirName, "onrequest") != 0) && (strcmp($dirName, "onspot") != 0)){
+        array_push($delimString, "Parameter error");
+        return implode("|", $delimString);
+    }else{
+        $fullPath = $directoryArray[$dirName];
+        $log->debug("Find Files in directory: " .$fullPath);
+        $files = scandir($fullPath);
+        foreach($files as $file){
+            if(strlen(strstr($file, '.', true)) < 1) {
+                continue;
+            }else {
+                array_push($delimString, $file);
+            }
+        }
+        return implode("|", $delimString);
+    }
 }
 
 
