@@ -14,6 +14,7 @@ include_once($errors .'errorProcessing.php');
 
 $log->debug("Upload a file was called start processing");
 
+//This directory is strictly associated with Request uploads images and files (not video files)
 $uploadDir = "../uploads/onrequest/";
 
 //executable and other dangerous file types NOT to upload (block all these extensions)
@@ -46,7 +47,7 @@ if(isset($_FILES) && !empty($_FILES)){
                     $log->error('File Size error in php.ini file');
                     break;
                 case UPLOAD_ERR_FORM_SIZE:
-                    $log->error('Exceeded filesize limit.');
+                    $log->error('Exceeded file size limit.');
                     break;
                 default:
                     $log->error('Unable to determine error');
