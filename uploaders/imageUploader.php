@@ -29,13 +29,35 @@ function outputJSON($msg, $status = 'error'){
 }
 
 if(isset($_FILES) && !empty($_FILES)){
-    $log->debug("We have files with data");
+    $log->debug("We have files to upload to the onweb uploads directory");
 
     if($_FILES['file']['error'] > 0){
+        //We need to know what error was found in the upload process
+        $log->error("Errors were detected in upload now parse the error");
+
+        if($_FILES['file']['error'] > 0){
+            switch ($_FILES['file']['error']) {
+                case UPLOAD_ERR_OK:
+                    break;
+                case UPLOAD_ERR_NO_FILE:
+                    $log->error('No file or files sent');
+                    break;
+                case UPLOAD_ERR_INI_SIZE:
+                    $log->error('File Size error in php.ini file');
+                    break;
+                case UPLOAD_ERR_FORM_SIZE:
+                    $log->error('Exceeded filesize limit.');
+                    break;
+                default:
+                    $log->error('Unable to determine error');
+                    break;
+            }
+        }
         outputJSON("File errors detected on upload");
     }
 
     if(!isset($_POST['pkId'])){
+        $log->error("Missing primary key as PK was not in POST[] array");
         outputJSON("Missing Primary Key value for upload");
     }else{
         $pkId = $_POST['pkId'];
@@ -45,6 +67,7 @@ if(isset($_FILES) && !empty($_FILES)){
     $originalFileName = $_FILES['file']['name'];
 
     if(in_array($ext, $blockedExt)){
+        $log->error("File extension is not supported for upload: " .$_FILES['file']['type']);
         outputJSON('Unsupported file type uploaded: ' .$_FILES['file']['type']);
     }
 
@@ -52,8 +75,11 @@ if(isset($_FILES) && !empty($_FILES)){
     $log->debug("The FileMaker temporary name " .$filenameTemp);
 
     if(!move_uploaded_file($_FILES['file']['tmp_name'], $uploadDir .$filenameTemp)){
+        $log->error("Error uploading file: " .$_FILES['file']['name']);
         outputJSON("Error uploading file: " .$_FILES['file']['name']);
     }
+
+    $log->debug("Copied temp file name: " .$_FILES['file']['tmp_name'] ." to file " .$filenameTemp);
 
     pushImageToFM($originalFileName, $filenameTemp, $pkId);
 
@@ -79,6 +105,7 @@ function pushImageToFM($originalName, $tempName, $pkId){
 
     $metaRecord->setField('Upload_Filename_Original_t', $originalName);
     $metaRecord->setField("Upload_Filename_Temp_t", $tempName);
+
     //set container field within record to empty initially so FM script can upload the image or file to container
     $metaRecord->setField("Answer_Container_Data_r", "");
 
@@ -90,4 +117,6 @@ function pushImageToFM($originalName, $tempName, $pkId){
         processError("Failed To upload File: " .$originalName,$result->getMessage(), "imageUploader.php", $pkId, $errorTitle );
         exit();
     }
+
+    $log->debug("Completed writing original and PK filenames to FileMaker record");
 }
