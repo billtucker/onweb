@@ -879,11 +879,14 @@ function getFullDirectoryList($dirArray){
 
 /**
  * This method searches onrequest and onspot upload directories for target file to delete based on file name
+ * Note: Did not create a new method but modified the original to omit the JSON return data array
  * @param $dirArray directory where uploads are found on Filesystem for both onspot and onrequest
  * @param $target String name of file to delete
  * @return array removed json and now uses a single String
  */
 function deleteUploadedFile($dirArray, $target){
+    global $log;
+
     if(!isset($dirArray) || !is_array($dirArray) || empty($dirArray) || empty($target)){
         return array("response"=> array("Error" => "failed"));
     }
@@ -893,6 +896,7 @@ function deleteUploadedFile($dirArray, $target){
         foreach($allFiles as $fileName){
             if(strcmp($fileName, $target) == 0){
                 unlink($dir ."\\" .$fileName);
+                $log->debug("Successfully deleted file: " .$fileName);
                 //Note: removed json response
                 //return array("response" => array("Success" => "File $target deleted"));
                 return "success";
@@ -902,6 +906,7 @@ function deleteUploadedFile($dirArray, $target){
 
     //Note: removed the json response
     //return array("response"=>array("Error" => "$target Not Found"));
+    $log-debug("Unable to find file: " .$target);
     return "File Not Found";
 }
 

@@ -30,6 +30,7 @@ if(isset($_GET['list']) || isset($_GET['dfile'])){
     if(isset($_GET['dfile'])){
 
         if(!empty($_GET['dfile'])){
+            $log->debug("Delete file operation received to delete file: " .$_GET['dfile']);
             echo deleteUploadedFile($dirArray, $_GET['dfile']);
         }else{
             echo "Error No delete parameters provided";
