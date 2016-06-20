@@ -13,7 +13,7 @@ include_once dirname(__DIR__) .DIRECTORY_SEPARATOR ."request-config.php";
 include_once($utilities ."utility.php");
 
 function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId, $containerUrl, $canModify){
-    global $log, $site_prefix;
+    global $log, $site_prefix, $getContainerUrl;
 
     $submitImageButtonId = "submit-all-" .$questionNum;
     $removeImageButtonId = "remove-all-" .$questionNum;
@@ -29,6 +29,12 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
     //support file delete from FileMaker functionality
     $deleteSuccessId = "remove-success-" .$questionNum;
     $removeMethodName = "removeFile" .$questionNum;
+
+    //Added question number hidden field to work with the image/file downloader for display
+    $hiddenQuestNumId = $pkId ."_" .$questionNum;
+    $replacementDivId = $pkId ."_replace";
+    $getContainerDataMethod = "getContainerData" .$questionNum;
+    $rewriteImageDivMethod = "rewriteImageDiv" .$questionNum;
 
     if(!empty($containerUrl)){
         $imageCaption = getLightBoxCaption($containerUrl);
@@ -49,23 +55,26 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
     </div>
     <div class="container">
         <div class="row">
-            <input type="hidden" id="<?php echo($primaryKeyId);?>" name="<?php echo($primaryKeyId);?>" value="<?php echo($pkId); ?>">
+            <input type="hidden" id="<?php echo($primaryKeyId);?>" name="<?php echo($primaryKeyId);?>" value="<?php echo($pkId);?>">
+            <input type="hidden" id="<?php echo($hiddenQuestNumId);?>" name="<?php echo($hiddenQuestNumId);?>" value="<?php echo($questionNum);?>">
             <?php if($canModify) {?>
                 <?php if(!empty($containerUrl)){?> <!-- container has data so display image in Lightbox-->
-                    <div class="col-xs-6 col-md-6"><!-- move this outside of if() test to line 190 -->
-                        <span class="glyphicon glyphicon-remove pull-right remove-cross" title="Remove File From Server" data-toggle="tooltip"
-                          id="<?php echo($glyphiconRemoveId); ?>" onclick="<?php echo($removeMethodName); ?>('<?php echo($primaryKeyId);?>');"></span>
-                        <div class="row image_container">
-                            <a href="../readImage.php?url=<?php echo(urlencode($containerUrl)); ?>" alt="Full Image" data-lightbox="<?php echo($pkId); ?>"
-                                data-title="<?php echo($imageCaption) ?>">
-                                <img class="img-responsive preview-image" src="../readImage.php?url=<?php echo(urlencode($containerUrl)); ?>"
-                                    align="left" id="<?php echo ($fullImageId); ?>">
-                            </a>
+                    <div id="<?php echo($replacementDivId);?>" name="<?php echo($replacementDivId);?>"><!-- start of image replacement div -->
+                        <div class="col-xs-6 col-md-6"><!-- move this outside of if() test to line 190 -->
+                            <span class="glyphicon glyphicon-remove pull-right remove-cross" title="Remove File From Server" data-toggle="tooltip"
+                                id="<?php echo($glyphiconRemoveId); ?>" onclick="<?php echo($removeMethodName); ?>('<?php echo($primaryKeyId);?>');"></span>
+                            <div class="row image_container">
+                                <a href="../readImage.php?url=<?php echo(urlencode($containerUrl)); ?>" alt="Full Image" data-lightbox="<?php echo($pkId);?>"
+                                    data-title="<?php echo($imageCaption);?>">
+                                    <img class="img-responsive preview-image" src="../readImage.php?url=<?php echo(urlencode($containerUrl)); ?>"
+                                        align="left" id="<?php echo ($fullImageId); ?>">
+                                </a>
+                            </div>
+                            <div class="row text-left text-success tdc-display-none" id="<?php echo($deleteSuccessId); ?>">
+                                <strong>File Successfully Deleted From FileMaker</strong><br>
+                            </div>
                         </div>
-                        <div class="row text-left text-success tdc-display-none" id="<?php echo($deleteSuccessId); ?>">
-                            <strong>File Successfully Deleted From FileMaker</strong><br>
-                        </div>
-                    </div>
+                    </div><!-- End of replacement div -->
                     <div class="col-xs-6 col-md-6">
                         <div class="row">
                             <div id="<?php echo ($formDropzoneId); ?>" class="decoration  dropzone"></div>
@@ -84,10 +93,12 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
                         </div>
                     </div>
             <?php }else if(empty($containerUrl) && !empty($fmFilename)){ ?><!-- container is empty but the filename field exists -->
-                <div class="col-xs-6 col-md-6 empty_image_container"><!-- move this outside of if() test to line 190 -->
-                    <p class="text-center">Import still processing file <?php echo($fmFilename); ?>.</p>
-                    <p class="text-center"> Reload page when complete.</p>
-                </div>
+                <div id="<?php echo($replacementDivId);?>" name="<?php echo($replacementDivId);?>"><!-- start of image replacement div -->
+                    <div class="col-xs-6 col-md-6 empty_image_container"><!-- move this outside of if() test to line 190 -->
+                        <p class="text-center">Import still processing file <?php echo($fmFilename); ?>.</p>
+                        <p class="text-center"> Reload page when complete.</p>
+                    </div>
+                </div><!-- end of image replacement div -->
                 <div class="col-xs-6 col-md-6">
                     <div class="row">
                         <div id="<?php echo ($formDropzoneId); ?>" class="decoration  dropzone"></div>
@@ -142,6 +153,7 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
 
     <script>
 
+        //init button display by hiding all buttons associated with file upload
         $(document).ready(function () {
             $('<?php echo('#' .$submitImageButtonId);?>').hide();
             $('<?php echo('#' .$removeImageButtonId); ?>').hide();
@@ -150,6 +162,7 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
         });
 
 
+        //Remove the image from the FileMaker (null) the container then remove the image from the page
         function <?php echo($removeMethodName); ?>(elmId){
             var pkid = document.getElementById(elmId).value;
             console.log("PK: " + pkid);
@@ -208,6 +221,15 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
                     $('<?php echo('#' .$submitImageButtonId);?>').hide();
                     $('<?php echo('#' .$removeImageButtonId); ?>').hide();
                     $('<?php echo('#' .$uploadSuccessId); ?>').fadeIn(100).delay(5000).fadeOut(500);
+
+                    //Now we need to get the flag to run get the 'Just' uploaded image/file URL
+                    var runContainerUrl = <?php echo $getContainerUrl ? 'true' : 'false' ?>;
+                    var jsonData = JSON.parse(response);
+                    if(jsonData && jsonData.container_status){
+                        if(jsonData.container_status != '' && jsonData.container_status == 'empty'){
+                            console.log("We have container status of empty so now get the container URL");
+                        }
+                    }
                 });
 
                 //When a file is dropped inside Dropzone show box show button controls
@@ -227,5 +249,64 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
                 });
             }
         }
+
+        /**
+         * Method to recursively call a PHP file and get the container URL for a given META PK
+         * @param pkId string value of the PK for a given meta record
+         * Note: TODO: can this be a generic method to replace a DIV encapsulating a image or file
+         */
+        function <?php echo($getContainerDataMethod);?>(pkId){
+            var getFileTimer = setTimeout(function() {
+                console.log("getContainerData called with PKID: " + pkId + " with count: " + count);
+                $.ajax({
+                    url: "divReloader.php", //get the file name of PHP processor to get container URL
+                    data: {"pk":pkId},
+                    type: "POST",
+                    success: function(response){
+                        console.log("Success " + response);
+                        var jsonData = JSON.parse(response);
+                        if(jsonData.container_status == "empty"){
+                            console.log("Conatiner is empty so call method again Line 75");
+                            count++;
+                            <?php echo($getContainerDataMethod);?>(pkId);
+                            //now run this method ever 5 seconds as a thread to release browser
+                        }else{
+                            if(jsonData.container_url) {
+                                <?php echo($rewriteImageDivMethod);?>(pkId,
+                                    document.getElementById(pkId + "_questNum").value, jsonData.container_url,jsonData.filename);
+                                clearTimeout(getFileTimer);
+                                return false;
+                            }else{
+                                console.log("Strange condition - container status not empty without a URL in JSON array");
+                            }
+                        }
+                    },
+                    error: function(response){
+                        console.log("Error: " + response);
+                        jsonErrorData = JSON.parse(response);
+                        if(jsonErrorData.status == "error"){
+                            console.log("Error occurred kill get URL process");
+                            clearTimeout(getFileTimer);
+                            return false;
+                        }
+                    }
+                });
+            }, 5000); //This setup to run ever 5 seconds and this needs to be adjusted to more like 1 or 2 minute cycles
+        }
+
+        /**
+         * Rewrite the Div srounding the Image or file and replace it with the URL from the FM container
+         * @param pk Primary meta file record id/key UUID
+         * @param questNum the meta question number associated with item
+         * @param url the container URL
+         * @param filename the filename of the object file/image uploaded
+         */
+        function <?php echo($rewriteImageDivMethod);?>(pk, questNum, url, filename){
+            console.log("rewriteImageDiv PK: " + pk + " Question Number: " + questNum + " URL: " + url);
+
+            //Call the php file with POST format and query string attributes
+            $('<?php echo('#' .$replacementDivId);?>').load('loadFileImageDiv.php',{'pk':pk, 'url':url, 'questNum':questNum, 'filename':filename});
+        }
+
     </script>
 <?php } ?>

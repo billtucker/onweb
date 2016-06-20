@@ -29,6 +29,12 @@ function outputJSON($msg, $status = 'error'){
     )));
 }
 
+//function to return a json array for calling JQuery call
+function returnJsonToAjax($status, $containerStatus, $urlToUse, $fileName){
+    $responseArray = array("status"=>$status,"container_status"=>$containerStatus, "container_url"=>$urlToUse,"filename"=>$fileName);
+    echo utf8_encode(json_encode($responseArray));
+}
+
 if(isset($_FILES) && !empty($_FILES)){
     $log->debug("We have files to upload to the onweb uploads directory");
 
@@ -84,6 +90,38 @@ if(isset($_FILES) && !empty($_FILES)){
 
     pushImageToFM($originalFileName, $filenameTemp, $pkId);
 
+    $containerUrl = getFileContainerURL($pkId, $originalFileName);
+    $containerStatus = "";
+    if(empty($containerUrl)){
+        $containerStatus = "empty";
+    }else{
+        $containerStatus = "have_url";
+    }
+
+    returnJsonToAjax("success", $containerStatus, $containerUrl, $originalFileName);
+}
+
+function getFileContainerURL($pkId, $originalName){
+    global $log, $fmOrderDB;
+
+    $metaFind = $fmOrderDB->newFindCommand('[WEB] Project Meta Fields');
+    $metaFind->addFindCriterion('__pk_ID','==' .$pkId);
+    $metaResults = $metaFind->execute();
+
+    if(FileMaker::isError($metaResults)){
+        $errorTitle = "Failed To Upload File";
+        $error = "Meta Search Results Error: " .$metaResults->getMessage() ." " .$metaResults-getCode();
+        $log->error($error);
+        processError("Failed in get conatiner URL: " .$originalName, $metaResults->getMessage(), "imageUploader.php", $pkId, $errorTitle );
+        exit();
+    }
+
+    $metaRelatedRecords = $metaResults->getRecords();
+    $metaRecord = $metaRelatedRecords[0];
+
+    $containerUrl = $metaRecord->getField('Answer_Container_Data_r');
+
+    return $containerUrl;
 }
 
 function pushImageToFM($originalName, $tempName, $pkId){
