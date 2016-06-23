@@ -13,6 +13,8 @@ include_once($utilities .'utility.php');
 //Fixed hardcoded array of directories for all upload files to search (Yea this is problematic)
 $dirArray = array("onrequest" => $root ."uploads" .DIRECTORY_SEPARATOR ."onrequest", "onspot" => $root ."uploads" .DIRECTORY_SEPARATOR ."onspot" );
 
+$log->debug("tdcManager called now process the request");
+
 if(isset($_GET['list']) || isset($_GET['dfile'])){
     if(isset($_GET['list'])) {
 

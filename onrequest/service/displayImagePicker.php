@@ -73,12 +73,11 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
                             <div class="row text-left text-success tdc-display-none" id="<?php echo($deleteSuccessId); ?>">
                                 <strong>File Successfully Deleted From FileMaker</strong><br>
                             </div>
-                        </div>
-                    </div><!-- End of replacement div -->
-                    <div class="col-xs-6 col-md-6">
-                        <div class="row">
-                            <div id="<?php echo ($formDropzoneId); ?>" class="decoration  dropzone"></div>
-                        </div>
+                        </div><!--end of 1st column 6 div -->
+                        <div class="col-xs-6 col-md-6">
+                            <div class="row">
+                                <div id="<?php echo ($formDropzoneId); ?>" class="decoration  dropzone"></div>
+                            </div>
                             <div class="row pull-right upload-btn-position">
                                 <button type="button" id="<?php echo($submitImageButtonId); ?>"
                                         class="btn btn-primary upload-btn"><?php echo($uploadButtonLabel); ?>
@@ -87,36 +86,38 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
                                               class="btn btn-danger upload-btn"><?php echo ($removeButtonLabel); ?>
                                 </button>
                             </div>
-                        <div class="row text-right text-success tdc-display-none" id="<?php echo($uploadSuccessId); ?>">
-                            <strong>Image Successfully Uploaded</strong><br>
-                            <i class="text-info"><strong>The preview of the image is not immediate available.</strong></i>
-                        </div>
-                    </div>
+                            <div class="row text-right text-success tdc-display-none" id="<?php echo($uploadSuccessId); ?>">
+                                <strong>Image Successfully Uploaded</strong><br>
+                                <i class="text-info"><strong>The preview of the image is not immediate available.</strong></i>
+                            </div>
+                        </div><!-- end of 2nd column 6 div -->
+                    </div><!-- End of replacement div -->
             <?php }else if(empty($containerUrl) && !empty($fmFilename)){ ?><!-- container is empty but the filename field exists -->
                 <div id="<?php echo($replacementDivId);?>" name="<?php echo($replacementDivId);?>"><!-- start of image replacement div -->
                     <div class="col-xs-6 col-md-6 empty_image_container"><!-- move this outside of if() test to line 190 -->
                         <p class="text-center">Import still processing file <?php echo($fmFilename); ?>.</p>
                         <p class="text-center"> Reload page when complete.</p>
-                    </div>
-                </div><!-- end of image replacement div -->
-                <div class="col-xs-6 col-md-6">
-                    <div class="row">
-                        <div id="<?php echo ($formDropzoneId); ?>" class="decoration  dropzone"></div>
-                    </div>
-                    <div class="row pull-right upload-btn-position">
-                        <button type="button" id="<?php echo($submitImageButtonId); ?>"
+                    </div><!-- end of 1st column 6 div -->
+                    <div class="col-xs-6 col-md-6">
+                        <div class="row">
+                            <div id="<?php echo ($formDropzoneId); ?>" class="decoration  dropzone"></div>
+                        </div>
+                        <div class="row pull-right upload-btn-position">
+                            <button type="button" id="<?php echo($submitImageButtonId); ?>"
                                 class="btn btn-primary upload-btn"><?php echo($uploadButtonLabel); ?>
-                        </button>
-                        &nbsp;<button type="button" id="<?php echo($removeImageButtonId); ?>"
+                            </button>
+                                &nbsp;<button type="button" id="<?php echo($removeImageButtonId); ?>"
                                       class="btn btn-danger upload-btn"><?php echo ($removeButtonLabel); ?>
-                        </button>
-                    </div>
-                    <div class="row text-right text-success tdc-display-none" id="<?php echo($uploadSuccessId); ?>">
-                        <strong>Image Successfully Uploaded</strong><br>
-                        <i class="text-info"><strong>The preview of the image is not immediate available.</strong></i>
-                    </div>
-                </div>
+                            </button>
+                        </div>
+                        <div class="row text-right text-success tdc-display-none" id="<?php echo($uploadSuccessId); ?>">
+                            <strong>Image Successfully Uploaded</strong><br>
+                            <i class="text-info"><strong>The preview of the image is not immediate available.</strong></i>
+                        </div>
+                    </div><!-- end of 2nd column 6 div -->
+                </div><!-- end of image replacement div -->
             <?php } else { ?><!-- No container data or filename just display Dropzone box -->
+            <div id="<?php echo($replacementDivId);?>" name="<?php echo($replacementDivId);?>"><!-- start of image replacement div -->
                 <div class="col-xs-12 col-md-12">
                     <div class="row">
                         <div id="<?php echo ($formDropzoneId); ?>" class="decoration  dropzone"></div>
@@ -133,7 +134,8 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
                         <strong>Image Successfully Uploaded</strong><br>
                         <i class="text-info"><strong>The preview of the image is not immediate available.</strong></i>
                     </div>
-                </div>
+                </div><!-- end of 12 column div -->
+            </div><!-- end of replacement div -->
             <?php } ?>
         <?php } else{ ?>
             <?php if(!empty($containerUrl)){?> <!-- container has data so display image in Lightbox-->
@@ -148,7 +150,7 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
                 <div class="col-xs-12 col-md-12 image_container"></div>
             <?php } ?>
         <?php } ?>
-        </div>
+        </div><!-- end of row div -->
     </div><!-- end of container for image display -->
 
     <script>
@@ -200,6 +202,10 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
                 var submitButton = document.querySelector('<?php echo('#' .$submitImageButtonId);?>');
                 var myDropzone = this; //closure
 
+                this.on('dragover drop', function(e) {
+                    e.preventDefault();
+                });
+
                 submitButton.addEventListener("click", function(){
                     console.log("Event listener fired");
                     myDropzone.processQueue(); //Tell Dropzone to process all queued files
@@ -228,6 +234,7 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
                     if(jsonData && jsonData.container_status){
                         if(jsonData.container_status != '' && jsonData.container_status == 'empty'){
                             console.log("We have container status of empty so now get the container URL");
+                            <?php echo($getContainerDataMethod);?>(document.getElementById('<?php echo($primaryKeyId);?>').value, myDropzone);
                         }
                     }
                 });
@@ -255,25 +262,25 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
          * @param pkId string value of the PK for a given meta record
          * Note: TODO: can this be a generic method to replace a DIV encapsulating a image or file
          */
-        function <?php echo($getContainerDataMethod);?>(pkId){
+        function <?php echo($getContainerDataMethod);?>(pkId, myDropzone){
             var getFileTimer = setTimeout(function() {
-                console.log("getContainerData called with PKID: " + pkId + " with count: " + count);
+                console.log("getContainerData called with PKID: " + pkId);
                 $.ajax({
-                    url: "divReloader.php", //get the file name of PHP processor to get container URL
+                    url: "../uploaders/urlReloader.php", //get the file name of PHP processor to get container URL
                     data: {"pk":pkId},
                     type: "POST",
                     success: function(response){
-                        console.log("Success " + response);
+                        console.log("getContainerDataMethod Success " + response);
                         var jsonData = JSON.parse(response);
                         if(jsonData.container_status == "empty"){
-                            console.log("Conatiner is empty so call method again Line 75");
-                            count++;
-                            <?php echo($getContainerDataMethod);?>(pkId);
+                            console.log("Conatiner is empty so call method again");
+                            <?php echo($getContainerDataMethod);?>(pkId, myDropzone);
                             //now run this method ever 5 seconds as a thread to release browser
                         }else{
                             if(jsonData.container_url) {
                                 <?php echo($rewriteImageDivMethod);?>(pkId,
-                                    document.getElementById(pkId + "_questNum").value, jsonData.container_url,jsonData.filename);
+                                    document.getElementById('<?php echo($hiddenQuestNumId);?>').value,
+                                    jsonData.container_url,jsonData.filename, myDropzone);
                                 clearTimeout(getFileTimer);
                                 return false;
                             }else{
@@ -301,11 +308,17 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
          * @param url the container URL
          * @param filename the filename of the object file/image uploaded
          */
-        function <?php echo($rewriteImageDivMethod);?>(pk, questNum, url, filename){
+        function <?php echo($rewriteImageDivMethod);?>(pk, questNum, url, filename, dzHandle){
             console.log("rewriteImageDiv PK: " + pk + " Question Number: " + questNum + " URL: " + url);
 
             //Call the php file with POST format and query string attributes
-            $('<?php echo('#' .$replacementDivId);?>').load('loadFileImageDiv.php',{'pk':pk, 'url':url, 'questNum':questNum, 'filename':filename});
+            $('<?php echo('#' .$replacementDivId);?>').load('../uploaders/loadFileImageDiv.php',
+                {'pk':pk, 'url':url, 'questNum':questNum, 'filename':filename}, function(){
+                    console.log("Load complete now hide buttons");
+                    $('<?php echo('#' .$submitImageButtonId);?>').hide();
+                    $('<?php echo('#' .$removeImageButtonId); ?>').hide();
+                });
+            dzHandle.removeAllFiles();
         }
 
     </script>
