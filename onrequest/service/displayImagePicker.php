@@ -198,6 +198,9 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
             //Dropzone accepts images and video file only
             acceptedFiles: "image/*",
 
+            //For now we are only accepting a single image file
+            maxFiles: 1,
+
             init: function(){
                 var submitButton = document.querySelector('<?php echo('#' .$submitImageButtonId);?>');
                 var myDropzone = this; //closure
@@ -206,8 +209,9 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
                     e.preventDefault();
                 });
 
-                submitButton.addEventListener("click", function(){
+                submitButton.addEventListener("click", function(e){
                     console.log("Event listener fired");
+                    e.preventDefault();
                     myDropzone.processQueue(); //Tell Dropzone to process all queued files
                 });
 

@@ -48,6 +48,7 @@ if(isset($_POST['pk']) && isset($_POST['url']) && isset($_POST['questNum']) && i
     $uploadButtonLabel = "Upload Image";
     $removeButtonLabel = "Remove File";
     $uploadSuccessId = "upload-success-" .$questionNum;
+    $initDzId = "#" .$formDropzoneId;
 
     //display replace div (in this case) an image file
     //Note If an image added as net new or replacement image the entire section image div and dropzone div are replaced
@@ -75,6 +76,7 @@ if(isset($_POST['pk']) && isset($_POST['url']) && isset($_POST['questNum']) && i
     echo "<i class='text-info'><strong>The preview of the image is not immediate available.</strong></i>";
     echo "</div>";
     echo "</div><!-- end of 2nd column 6 div -->";
+    echo "<script> new Dropzone('$initDzId'); </script>";
     $log->debug("Done with replacing both div(s) using echo and Ajax load method");
 }else{
     $log->debug("One of the parameter is missing");
