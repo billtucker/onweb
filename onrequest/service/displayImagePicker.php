@@ -35,6 +35,7 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
     $replacementDivId = $pkId ."_replace";
     $getContainerDataMethod = "getContainerData" .$questionNum;
     $rewriteImageDivMethod = "rewriteImageDiv" .$questionNum;
+    $fileTypeID = $pkId ."_" .$questionNum."_fileType";
 
     if(!empty($containerUrl)){
         $imageCaption = getLightBoxCaption($containerUrl);
@@ -57,6 +58,7 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
         <div class="row">
             <input type="hidden" id="<?php echo($primaryKeyId);?>" name="<?php echo($primaryKeyId);?>" value="<?php echo($pkId);?>">
             <input type="hidden" id="<?php echo($hiddenQuestNumId);?>" name="<?php echo($hiddenQuestNumId);?>" value="<?php echo($questionNum);?>">
+            <input type="hidden" id="<?php echo($fileTypeID); ?>" name="<?php echo($fileTypeID); ?>" value="image">
             <?php if($canModify) {?>
                 <?php if(!empty($containerUrl)){?> <!-- container has data so display image in Lightbox-->
                     <div id="<?php echo($replacementDivId);?>" name="<?php echo($replacementDivId);?>"><!-- start of image replacement div -->
@@ -238,7 +240,8 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
                     if(jsonData && jsonData.container_status){
                         if(jsonData.container_status != '' && jsonData.container_status == 'empty'){
                             console.log("We have container status of empty so now get the container URL");
-                            <?php echo($getContainerDataMethod);?>(document.getElementById('<?php echo($primaryKeyId);?>').value, myDropzone);
+                            <?php echo($getContainerDataMethod);?>(document.getElementById('<?php echo($primaryKeyId);?>').value,
+                                myDropzone);
                         }
                     }
                 });
@@ -284,7 +287,8 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
                             if(jsonData.container_url) {
                                 <?php echo($rewriteImageDivMethod);?>(pkId,
                                     document.getElementById('<?php echo($hiddenQuestNumId);?>').value,
-                                    jsonData.container_url,jsonData.filename, myDropzone);
+                                    jsonData.container_url,jsonData.filename, myDropzone,
+                                document.getElementById('<?php echo($fileTypeID)?>').value);
                                 clearTimeout(getFileTimer);
                                 return false;
                             }else{
@@ -312,12 +316,12 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
          * @param url the container URL
          * @param filename the filename of the object file/image uploaded
          */
-        function <?php echo($rewriteImageDivMethod);?>(pk, questNum, url, filename, dzHandle){
+        function <?php echo($rewriteImageDivMethod);?>(pk, questNum, url, filename, dzHandle, filetype){
             console.log("rewriteImageDiv PK: " + pk + " Question Number: " + questNum + " URL: " + url);
 
             //Call the php file with POST format and query string attributes
             $('<?php echo('#' .$replacementDivId);?>').load('../uploaders/loadFileImageDiv.php',
-                {'pk':pk, 'url':url, 'questNum':questNum, 'filename':filename}, function(){
+                {'pk':pk, 'url':url, 'questNum':questNum, 'filename':filename,'filetype':filetype}, function(){
                     console.log("Load complete now hide buttons");
                     $('<?php echo('#' .$submitImageButtonId);?>').hide();
                     $('<?php echo('#' .$removeImageButtonId); ?>').hide();

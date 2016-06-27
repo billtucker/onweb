@@ -84,3 +84,5 @@ $noRecordsFound = "401";
 //Flag to enable or disable ajax image/file downloader. The Javascript, if enabled, will try to access the Meta record for
 //an image/file URL. Some originzation will want disable this flag to allow for virus validation before uploading to FM
 $getContainerUrl = true;
+
+$buildVersion = "06272016.R1";
