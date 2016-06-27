@@ -30,9 +30,11 @@ if($validateUser) {
 $log->debug("Validation is completed so now build Spot Viewer List");
 $spotViewerLayout = "[WEB] cwp_spotviewer_browse";
 
+$maxNumRecords = 100;
 $quickListFilter = "1";
 $spotList = $fmWorkDB->newFindCommand($spotViewerLayout);
 $spotList->addFindCriterion("z_QuickList_RoughCutsToApprove_cn", "==" .$quickListFilter);
+$spotList->setRange(0, $maxNumRecords);
 $spotResults = $spotList->execute();
 
 if(FileMaker::isError($spotResults)){
