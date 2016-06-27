@@ -157,7 +157,7 @@ function authenticateLdapUserFM($dbHandle, $userName, $site_prefix){
  * @param $site_prefix -- Site prefix to include port type SSL or 80
  */
 function authenticateFMOnly($dbHandle, $post, $site_prefix){
-    global $log;
+    global $log, $bypassPassword;
     $loginLayout = '[WEB] Login';
 
     $log->debug("Now entering FileMaker Authentication processing");
@@ -189,7 +189,9 @@ function authenticateFMOnly($dbHandle, $post, $site_prefix){
 
     $log->debug("Now have user record check if Pin or password matches");
 
-    if(isPasswordPinMatch($userRecord->getField('User_Password_Hash_t'), $ePassword) ||
+    //TODO revisit this once the LDAP issuer is resolved at FOX this is temporary to bypass the validation
+    //TODO the bypass flag should be removed once the LDAP is resolved
+    if($bypassPassword || isPasswordPinMatch($userRecord->getField('User_Password_Hash_t'), $ePassword) ||
         isPasswordPinMatch($userRecord->getField('User_Pin_Hash_t'), $ePassword)){
         $log->debug("Now call session creation for FM full authentication");
             setSessionData($userRecord, $site_prefix);
