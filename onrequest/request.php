@@ -75,11 +75,25 @@ if(FileMaker::isError($deliverableResults)){
 
 $log->debug("End now have Deliverable record. Start get Show Codes");
 
-//New show code get Query based on Network/Programming_Type_t field as primary key 02/12/2015
+//New show code Query based on Network/Programming_Type_t field as primary key 02/12/2015
+//Now modified to get Programming_Type_T item from session $_SESSION['user_accounts'] block 07/07/2015
 $showCodeFieldName = 'Show_Code_t';
 $webShowCodesLayoutName = "[WEB] Show Codes";
 $webShowCodesFind = $fmOrderDB->newFindCommand($webShowCodesLayoutName);
-$webShowCodesFind->addFindCriterion('Programming_Type_t', '==' .$request->getField('Programming_Type_t'));
+
+$requestDivisionFieldName = "Programming_Type_t";
+$requestDivision = $request->getField($requestDivisionFieldName);
+
+//New test added to determine if Request was assigned a division or programming_type_value If not we use 1st value
+//from the user_accounts of session
+if(empty($requestDivision) || $requestDivision == ""){
+    $webShowCodesFind->addFindCriterion($requestDivisionFieldName, '==' .$_SESSION['user_accounts'][0]);
+    $requestDivision = $_SESSION['user_accounts'][0];
+}else{
+    $webShowCodesFind->addFindCriterion($requestDivisionFieldName, '==' .$request->getField($requestDivisionFieldName));
+}
+
+
 //Sort the results from the query alphabetically by the Show Title field
 $webShowCodesFind->addSortRule($showCodeFieldName, 1, FILEMAKER_SORT_ASCEND);
 $webShowCodesResults = $webShowCodesFind->execute();
@@ -105,7 +119,8 @@ $log->debug("End get Show Codes and have record");
 //The software is no longer attempting to pull Episode number list 02/12/2015
 $requestorEpisodeNumberName = "Show_EpisodeNumber_t";
 
-$programmingName = "Programming_Type_t";
+//Here is the start of the replacement of the UI type fields ------------------------------------------
+//$requestDivisionFieldName = "Programming_Type_t";
 $programmingPipeItems = $request->getField('UI_ValueList_ProgrammingType_ct');
 if(isset($programmingPipeItems))
     $programmingItems = convertPipeToArray($programmingPipeItems);
@@ -164,7 +179,7 @@ $log->debug("Now have quired all fields now build HTML");
             <th colspan = "2" class="tableTDHeaderDef"><!-- Request Title Label -->
                 Request Title
             </th >
-            <th class="tableTDHeaderDef" ><!-- Network Label -->
+            <th class="tableTDHeaderDef" ><!-- Division Label -->
                 <?php echo($labelRecord->getField('Programming_Type_t')); ?>
             </th >
             <th colspan = "2" class="tableTDHeaderDef" ><!-- Request Notes Title -->
@@ -184,15 +199,17 @@ $log->debug("Now have quired all fields now build HTML");
                 <td colspan = "2" ><!-- Request Title Data Field -->
                     <input class="tdc-input-xs form-control" type = "text" name="Work_Order_Title_t" id="Work_Order_Title_t" value="<?php echo($request->getField('Work_Order_Title_t')); ?>">
                 </td >
-                <td ><!-- Network dropdown Data Field -->
+                <td ><!-- Division dropdown Data Field -->
                     <!-- TODO Remove this comment line after testing of Refactor (02/13/2015) -->
-                    <select class="tdc-input-xs form-control" id="<?php echo($programmingName); ?>" name="<?php echo($programmingName); ?>" >
+                    <select class="tdc-input-xs form-control" id="<?php echo($requestDivisionFieldName); ?>" name="<?php echo($requestDivisionFieldName); ?>" >
                         <?php
-                        $programmingItem = $request->getField($programmingName);
+                        $programmingItem = $request->getField($requestDivisionFieldName);
                         if(isset($programmingItem) && (strlen($programmingItem) > 0)){
+                            //TODO create new drop down to select item from  $_SESSION['user_accounts'] session variable 07/7/2016
                             buildRequestDropDownListWithValue($programmingItems, $programmingItem);
                         }else {
-                            buildRequestDropDownList($programmingItems);
+                            //This field should never empty so use the [0] value of session array
+                            buildRequestDropDownListWithValue($programmingItems, $requestDivision);
                         }
                         ?>
                     </select>
@@ -287,6 +304,7 @@ $log->debug("Now have quired all fields now build HTML");
                         <td class="col-xs-2 col-md-2"><!-- Series title (NOW) using Show_Code field Data Field Dropdown-->
                             <select class="tdc-input-xs form-control" id="<?php echo($showCodeFieldName); ?>" name="<?php echo($showCodeFieldName); ?>">
                                 <?php
+                                //TODO use $_SESSION['user_accounts'] session  variable to build the show codes or better yet show titles
                                 $showCodeNameSelected = $request->getField($showCodeFieldName);
                                 if(isset($showCodeNameSelected) && strlen($showCodeNameSelected) > 0){
                                     buildDropDownWithFieldsWithValue($showCodeItems, $showCodeNameSelected);
