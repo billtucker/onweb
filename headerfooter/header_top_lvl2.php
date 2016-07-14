@@ -84,7 +84,7 @@ if(file_exists($root .$appConfigName)){
                         <a href="#" onclick="history.go(-1);return false;"><strong>Back</strong></a>
                     </li>
                     <li class="tdc-nav-bar-header-divider-left" role="presentation">
-                    <li class="tdc-nav-bar-header-divider-left" role="presentation">
+                    <li class="tdc-nav-bar-header-divider-left printBtn" role="presentation">
                         <!-- disable the print button functionality on the spotedit.php only -->
                         <?php printEnableDisable($pageUrl); ?>
                     </li>

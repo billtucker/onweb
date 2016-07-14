@@ -627,8 +627,16 @@ function findTarget($sLine, $target){
  */
 function printEnableDisable($url){
     $pageToDisablePrint = "spotedit.php";
+    $disablePrint = false;
+    $pagesToDisableArray = array("spotedit.php", "login.php");
 
-    if(strpos($url, $pageToDisablePrint)) {
+    foreach($pagesToDisableArray as $disablePage){
+        if(strpos($url, $disablePage)){
+            $disablePrint = true;
+        }
+    }
+
+    if($disablePage) {
         echo("<a href=\"#\" onclick=\"disabledPrintBtnMessage()\"><strong>Print</strong></a>");
     }else{
         echo("<a href=\"#\" onclick=\"document.print.submit()\"><strong>Print</strong></a>");

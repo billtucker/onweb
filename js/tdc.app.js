@@ -177,7 +177,7 @@ $(document).ready(function () {
 //class or multiple classes to determine if NProgress should run (Example class="btn btn-default delgrp" or
 //class="delgrp")
 function skipNprogressHasClassName(ele){
-    var classArray = ['fileinput-remove', 'delgrp', 'remove-cross','upload-btn'];
+    var classArray = ['fileinput-remove', 'delgrp', 'remove-cross','upload-btn', 'printBtn'];
     for(var x = 0; x < classArray.length; x++){
         if($(ele.target).hasClass(classArray[x])){
             return true;

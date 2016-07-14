@@ -12,6 +12,7 @@ include_once($_SERVER["DOCUMENT_ROOT"] ."/onweb/onweb-config.php");
 include_once('utility.php');
 include_once("$validation" ."user_validation.php");
 include_once($root .'/vendor/autoload.php');
+include_once($errors .'errorProcessing.php');
 
 $pageUrl = urlencode("https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
 
@@ -35,23 +36,29 @@ try{
     $log->error("printPage.php - New PDF Class Exception: " .$e->getMessage());
 }
 
-$urlIn = urldecode($_POST['url']);
+if(isset($_POST['url'])){
+    $urlIn = urldecode($_POST['url']);
 
-$url = setPrintEncryptionUrl($urlIn);
+    $url = setPrintEncryptionUrl($urlIn);
 
-$log->debug("Use Post to get URL: " .$url);
+    $log->debug("Use Post to get URL: " .$url);
 
-header('Content-Type: application/pdf');
-header('Cache-Control: public, must-revalidate, max-age=0'); // HTTP/1.1
-header('Pragma: public');
-header('Expires: Sat, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
-header('Content-Type: application/pdf');
-header('Content-Disposition: inline; filename="print_page.pdf"');
+    header('Content-Type: application/pdf');
+    header('Cache-Control: public, must-revalidate, max-age=0'); // HTTP/1.1
+    header('Pragma: public');
+    header('Expires: Sat, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+    header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+    header('Content-Type: application/pdf');
+    header('Content-Disposition: inline; filename="print_page.pdf"');
 
-
-try{
-    echo $snappy->getOutput($url);
-}catch (Exception $e){
-    $log->error("Exception thrown PDF Generation error: " .$e->getMessage());
+    try{
+        echo $snappy->getOutput($url);
+    }catch (Exception $e){
+        $log->error("Exception thrown PDF Generation error: " .$e->getMessage());
+    }
+}else{
+    $errorTitle = "Print Page Error";
+    $log->error("Error Print Operation", "No URL sent from page to print", $pageUrl, null, null);
+    processError("Error Print Operation", "Error Print Operation", $pageUrl, null, null, $errorTitle);
+    exit();
 }

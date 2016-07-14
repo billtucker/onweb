@@ -106,7 +106,6 @@ function validateUser($site_prefix, $fullUrl, $siteSection, $viewCheck, $pluginT
 //This method will currently process queries from ON-Request pages if user is allowed to edit Request
 //TODO this method should be replaced by the SpotViewer methods that determine if a user can access or edit sections
 function userCanModifyRequest($phraseToTest){
-
     global $log;
 
     if(!session_id()){
@@ -114,13 +113,19 @@ function userCanModifyRequest($phraseToTest){
     }
 
     if(!empty($_SESSION['accessLevel'])){
-        if(in_array($phraseToTest, $_SESSION['accessLevel'])){
-			$log->debug("True: userCanModifyRequest() method");
-            return true;
+        if(is_array($_SESSION['accessLevel'])){
+            if(in_array($phraseToTest, $_SESSION['accessLevel'])){
+                $log->debug("True: userCanModifyRequest() method");
+                return true;
+            }else{
+                if($_SESSION['accessLevel'] == "$phraseToTest"){
+                    return true;
+                }
+            }
         }
     }
 	
-	$log->debug("False: userCanModifyRequest() method");
+	$log->debug("Failed to find Request Modify for user: " .$_SESSION['userName']);
     return false;
 }
 

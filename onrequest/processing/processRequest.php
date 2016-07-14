@@ -42,7 +42,7 @@ if (isset($_POST['requestPkId'])) {
 if (isset($_POST['requestsubmit']) || isset($_POST['saveDataLink'])) {
     $requestFieldArray = array('Work_Order_Title_t', 'Programming_Type_t', 'Work_Order_Notes_t', 'Request_Approver_List_t',
         'Contact_Company_t', 'Contact_Department_t', 'Contact_Phone_t', 'Show_Code_t', 'Show_EpisodeNumber_t',
-        'Show_Episode_Title_t', 'Show_AirDate_t', 'Show_AirTime_ti');
+        'Show_Episode_Title_t', 'Show_AirDate_t', 'Show_AirTime_ti', 'Contact_pk_Contact_ID_n', 'Request_Status_t');
 
     $deliverableFormFieldArray = array('Spot_Type', 'Length', 'Notes', 'Rough_Cut_Due_d', 'Final_Due_Date',
         'Flight_Date_Start', 'Flight_Date_End', '__pk_ID');

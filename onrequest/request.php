@@ -31,6 +31,11 @@ if($validateUser) {
     $canModify = userCanModifyRequest($okModify);
 }
 
+//User is now validated so lets start the $_SESSION[] to use the properties on this page
+//depending onm the user path through the system we need to ensure that the session was started
+if(!session_id()){
+    session_start();
+}
 
 $log->debug("Start including constants, request connection, and other files");
 include_once($requestInclude .'constants.php');
@@ -76,7 +81,7 @@ if(FileMaker::isError($deliverableResults)){
 $log->debug("End now have Deliverable record. Start get Show Codes");
 
 //New show code Query based on Network/Programming_Type_t field as primary key 02/12/2015
-//Now modified to get Programming_Type_T item from session $_SESSION['user_accounts'] block 07/07/2015
+//Start Code Change -- Now modified to get Programming_Type_T item from session $_SESSION['user_accounts'] block 07/07/2015
 $showCodeFieldName = 'Show_Code_t';
 $webShowCodesLayoutName = "[WEB] Show Codes";
 $webShowCodesFind = $fmOrderDB->newFindCommand($webShowCodesLayoutName);
@@ -92,6 +97,7 @@ if(empty($requestDivision) || $requestDivision == ""){
 }else{
     $webShowCodesFind->addFindCriterion($requestDivisionFieldName, '==' .$request->getField($requestDivisionFieldName));
 }
+//End Code change to use SESSION Programming_Type_t if no value stored on record
 
 
 //Sort the results from the query alphabetically by the Show Title field
@@ -242,10 +248,10 @@ $log->debug("Now have quired all fields now build HTML");
                         ?>
                     </select>
                     <p class="form-control-static text-center" >
-                        <?php echo($request->getField('Request_Status_Date_d'));?> <?php echo($request->getField('Request_Status_Time_i')); ?>
+                        <!-- <?php echo($request->getField('Request_Status_Date_d'));?> <?php echo($request->getField('Request_Status_Time_i')); ?> -->
                     </p>
                     <p class="form-control-static text-center" >
-                        <?php echo($request->getField('Request_Status_By_t')); ?>
+                        <!-- <?php echo($request->getField('Request_Status_By_t')); ?> -->
                     </p>
                 </td><!-- End Status Block  -->
             </tr>
