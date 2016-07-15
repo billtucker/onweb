@@ -947,5 +947,57 @@ function getDirectoryNoJson($dirName, $directoryArray){
     }
 }
 
+/**
+ * A method to return an array of key value pairs for a given Programming Type or division from a common layout
+ * [WEB] OAP_CODES Value List Items. The return arrays are to be loaded in to users session object
+ * @param $layoutFindKey String key to access list data for a given type (i.e. Spot Type List is get Spot types only)
+ * for a user account division
+ * @param $codeField String code field name to access the field to populate the value of ther option tag
+ * @param $descriptionField String description field name
+ * @param $divisionField String division field name of array
+ * @param $divisionArray Array String of Programming_t values or value
+ * @param $searchFor String used for troubleshooting proposes only
+ * @param $dbHandle FileMaker handle to database
+ * @param $sortField String field name to sort on of search operation
+ * @return array Array of key:value pairs by Programming_t/divisions searched (perfect json data format)
+ */
+function buildSpotVersionsListArray($layoutFindKey, $codeField, $descriptionField, $divisionField, $divisionArray, $searchFor, $dbHandle, $sortField){
+    global $log;
+
+    $masterListArray = array();
+
+    //fixed values to build list. All other values are passed in to method
+    $oapCodesLayout = "[WEB] OAP_CODES Value List Items";
+    $oapCodesKeyField = "z_SYS_List_Type_t";
+
+    $log->debug("Searching for: " .$searchFor);
+
+    foreach($divisionArray as $division){
+        $itemListArray = array();
+        $listFind = $dbHandle->newFindCommand($oapCodesLayout);
+        $listFind->addFindCriterion($oapCodesKeyField, $layoutFindKey);
+        $listFind->addFindCriterion($divisionField, $division);
+        $listFind->addFindCriterion($codeField, "*");
+        $listFind->addSortRule($sortField, 1, FILEMAKER_SORT_ASCEND);
+
+        $results = $listFind->execute();
+
+        if(FileMaker::isError($results)){
+            $log->error("Error in searching for " .$searchFor . " Error: " .$results->getMessage());
+            return $masterListArray;
+        }else{
+            $log->debug("XXXX- FM Record count: " .$results->getFoundSetCount() ." For division " .$division ." Search: " .$searchFor ." -XXXX");
+            $records = $results->getRecords();
+            foreach($records as $record){
+                if($record->getField($codeField) != ""){
+                    $itemListArray[$record->getField($codeField)] = $record->getField($descriptionField);
+                }
+            }
+            $masterListArray[$division] = $itemListArray;
+        }
+    }
+    return $masterListArray;
+}
+
 
 ?>

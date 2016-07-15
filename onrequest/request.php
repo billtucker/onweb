@@ -90,10 +90,39 @@ $requestDivisionFieldName = "Programming_Type_t";
 $requestDivision = $request->getField($requestDivisionFieldName);
 
 //New test added to determine if Request was assigned a division or programming_type_value If not we use 1st value
-//from the user_accounts of session
+//from the user_accounts of session. This is considered a temporary fix as future Requests created via index page buttons
+//will automatically assign a division or programming_type_t value
 if(empty($requestDivision) || $requestDivision == ""){
     $webShowCodesFind->addFindCriterion($requestDivisionFieldName, '==' .$_SESSION['user_accounts'][0]);
     $requestDivision = $_SESSION['user_accounts'][0];
+
+    //now write the value into the record
+    $saveFind = $fmOrderDB->newFindCommand('[WEB] Project Request');
+    $saveFind -> addFindCriterion('__pk_ID', '==' .$requestPkId);
+    $saveFinds = $saveFind -> execute();
+
+    /** Check for errors and if so send to error processing and report to user */
+    if(FileMaker::isError($saveFinds)){
+        $errorTitle = "FileMaker Error";
+        $log->error($saveFinds->getMessage(), $saveFinds->getErrorString(), $pageUrl, $pkId, $site_prefix);
+        processError($saveFinds->getMessage(), $saveFinds->getErrorString(), $pageUrl, $pkId, $errorTitle);
+        exit;
+    }
+
+    /** Now pull all records of find command for Requests (Parent of Meta data) and pull the first record of the array */
+    $saveRequests = $saveFinds -> getRecords();
+    $saveRecord = $saveRequests[0];
+    $saveRecord->setField('Programming_Type_t', $requestDivision);
+    $saveRequest = $saveRecord->commit();
+
+    if(FileMaker::isError($saveRequest)){
+        $errorTitle = "FileMaker Error";
+        $log->error("Failed save Programming type to request", $saveRequest->getMessage(), $saveRequest->getErrorString(), $pageUrl, $requestPkId, $site_prefix);
+        processError($saveRequest->getMessage(), $saveRequest->getErrorString(), $pageUrl, $requestPkId, $errorTitle);
+        exit();
+    }
+
+    $log->debug("Programming type was empty is now set to: " .$requestDivision ." For PK: " .$requestPkId);
 }else{
     $webShowCodesFind->addFindCriterion($requestDivisionFieldName, '==' .$request->getField($requestDivisionFieldName));
 }
@@ -161,7 +190,7 @@ include_once($headerFooter .$headerToUse);
 //TODO figure this one out as the JS directory dose not exist at the Request level. For now hardcode the value
 echo("\n<script type='text/javascript' src='../js/tdc-request-save-scroll-button.js'></script>\n");
 
-$log->debug("Now have quired all fields now build HTML");
+$log->debug("Now have required all fields now build HTML");
 ?>
     <!-- TODO review form and move styles to css form -->
     <!-- form style was added to keep elements  from shifting right (Yes Strange but true) -->
@@ -373,7 +402,7 @@ $log->debug("Now have quired all fields now build HTML");
                         <?php if($canModify){ ?>
                             <button id="add-deliverable" name="add-deliverable" value="add-deliverable" type="submit"
                                     class="input-group-addon tdc-glyphicon-control tdc-cell-spacing"
-                                    style="color:lightskyblue;border: none" aria-hidden="true" title="Add Deliverable to the Request">
+                                    style="color:lightskyblue;border: none" aria-hidden="true" title="Add Deliverable to the Request" data-toggle="tooltip">
                                 <span class="glyphicon glyphicon-plus"></span>
                             </button>
                         <?php } else { ?>
@@ -405,12 +434,23 @@ $log->debug("Now have quired all fields now build HTML");
                 $requestedProjectListCounter = 1;
                 $underLine = "_"; //Used for selects to assign name and ID(s) for elements
 
+
                 if(isset($projectReqDelRelatedSets) && !empty($projectReqDelRelatedSets)){
                     foreach($projectReqDelRelatedSets as $projectRelatedSet){ ?>
-                        <tr><!-- Start of data row for Project List -->
-                            <td>
-                                <?php echo($projectRelatedSet->getField('#')); ?>
-                            </td>
+                        <!-- Start of data row for Project List --><!-- let make sure to add and if statement for can edit -->
+                        <tr id="<?php echo("del_deliverable_" .$projectRelatedSet->getField('#'));?>">
+                            <td><!-- start of TD with deliverable index and delete icon -->
+                                <?php echo($projectRelatedSet->getField('#')); ?><br><br>
+                                <button class='btn btn-default btn-sm deleteRow tdc-tag-delete-icon delgrp'
+                                        id="<?php echo('deleteDeliverable_' .$projectRelatedSet->getField('#'));?>"
+                                        name="<?php echo('deleteDeliverable_' .$projectRelatedSet->getField('#'));?>"
+                                        type='button'
+                                        onclick="deleteDeliverable(<?php echo($projectRelatedSet->getField('#'));?>);"
+                                        title="Delete this record"
+                                        data-toggle="tooltip" data-placement='bottom'>
+                                    <span class='glyphicon glyphicon-remove-sign delgrp'></span>
+                                </button>
+                            </td><!-- end of td with index number and delete icon -->
                             <td><!-- Project Type Dropdown Field -->
                                 <select class="tdc-request-list-height" name="<?php echo($spotTypeName .$underLine .$requestedProjectListCounter);?>"
                                         id="<?php echo($spotTypeName .$underLine .$requestedProjectListCounter);?>">
@@ -535,7 +575,8 @@ $log->debug("Now have quired all fields now build HTML");
                         <td>
                             <a href="deliverableview.php?pKid=<?php echo(rawurldecode($projectRelatedSet->getField('__pk_ID')));?>&itemId=<?php echo($requestedProjectListCounter);?>">
                                     <span class="input-group-addon tdc-glyphicon-control tdc-cell-spacing icon-red">
-                                        <span class="glyphicon glyphicon-pencil"></span>
+                                        <span class="glyphicon glyphicon-pencil" title="Open this record"
+                                              data-toggle="tooltip" data-placement='top'></span>
                                     </span>
                             </a>
                             <input type="hidden" name=<?php echo("del_pk_id" .$underLine .$requestedProjectListCounter)?>
@@ -555,7 +596,7 @@ $log->debug("Now have quired all fields now build HTML");
                         <?php if($canModify){ ?>
                             <button id="add-deliverable" name="add-deliverable" value="add-deliverable" type="submit"
                                     class="input-group-addon tdc-glyphicon-control tdc-cell-spacing"
-                                    style="color:lightskyblue;border: none" aria-hidden="true" title="Add Deliverable to the Request">
+                                    style="color:lightskyblue;border: none" aria-hidden="true" title="Add Deliverable to the Request" data-toggle="tooltip">
                                 <span class="glyphicon glyphicon-plus"></span>
                             </button>
                         <?php } else { ?>

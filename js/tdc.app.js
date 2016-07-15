@@ -368,3 +368,29 @@ function addHiddenLinkFields(linkNum){
     document.getElementById("request-form").appendChild(input);
     document.getElementById("request-form").appendChild(pkToUse);
 }
+
+/**
+ * A very simple method to delete a deliverable record from a request using the request item (FM #) number and ajax.
+ * This method is generic enough and should not be tied to the dynamic code generation
+ * @param deleteIndex -- integer number assigned to deliverable record (ID and name values) to get and then hide
+ */
+function deleteDeliverable(deleteIndex){
+    var fullId = "__pk_ID_" + deleteIndex;
+    var pk = document.getElementById(fullId).value;
+    console.log("Delete for PK: " + pk);
+
+    $.ajax({
+        data: {deleteDelivPk:pk},
+        url: 'processing/processRequest.php',
+        method: 'POST',
+        success: function(msg){
+            console.log(msg);
+            console.log("Success with delete operation Now hide TR");
+            $('#del_deliverable_' + deleteIndex).hide();
+        },
+
+        error: function(msg){
+            console.log("Error: " + msg);
+        }
+    });
+}

@@ -23,6 +23,8 @@ if(isset($_GET['messageTitle'])){
     $messageTitle = "System Error";
 }
 
+$log->error("Error page called with error message: " .$message ." with title: " .$messageTitle);
+
 //include header file dynamically from the page URL
 include_once($headerFooter .getHeaderIncludeFileName(urldecode($pageUrl)));
 

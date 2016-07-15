@@ -30,16 +30,18 @@ if (!$canModify) {
 
 include_once($requestInclude . 'requestConnection.php');
 
-if (isset($_POST['requestPkId'])) {
-    $pkId = $_POST['requestPkId'];
-} else {
-    $errorTitle = "Missing Key To Process";
-    $log->error("Missing PK value redirect user to error page");
-    processError("Missing PKID", "Missing PKID", $pageUrl, "NULL", $errorTitle);
-    exit;
-}
 
 if (isset($_POST['requestsubmit']) || isset($_POST['saveDataLink'])) {
+
+    if (isset($_POST['requestPkId']) && !empty($_POST['requestPkId'])){
+        $pkId = $_POST['requestPkId'];
+    } else {
+        $errorTitle = "Missing Key To Process";
+        $log->error("Missing PK value redirect user to error page");
+        processError("Missing PKID", "Missing PKID", $pageUrl, "NULL", $errorTitle);
+        exit;
+    }
+
     $requestFieldArray = array('Work_Order_Title_t', 'Programming_Type_t', 'Work_Order_Notes_t', 'Request_Approver_List_t',
         'Contact_Company_t', 'Contact_Department_t', 'Contact_Phone_t', 'Show_Code_t', 'Show_EpisodeNumber_t',
         'Show_Episode_Title_t', 'Show_AirDate_t', 'Show_AirTime_ti', 'Contact_pk_Contact_ID_n', 'Request_Status_t');
@@ -139,6 +141,16 @@ if (isset($_POST['requestsubmit']) || isset($_POST['saveDataLink'])) {
 
 } elseif (isset($_POST['add-deliverable'])) {
 
+    //TODO: This code is a duplicate of request "All" process figuree this out Soon
+    if (isset($_POST['requestPkId']) && !empty($_POST['requestPkId'])){
+        $pkId = $_POST['requestPkId'];
+    } else {
+        $errorTitle = "Missing Key To Process";
+        $log->error("Missing PK value redirect user to error page");
+        processError("Missing PKID", "Missing PKID", $pageUrl, "NULL", $errorTitle);
+        exit;
+    }
+
     $log->debug("Adding deliverable record start with PKID: " . $pkId);
 
     //This is new definition of calling a script in FM from API 11-16-2015
@@ -161,6 +173,43 @@ if (isset($_POST['requestsubmit']) || isset($_POST['saveDataLink'])) {
     header('Pragma: no-cache');
 
     header('Location: ' . $request_site_prefix . 'request.php?pkId=' . urlencode($pkId) . '&message=delvAdded');
+
+} else if(isset($_POST['deleteDelivPk'])){
+    $pkToDelete = $_POST['deleteDelivPk'];
+    $log->debug("Step 1. Did we get the PK: " .$pkToDelete);
+
+    $deliverableLayout = '[WEB] Project Deliverable';
+    $DeliverableFind = $fmOrderDB->newFindCommand($deliverableLayout);
+    $DeliverableFind->addFindCriterion('__pk_ID', '==' . $pkToDelete);
+    $deliverableResults = $DeliverableFind->execute();
+    //This is the control if no deliverable records exist the skip the deliverable save operation
+    $processDeliverable = true;
+
+    if (FileMaker::isError($deliverableResults)) {
+        $errorTitle = "FileMaker Error";
+        $log->error("Failure to open " . $deliverableLayout . " " . $deliverableResults->getMessage() . " " . $deliverableResults->getCode());
+        processError($deliverableResults->getMessage(), $deliverableResults->getErrorString(), "processRequest.php", $pkId, $errorTitle);
+        exit;
+    } else {
+        //Get all records after error test
+        $projectReqDelRelatedSets = $deliverableResults->getRecords();
+    }
+
+    $deliveriableRecord = $projectReqDelRelatedSets[0];
+    $deliveriableRecId = $deliveriableRecord->getRecordId();
+
+    $log->debug('We have the recordId: ' .$deliveriableRecId);
+
+    $deleteRecord = $fmOrderDB->newDeleteCommand($deliverableLayout, $deliveriableRecId);
+
+    if(FileMaker::isError($deleteRecord)){
+        $errorTitle = "FileMNaker Error";
+        $log->error("Failed to delete Deliverable PK: " .$pkToDelete . " RecordId: " .$deliveriableRecId ." Error Message: " .$deleteRecord->getMessage());
+        processError($deleteRecord->getMessage(), $deleteRecord->getErrorString(), "processRequest.php", $pkToDelete, $errorTitle);
+        exit;
+    }
+    $log->debug("Successfully deleted Deliveriable Record PK: " .$pkToDelete ." RecId: " .$deliveriableRecId);
+    echo "success";
 } else {
     //TODO This should go to a clean Error page like error404.php
     $log->debug("This is a error condition and the script or processing never happened");

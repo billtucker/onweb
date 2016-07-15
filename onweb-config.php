@@ -85,7 +85,7 @@ $noRecordsFound = "401";
 //an image/file URL. Some originzation will want disable this flag to allow for virus validation before uploading to FM
 $getContainerUrl = true;
 
-$buildVersion = "06272016.R2";
+$buildVersion = "07152016.BETA1";
 
 //TODO this is in place to cover an issue with LDAP at Fox this is temporary in nature. This will force a bypass password validation
 //TODO This should be removed once the LDAP is resolved

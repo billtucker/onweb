@@ -29,7 +29,7 @@ function displayPencilLinkWithJavaScript($itemNum, $deliverablePkId){
 echo<<< DIVCODE
     <a href="#" id="$linkHtmlId" name="$linkHtmlId" >
         <span class="input-group-addon tdc-glyphicon-control tdc-cell-spacing icon-red">
-            <span class="glyphicon glyphicon-pencil"></span>
+            <span class="glyphicon glyphicon-pencil" title="Add Deliverable to the Request" data-toggle="tooltip"></span>
         </span>
     </a>
     <input type="hidden" name="$deliverableHtmlId" id="$deliverableHtmlId" value="$deliverablePkId">

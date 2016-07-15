@@ -86,7 +86,7 @@ function buildTagDeleteCell($index, $canModify){
     if($canModify){
         echo("<button class='btn btn-default btn-sm deleteRow tdc-tag-delete-icon delgrp' id='"
             .$idNamePrefix ."' name='" .$idNamePrefix ."' type='button'
-        onclick=delRow('" .$tableId ."'," .$clickRowId ."); title='" .$titleText ."' data-placement='bottom'>\n");
+        onclick=delRow('" .$tableId ."'," .$clickRowId ."); title='" .$titleText ."' data-placement='bottom' data-toggle='tooltip'>\n");
         echo("<span class='glyphicon glyphicon-remove-sign delgrp' id='" .$spanIdName ."'></span>\n");
         echo("</button>");
     }else{

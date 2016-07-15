@@ -25,8 +25,8 @@ if(FileMaker::isError($requestListFinds)){
         $requestList = array();
         $log->debug("Request list is empty no records found. Now display empty Request table view");
     }else{
-        $log->error($requestFinds->getMessage(), $requestFinds->getErrorString(), $pageUrl, "NA", $site_prefix);
-        processError($requestFinds->getMessage(), $requestFinds->getErrorString(), $pageUrl, "NA", $errorTitle);
+        $log->error($saveFinds->getMessage(), $saveFinds->getErrorString(), $pageUrl, "NA", $site_prefix);
+        processError($saveFinds->getMessage(), $saveFinds->getErrorString(), $pageUrl, "NA", $errorTitle);
         exit;
     }
 }else{
