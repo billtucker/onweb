@@ -100,6 +100,30 @@ function buildRequestDropDownMapWithValue($valueMap, $selectedValue){
     }
 }
 
+function buildSessionDropDownMapWithValue($valueMap, $selectedValue){
+    if(isset($valueMap)){
+        foreach($valueMap as $key => $value){
+            if($selectedValue == $value){
+                echo("<option value=" .$key ." selected>" .$value ."</option>\n");
+            }else{
+                echo("<option value=" .$key .">" .$value ."</option>\n");
+            }
+        }
+    }else{
+        echo("<option></option>");
+    }
+}
+
+function buildSessionDropDown($valueMap){
+    echo("<option></option>"); //start with an empty value
+
+    if(isset($valueMap)){
+        foreach($valueMap as $key => $value){
+            echo("<option value=" .$key ." >" .$value ."</option>\n");
+        }
+    }
+}
+
 /**
  * New function to process Show Codes view 02/17/2015
  * @param $records -- show code record handle to layout

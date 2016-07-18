@@ -78,6 +78,24 @@ function isPipeDelaminatedArray($item){
 }
 
 /**
+ * This method takes a multi value list or single string and returns an Array
+ * @param $items one or more string items delimintaed by Pipe "|" characters
+ * @return array always return an array of 1 or more values
+ */
+function convertPipeToAnArray($items){
+    if(empty($items)){
+        return array();
+    }
+
+    if(isPipeDelaminatedArray($items)){
+        return explode("|", trim($items));
+    }else{
+        return array($items);
+    }
+}
+
+
+/**
  * @param $buttonLabel Name of Project Type
  * @param $pkId -- FileMaker primary key for Project Type
  * Function used by index.php to display Project Type buttons
@@ -439,7 +457,8 @@ function destroySession(){
     unset($_SESSION['lastName']);
     unset($_SESSION['accessLevel']);
     unset($_SESSION['userName']);
-    unset( $_SESSION['installedPlugins']);
+    unset($_SESSION['installedPlugins']);
+    unset($_SESSION["show_codes"]);
     session_destroy();
 }
 
@@ -961,7 +980,7 @@ function getDirectoryNoJson($dirName, $directoryArray){
  * @param $sortField String field name to sort on of search operation
  * @return array Array of key:value pairs by Programming_t/divisions searched (perfect json data format)
  */
-function buildSpotVersionsListArray($layoutFindKey, $codeField, $descriptionField, $divisionField, $divisionArray, $searchFor, $dbHandle, $sortField){
+function buildSpotVersionsSessionArray($layoutFindKey, $codeField, $descriptionField, $divisionField, $divisionArray, $searchFor, $dbHandle, $sortField){
     global $log;
 
     $masterListArray = array();
@@ -997,6 +1016,51 @@ function buildSpotVersionsListArray($layoutFindKey, $codeField, $descriptionFiel
         }
     }
     return $masterListArray;
+}
+
+/**
+ * For consistency this method will return a list of Show Titles (show_codes) by division in the same way spot
+ * types, versions, and descriptor list operate. This method is like the buildSpotVersionsSessionArray() method
+ * however thsi method is only for Show Titles. This method takes an array accounts then builds an array of titles
+ * per account that is loaded in to the SESSION
+ * @param $dbHandle FM DB handle
+ * @param $accountArray String $_SESSION array of user_accounts all accounts associated with this user
+ * @return array String array of show titles by account
+ */
+function buildShowCodesSessionArray($dbHandle, $accountArray, $requestPkId, $pageUrl){
+    global $log, $noRecordsFound, $site_prefix;
+    $showCodesArray = array();
+    $showCodeSortFieldName = 'Show_Title_t';
+    $webShowCodesLayoutName = "[WEB] Show Codes";
+    $webShowCodesDivisionField = 'Programming_Type_t';
+    $webShowCodesFind = $dbHandle->newFindCommand($webShowCodesLayoutName);
+
+    foreach($accountArray as $account){
+        $showCodeData = array();
+        $webShowCodesFind->addFindCriterion($webShowCodesDivisionField, '==' .$account);
+        $webShowCodesFind->addSortRule($showCodeSortFieldName, 1, FILEMAKER_SORT_ASCEND);
+        $webShowCodesResults = $webShowCodesFind->execute();
+
+        if(FileMaker::isError($webShowCodesResults)){
+            if($webShowCodesResults->getCode() == $noRecordsFound){ // check for 401 or no record found
+                $log->debug("No matching show codes results find");
+                //This is more than likely an empty array or a partial array if 2 accounts defined with only one with titles
+                return $showCodesArray;
+            }else {
+                $errorTitle = "FileMaker Error";
+                $log->error($webShowCodesResults->getMessage(), $webShowCodesResults->getErrorString(), $pageUrl, $requestPkId, $site_prefix);
+                processError($webShowCodesResults->getMessage(), $webShowCodesResults->getErrorString(), $pageUrl, $requestPkId, $errorTitle);
+                exit;
+            }
+        }else{
+            $showCodeItems = $webShowCodesResults->getRecords();
+            foreach($showCodeItems as $showItems){
+                $showCodeData[$showItems->getField('Show_Code_t')] = $showItems->getField('Show_Title_t');
+            }
+            $showCodesArray[$account] = $showCodeData;
+        }
+    }
+    return $showCodesArray;
 }
 
 

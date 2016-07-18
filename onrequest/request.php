@@ -55,7 +55,7 @@ if(isset($_GET['pkId']) && !empty($_GET['pkId'])){
     exit();
 }
 
-//Call function in requestConnection.php to get request handle
+//Call function in requestConnection.php to get request handle --> $request
 getRequest($requestPkId);
 
 $log->debug("Start Have request PK - do Deliverable Find command");
@@ -80,11 +80,12 @@ if(FileMaker::isError($deliverableResults)){
 
 $log->debug("End now have Deliverable record. Start get Show Codes");
 
-//New show code Query based on Network/Programming_Type_t field as primary key 02/12/2015
-//Start Code Change -- Now modified to get Programming_Type_T item from session $_SESSION['user_accounts'] block 07/07/2015
+//get all available Programming_t and load them to sessions
+$requestUIProgammingField = "UI_ValueList_ProgrammingType_ct";
+$allProgrammingTypes = convertPipeToAnArray($request->getField($requestUIProgammingField));
+
+$log->debug("Start Show Code list from FM or just Session");
 $showCodeFieldName = 'Show_Code_t';
-$webShowCodesLayoutName = "[WEB] Show Codes";
-$webShowCodesFind = $fmOrderDB->newFindCommand($webShowCodesLayoutName);
 
 $requestDivisionFieldName = "Programming_Type_t";
 $requestDivision = $request->getField($requestDivisionFieldName);
@@ -93,10 +94,10 @@ $requestDivision = $request->getField($requestDivisionFieldName);
 //from the user_accounts of session. This is considered a temporary fix as future Requests created via index page buttons
 //will automatically assign a division or programming_type_t value
 if(empty($requestDivision) || $requestDivision == ""){
-    $webShowCodesFind->addFindCriterion($requestDivisionFieldName, '==' .$_SESSION['user_accounts'][0]);
     $requestDivision = $_SESSION['user_accounts'][0];
 
-    //now write the value into the record
+    //If programming_type_t is null from FM then use $_SESSION['user_accounts'][0] value. Now write that assignment to the request
+    //record to ensure it is set ofr deliverable record
     $saveFind = $fmOrderDB->newFindCommand('[WEB] Project Request');
     $saveFind -> addFindCriterion('__pk_ID', '==' .$requestPkId);
     $saveFinds = $saveFind -> execute();
@@ -123,38 +124,26 @@ if(empty($requestDivision) || $requestDivision == ""){
     }
 
     $log->debug("Programming type was empty is now set to: " .$requestDivision ." For PK: " .$requestPkId);
-}else{
-    $webShowCodesFind->addFindCriterion($requestDivisionFieldName, '==' .$request->getField($requestDivisionFieldName));
 }
+
+//Validate if session was loaded with Show codes if not load them to session
+if(!isset($_SESSION[$showCodesSessionIndex])){
+    $log->debug("Show codes session is not set so load Session and showCodeItems array");
+    $showCodeItems = buildShowCodesSessionArray($fmOrderDB, $allProgrammingTypes, $requestPkId, $pageUrl);
+    $_SESSION[$showCodesSessionIndex] = $showCodeItems;
+}else{
+    $log->debug("Use Session to load showCodeItems array");
+    $showCodeItems = $_SESSION[$showCodesSessionIndex];
+}
+
 //End Code change to use SESSION Programming_Type_t if no value stored on record
 
-
-//Sort the results from the query alphabetically by the Show Title field
-$webShowCodesFind->addSortRule($showCodeFieldName, 1, FILEMAKER_SORT_ASCEND);
-$webShowCodesResults = $webShowCodesFind->execute();
-
-if(FileMaker::isError($webShowCodesResults)){
-    if($webShowCodesResults->getCode() == $noRecordsFound){
-        $log->debug("No matching show codes results find");
-        //Init an empty array for the builder
-        $showCodeItems = array();
-    }else {
-        $errorTitle = "FileMaker Error";
-        $log->error($webShowCodesResults->getMessage(), $webShowCodesResults->getErrorString(), $pageUrl, $requestPkId, $site_prefix);
-        processError($webShowCodesResults->getMessage(), $webShowCodesResults->getErrorString(), $pageUrl, $requestPkId, $errorTitle);
-        exit;
-    }
-}else{
-    //Now get all the records needed to populate dropdown 02/12/2015
-    $showCodeItems = $webShowCodesResults->getRecords();
-}
-
-$log->debug("End get Show Codes and have record");
+$log->debug("End Show Code list from FM or just Session");
 
 //The software is no longer attempting to pull Episode number list 02/12/2015
 $requestorEpisodeNumberName = "Show_EpisodeNumber_t";
 
-//Here is the start of the replacement of the UI type fields ------------------------------------------
+//This must stay in place until an understanding is had about use case
 //$requestDivisionFieldName = "Programming_Type_t";
 $programmingPipeItems = $request->getField('UI_ValueList_ProgrammingType_ct');
 if(isset($programmingPipeItems))
@@ -169,15 +158,61 @@ if(isset($requestStatusPipeList))
 //Removed query of list ands modified dropdown to input box 02/12/2015
 $requestorsByDepartmentName = "Contact_pk_Contact_ID_n";
 
-/** Project Type uses UI_Spot_Types_ValueList_ct field a special Pipe Delimited values **/
+//Now load all spot types for all given Programming_type_t values in the database
+if(!isset($_SESSION[$spotTypesSessionIndex])){
+    $spotTypeCodeDescriptionField = "Spot_Type_t";
+    $spotTypeDivision = "Spot_Type_Programming_t";
+    $spotListFilter = "Spot Type List";
+    //$layoutFindKey, $codeField, $descriptionField, $divisionField, $divisionArray, $searchFor, $dbHandle, $sortField
+    $spotTypeArray = buildSpotVersionsSessionArray($spotListFilter, $spotTypeCodeDescriptionField, $spotTypeCodeDescriptionField, $spotTypeDivision,
+        $allProgrammingTypes, "Spot Types", $fmOrderDB, $spotTypeCodeDescriptionField);
+
+    $_SESSION[$spotTypesSessionIndex] = $spotTypeArray;
+}else{
+    $log->debug('Using Session to load Spot Types');
+    $spotTypeArray = $_SESSION[$spotTypesSessionIndex];
+}
+
 $spotTypeName = "Spot_Type";
-$spotTypePipeList = $request->getField('UI_ValueList_Spot_Types_ct');
+//This is a raw pipe delimited list so convert everything to use arrays from $_SESSION[]
+//$spotTypePipeList = $request->getField('UI_ValueList_Spot_Types_ct');
 
 $lengthName = "Length";
 $lengthPipeList = $request->getField('UI_ValueList_ProjectLengths_ct');
 if(isset($lengthPipeList)){
     $lengthItems = convertPipeToArray($lengthPipeList);
 }
+
+//This to preload Tag Versions and Tag Version Descriptors to be used on the next page
+if(!isset($_SESSION[$tagsSessionIndex])){
+    $tagFindKey = "Version List";
+    $tagCodeField = "Version_List_t";
+    $tagDescriptionField = "Version_Description_t";
+    $tagDivisionField = "Version_ProgrammingType_t";
+    $tagsArray = buildSpotVersionsSessionArray($tagFindKey, $tagCodeField, $tagDescriptionField, $tagDivisionField, $allProgrammingTypes,
+        "Tags", $fmOrderDB, $tagDescriptionField);
+
+    $_SESSION[$tagsSessionIndex] = $tagsArray;
+}else{
+    $log->debug("Using Sessiopn to load Tags");
+    $tagsArray = $_SESSION[$tagsSessionIndex];
+}
+
+If(!isset($_SESSION[$versionDescriptorSessionIndex])){
+    $versionDescriptorFindKey = "Version Descriptor";
+    $versionDescriptorCodeField = "Version_Descriptor_t";
+    $versionDescriptorDescriptionField = "Version_Descriptor_Description_t";
+    $versionDescriptorDivisionField = "Version_Descriptor_Programming_t";
+
+    $versionDescriptorArray = buildSpotVersionsSessionArray($versionDescriptorFindKey, $versionDescriptorCodeField, $versionDescriptorDescriptionField,
+        $versionDescriptorDivisionField, $allProgrammingTypes, "Version Descriptors", $fmOrderDB, $versionDescriptorDescriptionField);
+
+    $_SESSION[$versionDescriptorSessionIndex] = $versionDescriptorArray;
+}else{
+    $log->debug("Using Session to load Version Descritors");
+    $versionDescriptorArray = $_SESSION[$versionDescriptorSessionIndex];
+}
+
 
 //1. Do not include HTML header record until most processing is completed. The error page cannot be called "Redirected"
 //after HTML header is called.
@@ -342,9 +377,11 @@ $log->debug("Now have required all fields now build HTML");
                                 //TODO use $_SESSION['user_accounts'] session  variable to build the show codes or better yet show titles
                                 $showCodeNameSelected = $request->getField($showCodeFieldName);
                                 if(isset($showCodeNameSelected) && strlen($showCodeNameSelected) > 0){
-                                    buildDropDownWithFieldsWithValue($showCodeItems, $showCodeNameSelected);
+                                    buildSessionDropDownMapWithValue($showCodeItems[$requestDivision], $showCodeNameSelected);
+                                    //buildDropDownWithFieldsWithValue($showCodeItems, $showCodeNameSelected);
                                 }else{
-                                    buildRequestDropDownWithFields($showCodeItems);
+                                    buildSessionDropDown($showCodeItems[$requestDivision]);
+                                    //buildRequestDropDownWithFields($showCodeItems);
                                 }
                                 ?>
                             </select>
@@ -457,9 +494,9 @@ $log->debug("Now have required all fields now build HTML");
                                     <?php
                                     $fmSpotType = $projectRelatedSet->getField('Spot_Type');  //$request->getField('Spot_Type');
                                     if(isset($fmSpotType) && (strlen($fmSpotType) > 0)){
-                                        buildRequestDropDownListWithValue(convertPipeToArray($spotTypePipeList), $fmSpotType);
+                                        buildSessionDropDownMapWithValue($spotTypeArray[$requestDivision], $fmSpotType);
                                     }else{
-                                        buildRequestDropDownList(convertPipeToArray($spotTypePipeList));
+                                        buildSessionDropDown($spotTypeArray[$requestDivision]);
                                     }
                                     ?>
                                 </select>

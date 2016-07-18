@@ -85,7 +85,15 @@ $noRecordsFound = "401";
 //an image/file URL. Some originzation will want disable this flag to allow for virus validation before uploading to FM
 $getContainerUrl = true;
 
-$buildVersion = "07152016.BETA1";
+$buildVersion = "07182016.BETA2";
+
+//Begin $_SESSION index names I expect this will grow over time to preform one time FileMaker loads then use $_SESSION
+// to access the data per page load. The labels should be self explanatory as to what is being loaded
+$showCodesSessionIndex = "show_codes";
+$spotTypesSessionIndex = "spot_types";
+$tagsSessionIndex = "tags";
+$versionDescriptorSessionIndex = "version_descriptors";
+
 
 //TODO this is in place to cover an issue with LDAP at Fox this is temporary in nature. This will force a bypass password validation
 //TODO This should be removed once the LDAP is resolved
