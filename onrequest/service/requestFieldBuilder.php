@@ -103,7 +103,7 @@ function buildRequestDropDownMapWithValue($valueMap, $selectedValue){
 function buildSessionDropDownMapWithValue($valueMap, $selectedValue){
     if(isset($valueMap)){
         foreach($valueMap as $key => $value){
-            if($selectedValue == $value){
+            if($selectedValue == $key){
                 echo("<option value=" .$key ." selected>" .$value ."</option>\n");
             }else{
                 echo("<option value=" .$key .">" .$value ."</option>\n");
