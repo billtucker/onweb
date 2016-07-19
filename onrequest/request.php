@@ -44,6 +44,14 @@ include_once($requestService .'requestFieldBuilder.php');
 include_once($utilities .'utility.php');
 include_once($errors .'errorProcessing.php');
 include_once($fmfiles ."order.db.php");
+include_once ($requestService ."loadRequestSessionData.php");
+
+//Now start the session if not set.. Maybe overkill with extra code lines but lets check and start if required
+//Maybe move this to config file since its included in all files
+if(!session_id()){
+    session_start();
+}
+
 $log->debug("End including constants, request connection, and other files");
 
 if(isset($_GET['pkId']) && !empty($_GET['pkId'])){
@@ -126,11 +134,9 @@ if(empty($requestDivision) || $requestDivision == ""){
     $log->debug("Programming type was empty is now set to: " .$requestDivision ." For PK: " .$requestPkId);
 }
 
-//Validate if session was loaded with Show codes if not load them to session
+//Now load session data for show codes
 if(!isset($_SESSION[$showCodesSessionIndex])){
-    $log->debug("Show codes session is not set so load Session and showCodeItems array");
-    $showCodeItems = buildShowCodesSessionArray($fmOrderDB, $allProgrammingTypes, $requestPkId, $pageUrl);
-    $_SESSION[$showCodesSessionIndex] = $showCodeItems;
+    $showCodeItems = loadShowCodeSessionData($fmOrderDB, $allProgrammingTypes, $requestPkId, $pageUrl);
 }else{
     $log->debug("Use Session to load showCodeItems array");
     $showCodeItems = $_SESSION[$showCodesSessionIndex];
@@ -158,17 +164,10 @@ if(isset($requestStatusPipeList))
 //Removed query of list ands modified dropdown to input box 02/12/2015
 $requestorsByDepartmentName = "Contact_pk_Contact_ID_n";
 
-//Now load all spot types for all given Programming_type_t values in the database
+//load SpotTypes from FM DB or Session
 if(!isset($_SESSION[$spotTypesSessionIndex])){
-    $spotTypeCodeDescriptionField = "Spot_Type_t";
-    $spotTypeDivision = "Spot_Type_Programming_t";
-    $spotListFilter = "Spot Type List";
-    //$layoutFindKey, $codeField, $descriptionField, $divisionField, $divisionArray, $searchFor, $dbHandle, $sortField
-    $spotTypeArray = buildSpotVersionsSessionArray($spotListFilter, $spotTypeCodeDescriptionField, $spotTypeCodeDescriptionField, $spotTypeDivision,
-        $allProgrammingTypes, "Spot Types", $fmOrderDB, $spotTypeCodeDescriptionField);
-
-    $_SESSION[$spotTypesSessionIndex] = $spotTypeArray;
-}else{
+    $spotTypeArray = loadSpotTypesSessionData($fmOrderDB, $allProgrammingTypes);
+}else {
     $log->debug('Using Session to load Spot Types');
     $spotTypeArray = $_SESSION[$spotTypesSessionIndex];
 }
@@ -183,36 +182,21 @@ if(isset($lengthPipeList)){
     $lengthItems = convertPipeToArray($lengthPipeList);
 }
 
-//This to preload Tag Versions and Tag Version Descriptors to be used on the next page
+//Load Tag Versions from DB or Session
 if(!isset($_SESSION[$tagsSessionIndex])){
-    $tagFindKey = "Version List";
-    $tagCodeField = "Version_List_t";
-    $tagDescriptionField = "Version_Description_t";
-    $tagDivisionField = "Version_ProgrammingType_t";
-    $tagsArray = buildSpotVersionsSessionArray($tagFindKey, $tagCodeField, $tagDescriptionField, $tagDivisionField, $allProgrammingTypes,
-        "Tags", $fmOrderDB, $tagDescriptionField);
-
-    $_SESSION[$tagsSessionIndex] = $tagsArray;
+    $tagsArray = loadTagsSessionData($fmOrderDB, $allProgrammingTypes);
 }else{
     $log->debug("Using Sessiopn to load Tags");
     $tagsArray = $_SESSION[$tagsSessionIndex];
 }
 
+//Load version Descriptor from DB or Session Once
 If(!isset($_SESSION[$versionDescriptorSessionIndex])){
-    $versionDescriptorFindKey = "Version Descriptor";
-    $versionDescriptorCodeField = "Version_Descriptor_t";
-    $versionDescriptorDescriptionField = "Version_Descriptor_Description_t";
-    $versionDescriptorDivisionField = "Version_Descriptor_Programming_t";
-
-    $versionDescriptorArray = buildSpotVersionsSessionArray($versionDescriptorFindKey, $versionDescriptorCodeField, $versionDescriptorDescriptionField,
-        $versionDescriptorDivisionField, $allProgrammingTypes, "Version Descriptors", $fmOrderDB, $versionDescriptorDescriptionField);
-
-    $_SESSION[$versionDescriptorSessionIndex] = $versionDescriptorArray;
+    $versionDescriptorArray = loadVersionDecriptorSessionData($fmOrderDB, $allProgrammingTypes);
 }else{
     $log->debug("Using Session to load Version Descritors");
     $versionDescriptorArray = $_SESSION[$versionDescriptorSessionIndex];
 }
-
 
 //1. Do not include HTML header record until most processing is completed. The error page cannot be called "Redirected"
 //after HTML header is called.
