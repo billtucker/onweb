@@ -531,8 +531,7 @@ $log->debug("Now have required all fields now build HTML");
                         </tr>
                         <?php $requestedProjectListCounter += 1; ?>
                     <?php } ?><!-- end foreach loop on related sets -->
-
-                <?php }else{ ?>
+                <?php } else { ?>
                     <tr><!-- (TODO Check if this empty row fails on load) Start of data row for Project List Empty Project Row-->
                         <td>
                             <?php echo($requestedProjectListCounter); ?><br>
@@ -607,6 +606,10 @@ $log->debug("Now have required all fields now build HTML");
                     </tr>
                 <?php }?>
             </table><!-- End Requested Project List Table -->
+            <!-- This hidden field represents the number of distribution record associted with this project-->
+            <!-- Used in the update Spot Type dropdown list JavaScript method -->
+            <!-- thew minus one accounts for increament command at the end of loop for records -->
+            <input type="hidden" id="spotindex" name="spotindex" value="<?php echo($requestedProjectListCounter - 1); ?>">
         <?php }else{ ?>
             <!-- <div class="row"> -->
             <!-- Start deliverable items when there is no deliveriable records-->
@@ -630,7 +633,7 @@ $log->debug("Now have required all fields now build HTML");
                     </td>
                 </tr>
                 </thead>
-
+                <input type="hidden" id="spotindex" name="spotindex" value="<?php echo($requestedProjectListCounter); ?>">
             </table><!-- End Requested Project List Table -->
         <?php } ?>
         <!-- </div > --><!-- End of DIV for ROW holding Requested Projects -->

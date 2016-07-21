@@ -267,19 +267,23 @@ function modifyIdName(rowNode, index){
     return rowNode;
 }
 
-//function to copy description text from dropdown value to associated input box
+
+/**
+ * function to copy description text from dropdown to associated input box for version list (Tags)
+ * @param id string value of id assigned to text input box adjacent the dropdown
+ */
 function copyRowData(id){
+    console.log("New Copy data Javascript method called");
     var td = "d", us = "_";
 
-    element = document.getElementById(id);
-    var fullValue = element.value;
-    var str = fullValue.substr(fullValue.indexOf(' ') + 1);
+    var elem = document.getElementById(id);
+    descriptionText = elem.options[elem.selectedIndex].innerHTML;
 
     var prefix = id.substr(0, id.indexOf('_'));
     var item = id.substr(id.indexOf('_') + 1);
     var target = prefix + us + td + item;
 
-    document.getElementById(target).value = str;
+    document.getElementById(target).value = descriptionText;
 }
 
 //delete a row from the tag table

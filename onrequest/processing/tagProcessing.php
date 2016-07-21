@@ -89,7 +89,7 @@ function processDeliverableTags($post, $deliverablePkId, $orderDBHandle){
         $itemNum = substr($value, strpos($value, $us) + 1);
         if (is_numeric($itemNum)) {
             if (isset($post[$value]) && !empty($post[$value])) {
-                $rowArray[$codeDex] = getPromoCode($post[$value]);
+                $rowArray[$codeDex] = $post[$value];
             }
 
             if (isset($post[$prefix . $us . $desc . $itemNum]) && !empty($post[$prefix . $us . $desc . $itemNum])) {

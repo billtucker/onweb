@@ -40,15 +40,13 @@ if(isset($_GET['pkId']) && !empty($_GET['pkId'])){
     exit;
 }
 
-$headerToUse = getHeaderIncludeFileName(urldecode($pageUrl));
-include_once($headerFooter .$headerToUse);
-
 include_once($requestInclude .'constants.php');
 include_once($requestInclude .'requestConnection.php');
 include_once($requestService .'requestFieldBuilder.php');
 include_once($requestService .'metaFieldBuilder.php');
 include_once($requestService .'deliverableTagFieldBuilder.php');
 include_once($errors .'errorProcessing.php');
+include_once ($requestService ."loadRequestSessionData.php");
 
 
 /** Open the Deliverable Layout and check for errors and assign record found by primary key */
@@ -72,9 +70,8 @@ $deliverableRecord = $deliverableRecords[0];
 //This is here to account for a for loop operation with a one to many operations
 $requestedProjectListCounter = 1;
 
+//Call function in requestConnection.php to get $request handle $request
 $requestPkId = $deliverableRecord->getField('_fk_Request_pk_ID');
-
-//Call function in requestConnection.php to get $request handle
 getRequest($requestPkId);
 
 $log->debug("Begin Find meta records");
@@ -98,42 +95,27 @@ if(FileMaker::isError($metaResults)){
 
 $log->debug("Finished find of meta records");
 
-$log->debug("Begin find of show codes for deliverable view");
-$programmingName = "Programming_Type_t";
-$webShowCodesLayoutName = "[WEB] Show Codes";
+//Can we get the Programming_Types_t from the request record
+//get all available Programming_t and load them to sessions
+$requestUIProgammingField = "UI_ValueList_ProgrammingType_ct";
+$allProgrammingTypes = convertPipeToAnArray($request->getField($requestUIProgammingField));
+
+//Get programming_type_t field and the selected Show Title selected
+$requestDivisionFieldName = "Programming_Type_t";
+$requestDivision = $request->getField($requestDivisionFieldName);
 $webShowCodeTitle = "Show_Title_t";
-$showCodeName = 'Show_Code_t';
-$webShowCodesFind = $fmOrderDB->newFindCommand($webShowCodesLayoutName);
-$webShowCodesFind->addFindCriterion($programmingName,'==' .$request->getField($programmingName));
-$webShowCodesFind->addFindCriterion($showCodeName,'==' .$request->getField($showCodeName));
-$webShowCodesFind->addSortRule($showCodeName, 1, FILEMAKER_SORT_ASCEND);
+$showTitle = $request->getField($webShowCodeTitle);
 
-$log->debug("Search Programming_Type_t using: " .$request->getField($programmingName) ." To search field: " .$programmingName);
-$log->debug("Search Show_code_t using: " .$request->getField($showCodeName) ." to search field: " .$showCodeName);
-
-$webShowCodesResults = $webShowCodesFind->execute();
-
-if(FileMaker::isError($webShowCodesResults)){
-    if($webShowCodesResults->getCode() == $noRecordsFound){
-        $log->debug("No matching records for search of show codes");
-    }else{
-        $log->error("Search For Show Codes Error: " .$webShowCodesResults->getMessage() ." Error String: " .$webShowCodesResults->getErrorString()
-            . " Page URL: " .$pageUrl ." PK ID: " .$deliverablePkId);
-        $errorTitle = "FileMaker Error";
-        processError($webShowCodesResults->getMessage(), $webShowCodesResults->getErrorString(), $pageUrl, $deliverablePkId, $errorTitle);
-        exit;
-    }
-}else{
-    $webShowCodeRecords = $webShowCodesResults->getRecords();
-    $webShowCodeRecord = $webShowCodesResults->getFirstRecord();
+//load SpotTypes from FM DB or Session
+if(!isset($_SESSION[$spotTypesSessionIndex])){
+    $spotTypeArray = loadSpotTypesSessionData($fmOrderDB, $allProgrammingTypes);
+}else {
+    $log->debug('Using Session to load Spot Types');
+    $spotTypeArray = $_SESSION[$spotTypesSessionIndex];
 }
-
-$log->debug("End find of show codes for deliverable view");
 
 /** Project Type uses UI_Spot_Types_ValueList_ct field a special Pipe Delimited values **/
 $spotTypeName = "Spot_Type";
-$spotTypePipeList = $request->getField('UI_ValueList_Spot_Types_ct');
-
 
 $lengthName = "Length";
 $lengthPipeList = $request->getField('UI_ValueList_ProjectLengths_ct');
@@ -144,7 +126,17 @@ if(isset($lengthPipeList)){
 $requestStatusName = 'Request_Status_t';
 
 $log->debug("Begin find tags command");
-//Tags layout FM API access
+
+//I should be able to remove all the code below with the following
+//Load Tag Versions from DB or Session
+if(!isset($_SESSION[$tagsSessionIndex])){
+    $tagsArray = loadTagsSessionData($fmOrderDB, $allProgrammingTypes);
+}else{
+    $log->debug("Using Sessiopn to load Tags");
+    $tagsArray = $_SESSION[$tagsSessionIndex];
+}
+
+//Pull tags set in FM by Deliverable PK ID
 $tagsLayout = "[WEB] Project Deliverable Tags";
 $tagsFind = $fmOrderDB->newFindCommand($tagsLayout);
 $log->debug("Add search criteria Deliverable PKID: " .$deliverablePkId);
@@ -169,21 +161,33 @@ if (FileMaker::isError($tagsResults)) {
 
 }
 
-$log->debug("End of tag query of FileMaker");
-
+//Build dropdown of the version list of Tags for given Programming_type_t
 $promoCodeVersionValueList = array();
 $promoCodeVersionDisplayList = array();
 
-$deliverableTagsField = "UI_ValueList_Tag_Vers_ct";
-$deliverableTagList = $deliverableRecord->getField($deliverableTagsField);
-
-//TODO ddd this back in when FM script is fixed
-if(!empty($deliverableTagList)){
-    foreach(convertPipeToArray($deliverableTagList) as $tag){
-        array_push($promoCodeVersionValueList, $tag);
-        array_push($promoCodeVersionDisplayList, convertTagDisplay($tag));
+$tagsForThisDivision = $tagsArray[$requestDivision];
+if(!empty($tagsForThisDivision)){
+    foreach($tagsForThisDivision as $code => $value){
+        array_push($promoCodeVersionValueList, $code);
+        array_push($promoCodeVersionDisplayList, $value);
     }
 }
+
+$log->debug("End of tag query of FileMaker");
+
+$log->debug("Start New version descriptors that are associated with version list (tags)");
+
+//Load version Descriptor from DB or Session Once
+If(!isset($_SESSION[$versionDescriptorSessionIndex])){
+    $versionDescriptorArray = loadVersionDecriptorSessionData($fmOrderDB, $allProgrammingTypes);
+}else{
+    $log->debug("Using Session to load Version Descritors");
+    $versionDescriptorArray = $_SESSION[$versionDescriptorSessionIndex];
+}
+
+$log->debug("Start New version descriptors that are associated with version list (tags)");
+
+//start loading headers and HTML
 $headerToUse = getHeaderIncludeFileName(urldecode($pageUrl));
 include_once($headerFooter .$headerToUse);
 
@@ -228,8 +232,8 @@ echo("\n<script type='text/javascript' src='../js/tdc-deliverable-save-scroll-bu
         <td colspan = "2" ><!-- Request Title Data Field -->
             <?php echo($request->getField('Work_Order_Title_t')); ?>
         </td>
-        <td><!-- Network selection -->
-            <?php echo($request->getField($programmingName));?>
+        <td><!-- Division selection -->
+            <?php echo($requestDivision);?>
         </td>
         <td colspan = "2"><!-- Request Notes Data Field -->
             <?php
@@ -280,8 +284,8 @@ echo("\n<script type='text/javascript' src='../js/tdc-deliverable-save-scroll-bu
             <tr>
                 <td><!-- Series Title -->
                     <?php
-                    if(isset($webShowCodeRecord)){
-                        echo($webShowCodeRecord->getField($webShowCodeTitle));
+                    if(isset($showTitle)){
+                        echo($showTitle);
                     }else{
                         echo "&nbsp;";
                     }
@@ -339,11 +343,11 @@ echo("\n<script type='text/javascript' src='../js/tdc-deliverable-save-scroll-bu
             <td><!-- Project Type Dropdown Field -->
                 <select class="tdc-deliverable-input-height" name="<?php echo($spotTypeName);?>" id="<?php echo($spotTypeName);?>">
                     <?php
-                    $fmSpotType = $deliverableRecord->getField('Spot_Type');
+                    $fmSpotType = $deliverableRecord->getField($spotTypeName);
                     if(isset($fmSpotType) && (strlen($fmSpotType) > 0)){
-                        buildRequestDropDownListWithValue(convertPipeToArray($spotTypePipeList), $fmSpotType);
+                        buildSessionDropDownMapWithValue($spotTypeArray[$requestDivision], $fmSpotType);
                     }else{
-                        buildRequestDropDownList(convertPipeToArray($spotTypePipeList));
+                        buildSessionDropDown($spotTypeArray[$requestDivision]);
                     }
                     ?>
                 </select>

@@ -198,7 +198,7 @@ function getRowPerPkId($_POSTArray, $target){
             foreach($_POSTArray as $key => $value){
                 if(returnPK($key) == $target){
                     if(isSuffixNumeric($key)){
-                        array_push($results, getPromoCode($value));
+                        array_push($results, $value);
                     }else{
                         array_push($results, $value);
                     }
@@ -981,7 +981,7 @@ function getDirectoryNoJson($dirName, $directoryArray){
  * @return array Array of key:value pairs by Programming_t/divisions searched (perfect json data format)
  */
 function buildSpotVersionsSessionArray($layoutFindKey, $codeField, $descriptionField, $divisionField, $divisionArray, $searchFor, $dbHandle, $sortField){
-    global $log;
+    global $log, $noRecordsFound;
 
     $masterListArray = array();
 
@@ -1002,8 +1002,12 @@ function buildSpotVersionsSessionArray($layoutFindKey, $codeField, $descriptionF
         $results = $listFind->execute();
 
         if(FileMaker::isError($results)){
-            $log->error("Error in searching for " .$searchFor . " Error: " .$results->getMessage());
-            return $masterListArray;
+            if($results->getCode() == $noRecordsFound){
+                $masterListArray[$division] = array();
+            }else{
+                $log->error("Error in searching for " .$searchFor . " Error: " .$results->getMessage());
+                return $masterListArray;
+            }
         }else{
             $log->debug("XXXX- FM Record count: " .$results->getFoundSetCount() ." For division " .$division ." Search: " .$searchFor ." -XXXX");
             $records = $results->getRecords();
@@ -1044,8 +1048,8 @@ function buildShowCodesSessionArray($dbHandle, $accountArray, $requestPkId, $pag
         if(FileMaker::isError($webShowCodesResults)){
             if($webShowCodesResults->getCode() == $noRecordsFound){ // check for 401 or no record found
                 $log->debug("No matching show codes results find");
-                //This is more than likely an empty array or a partial array if 2 accounts defined with only one with titles
-                return $showCodesArray;
+                //If no records exist for the Programming_Type_t then load empty array for that division
+                $showCodesArray[$account] = array();
             }else {
                 $errorTitle = "FileMaker Error";
                 $log->error($webShowCodesResults->getMessage(), $webShowCodesResults->getErrorString(), $pageUrl, $requestPkId, $site_prefix);
