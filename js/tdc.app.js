@@ -398,3 +398,88 @@ function deleteDeliverable(deleteIndex){
         }
     });
 }
+
+//The following functions were added to support dynamic updates of dropdown fields based on the Division dropdown
+//selector or Programming_Type_t
+
+//generic javascript function to clear a dropdown list just pass in element ID
+function clearDropdownOptions(dropdownId){
+    var elementToClear = document.getElementById(dropdownId);
+    var isSelected = elementToClear.options[e.selectedIndex].value;
+    //could use text e.options[e.selectedIndex].text
+    elementToClear.innerHTML = "";
+    return isSelected;
+}
+
+
+
+/**
+ * Generic replace method to replace contents in a drop down by element ID and if the previously selected item is
+ * within the return JSON then set the option to selected
+ * @param id string ID value
+ * @param jsonData JSON data returned by PHP containing the list of key value pairs
+ * @param isSelected key value of the previous selected item
+ */
+function replaceDropDownData(id, jsonData, isSelected){
+    var parsedJson = JSON.parse(jsonData);
+
+    //set an empty <option></option> tag if there was no selected item
+    document.getElementById(id).insertBefore(new Option('', ''), document.getElementById(id).firstChild);
+
+    //iterate the json data array to validate that the previously selected item is within the replacement list
+    //if not then just append the json data item to select loist in the DOM
+    $.each(parsedJson, function(i, value){
+        if(value == isSelected){
+            console.log("We should set a selected in option for " + isSelected);
+            $('#' + id).append($('<option selected>').text(value).attr('value', value));
+        }else{
+            $('#' + id).append($('<option>').text(value).attr('value', value));
+        }
+    });
+}
+
+/**
+ * Method call PHP that returns JSON data for a given Programming_Type_t selection
+ * @param programmingType Dropdown element associated with the Division selection the UI
+ */
+function getDropdownPHPJsonData(programmingType, ddType) {
+    //at this point we do not need to care what selected from the drop box just send via data on the POST
+    var selected = programmingType.value;
+    console.log("Now send data to processing page");
+    $.ajax({
+        url: "processing/dropDownJsonProcessing.php",
+        data: {"programmingType": selected,"listType":ddType},
+        type: "POST",
+        success: function (response) {
+            console.log("We have successfull JSON for Type: " + ddType);
+            if(ddType == "spottype"){
+                var maxCount = document.getElementById('spotindex').value;
+                var ddPrefix = "Spot_Type_";
+
+                for(var i = 0; i <= maxCount; i++){
+                    emId = ddPrefix + i;
+                    if(document.getElementById(emId)){
+                        var selectedItem = clearDropdownOptions(emId);
+                        replaceDropDownData(emId, response, selectedItem);
+                    }
+                }
+            }else if(ddType == "showcode"){
+                var showCodeId = "Show_Code_t";
+                clearDropdownOptions(showCodeId);
+                replaceDropDownData(showCodeId, response);
+            }
+        },
+        error: function (response) {
+            console.log("2. Error: " + response);
+        }
+    });
+}
+
+//This is a bit crappy to have to call the getDropdownPHPJsonData() function twice
+function replaceAllDivisionDropdowns(programmingType){
+    var showCodes = "showcode";
+    var spotType = "spottype";
+
+    getDropdownPHPJsonData(programmingType, spotType);
+    getDropdownPHPJsonData(programmingType, showCodes);
+}

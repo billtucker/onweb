@@ -255,7 +255,7 @@ $log->debug("Now have required all fields now build HTML");
                 </td >
                 <td ><!-- Division dropdown Data Field -->
                     <!-- TODO Remove this comment line after testing of Refactor (02/13/2015) -->
-                    <select class="tdc-input-xs form-control" id="<?php echo($requestDivisionFieldName); ?>" name="<?php echo($requestDivisionFieldName); ?>" >
+                    <select class="tdc-input-xs form-control" id="<?php echo($requestDivisionFieldName); ?>" name="<?php echo($requestDivisionFieldName); ?>" onchange="replaceAllDivisionDropdowns(this);">
                         <?php
                         $programmingItem = $request->getField($requestDivisionFieldName);
                         if(isset($programmingItem) && (strlen($programmingItem) > 0)){
