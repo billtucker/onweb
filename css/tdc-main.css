@@ -291,3 +291,10 @@ div.empty_image_container {
     background-color: #517b96;
 }
 
+/** This class is purely for Tag Version Descriptor dropdown boxes to show on two charcters when selected **/
+.tagsShowTwoChars {
+    font-family: monospace;
+    width: 2ch;
+    overflow: hidden;
+    white-space: nowrap;
+}

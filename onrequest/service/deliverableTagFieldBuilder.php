@@ -9,6 +9,23 @@
 include_once dirname(__DIR__) .DIRECTORY_SEPARATOR ."request-config.php";
 include_once($utilities ."utility.php");
 
+function buildTagDropDownDescriptor($itemList, $promoCode, $pkId, $index, $displayList){
+    $selectPk = $pkId ."_td_" .$index;
+    echo("<select class='tags tagsShowTwoChars' style='width: 40px;' id='" .$selectPk ."' name='" .$selectPk ."' onchange='processTagChanges(this.id);'>\n");
+    echo("<option value='' style='width: 160px;'></option>\n");
+    for($index = 0; $index < count($itemList); $index++){
+        if(isset($promoCode)){
+            if($promoCode == strtok($itemList[$index], " ")){
+                echo("<option value='" .trim($itemList[$index]) ."' selected style='width: 150px;'>" .trim($displayList[$index]) ."</option>\n");
+            }else{
+                echo("<option value='" .trim($itemList[$index]) ."' style='width: 150px;'>" .trim($displayList[$index]) ."</option>\n");
+            }
+        }else{
+            echo("<option value='" .trim($itemList[$index]) ."' style='width: 150px;'>" .trim($displayList[$index]) ."</option>\n");
+        }
+    }
+    echo("</select>\n");
+}
 /**
  * These function were added below to building Tags area of Deliverable View
  * @param $itemList -- a list of selections from the [WEB] Project Deliverable Tags layout
@@ -17,9 +34,9 @@ include_once($utilities ."utility.php");
  * @param $index -- row number of item being added
  * @param $displayList -- A list of tags with description separator of &nbsp
  */
-function buildTagDropDownNew($itemList, $promoCode, $pkId, $index, $displayList){
-    $selectPk = $pkId ."_" .$index;
-    echo("<select class='tags' style='width: 60px;' id='" .$selectPk ."' name='" .$selectPk ."' onchange='copyRowData(this.id);'>\n");
+function buildTagDropDownVersion($itemList, $promoCode, $pkId, $index, $displayList){
+    $selectPk = $pkId ."_tv_" .$index;
+    echo("<select class='tags tagsShowTwoChars' style='width: 40px;' id='" .$selectPk ."' name='" .$selectPk ."' onchange='processTagChanges(this.id);'>\n");
     echo("<option value='' style='width: 160px;'></option>\n");
     for($index = 0; $index < count($itemList); $index++){
         if(isset($promoCode)){
@@ -36,13 +53,27 @@ function buildTagDropDownNew($itemList, $promoCode, $pkId, $index, $displayList)
 }
 
 function buildTagDescription($description, $pkId, $index){
-    $descriptionPk = $pkId ."_d" .$index;
+    $descriptionPk = $pkId ."_tt_" .$index;
     echo("<input id='" .$descriptionPk ."' name='" .$descriptionPk ."' style='width: 100%;' value='" .$description ."'>\n");
 }
 
 function buildTagHouse($houseNumber, $pkId, $index){
-    $houseNumberPk = $pkId ."_h" .$index;
+    $houseNumberPk = $pkId ."_th_" .$index;
     echo("<input id='" .$houseNumberPk ."' name='" .$houseNumberPk ."' value='" .$houseNumber ."'>\n");
+}
+
+function buildTagsDropDownDescriptorPlusOne($itemList, $index, $displayList){
+    global $log;
+
+    $log->debug("deliverableTagFieldBuilder - buildTagsDropDownPlusOneNew() - Running Plus One Time: " .getCurrentTime());
+
+    $noTagPkId = "noTagPkId" ."_td_" .$index;
+    echo("<select class='tags tagsShowTwoChars' style='width: 40px;' id='" .$noTagPkId ."' name='" .$noTagPkId ."' onchange='processTagChanges(this.id);'>\n");
+    echo("<option value='' style='width: 160px;'></option>\n");
+    for($index = 0; $index < count($itemList); $index++){
+        echo("<option value='" .trim($itemList[$index]) ."' style='width: 150px;'>" .trim($displayList[$index]) ."</option>\n");
+    }
+    echo("</select>\n");
 }
 
 /**
@@ -51,13 +82,13 @@ function buildTagHouse($houseNumber, $pkId, $index){
  * @param $index -- row number of item being added
  * @param $displayList -- A list of tags with description separator of &nbsp
  */
-function buildTagsDropDownPlusOneNew($itemList, $index, $displayList){
+function buildTagsDropDownVersionPlusOne($itemList, $index, $displayList){
     global $log;
 
     $log->debug("deliverableTagFieldBuilder - buildTagsDropDownPlusOneNew() - Running Plus One Time: " .getCurrentTime());
 
-    $noTagPkId = "noTagPkId" ."_" .$index;
-    echo("<select class='tags' style='width: 60px;' id='" .$noTagPkId ."' name='" .$noTagPkId ."' onchange='copyRowData(this.id);'>\n");
+    $noTagPkId = "noTagPkId" ."_tv_" .$index;
+    echo("<select class='tags tagsShowTwoChars' style='width: 40px;' id='" .$noTagPkId ."' name='" .$noTagPkId ."' onchange='processTagChanges(this.id);'>\n");
     echo("<option value='' style='width: 160px;'></option>\n");
     for($index = 0; $index < count($itemList); $index++){
         echo("<option value='" .trim($itemList[$index]) ."' style='width: 150px;'>" .trim($displayList[$index]) ."</option>\n");
@@ -66,12 +97,12 @@ function buildTagsDropDownPlusOneNew($itemList, $index, $displayList){
 }
 
 function buildTagDescriptionPlusOne($index){
-    $descriptionPk = "noTagPkId" ."_d" .$index;
+    $descriptionPk = "noTagPkId" ."_tt_" .$index;
     echo("<input id='" .$descriptionPk ."' name='" .$descriptionPk ."' style='width: 100%;' value=''>\n");
 }
 
 function buildTagHousePlusOne($index){
-    $houseNumberPk = "noTagPkId" ."_h" .$index;
+    $houseNumberPk = "noTagPkId" ."_th_" .$index;
     echo("<input id='" .$houseNumberPk ."' name='" .$houseNumberPk ."' value=''>\n");
 }
 

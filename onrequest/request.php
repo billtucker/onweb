@@ -593,7 +593,8 @@ $log->debug("Now have required all fields now build HTML");
                             ?>
                         </td>
                         <td>
-                            <a href="deliverableview.php?pKid=<?php echo(rawurldecode($projectRelatedSet->getField('__pk_ID')));?>&itemId=<?php echo($requestedProjectListCounter);?>">
+                            <a href="deliverableview.php?pKid=<?php echo(rawurldecode($projectRelatedSet->getField('__pk_ID')));?>
+                            &itemId=<?php echo($requestedProjectListCounter);?>">
                                     <span class="input-group-addon tdc-glyphicon-control tdc-cell-spacing icon-red">
                                         <span class="glyphicon glyphicon-pencil" title="Open this record"
                                               data-toggle="tooltip" data-placement='top'></span>

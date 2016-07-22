@@ -158,7 +158,6 @@ if (FileMaker::isError($tagsResults)) {
     $tagRecords = $tagsResults->getRecords();
     $tagRecordCount = $tagsResults->getFoundSetCount();
     $log->debug("End find tags command record count: " .$tagRecordCount);
-
 }
 
 //Build dropdown of the version list of Tags for given Programming_type_t
@@ -168,8 +167,8 @@ $promoCodeVersionDisplayList = array();
 $tagsForThisDivision = $tagsArray[$requestDivision];
 if(!empty($tagsForThisDivision)){
     foreach($tagsForThisDivision as $code => $value){
-        array_push($promoCodeVersionValueList, $code);
-        array_push($promoCodeVersionDisplayList, $value);
+        array_push($promoCodeVersionValueList, convertTagForValueField($code ." " .$value));
+        array_push($promoCodeVersionDisplayList, convertTagDisplay($code ." " .$value)); //TODO this needs to be fixed
     }
 }
 
@@ -183,6 +182,16 @@ If(!isset($_SESSION[$versionDescriptorSessionIndex])){
 }else{
     $log->debug("Using Session to load Version Descritors");
     $versionDescriptorArray = $_SESSION[$versionDescriptorSessionIndex];
+}
+
+$promoCodeDescriptorValueList = array();
+$promoCodeDescriptorDisplayList = array();
+$descriptorsForThisDivision = $versionDescriptorArray[$requestDivision];
+if(!empty($descriptorsForThisDivision)){
+    foreach($descriptorsForThisDivision as $code => $value){
+        array_push($promoCodeDescriptorValueList, convertTagForValueField($code ." " .$value));
+        array_push($promoCodeDescriptorDisplayList, convertTagDisplay($code ." " .$value));
+    }
 }
 
 $log->debug("Start New version descriptors that are associated with version list (tags)");
@@ -436,12 +445,14 @@ echo("\n<script type='text/javascript' src='../js/tdc-deliverable-save-scroll-bu
                         <?php } ?>
                     </div>
                 </div>
+                <!-- Start of tag version and desciptor work -->
                 <table class="table table-bordered table-condensed" id="tag-table" name="tag-table">
                     <thead>
                     <tr>
-                        <th class="col-xs-2 col-md-2">Media Ver</th>
-                        <th class="col-xs-7 col-md-7">Media Description</th>
-                        <th class="col-xs-2 col-md-2">ISCI HD Code</th>
+                        <th class="col-xs-1 col-md-1">Media Ver</th>
+                        <th class="col-xs-1 col-md-1">&nbsp;</th>
+                        <th class="col-xs-8 col-md-8">Media Description</th>
+                        <th class="col-xs-1 col-md-1">ISCI HD Code</th>
                         <th class="col-xs-1 col-md-1">&nbsp;</th> <!-- delete row icon column -->
                     </tr>
                     </thead>
@@ -449,10 +460,14 @@ echo("\n<script type='text/javascript' src='../js/tdc-deliverable-save-scroll-bu
                     <?php
                     $tagIndex = 1;
                     foreach ($tagRecords as $tagRecord) {
+                        $tagPk = $tagRecord->getField('__pk_ID');
                         echo("<tr>\n");
                         echo("<td>\n");
-                        $tagPk = $tagRecord->getField('__pk_ID');
-                        buildTagDropDownNew($promoCodeVersionValueList, $tagRecord->getField('PromoCode_3_TagVersion_t'),
+                        buildTagDropDownDescriptor($promoCodeDescriptorValueList, $tagRecord->getField('PromoCode_Descriptor_t'),
+                            $tagPk, $tagIndex, $promoCodeDescriptorDisplayList);
+                        echo("</td>\n");
+                        echo("<td>\n");
+                        buildTagDropDownVersion($promoCodeVersionValueList, $tagRecord->getField('PromoCode_3_TagVersion_t'),
                             $tagPk, $tagIndex, $promoCodeVersionDisplayList);
                         echo("</td>\n");
                         echo("<td>\n");
@@ -469,7 +484,10 @@ echo("\n<script type='text/javascript' src='../js/tdc-deliverable-save-scroll-bu
                     }
                     echo("<tr>");
                     echo("<td>");
-                    buildTagsDropDownPlusOneNew($promoCodeVersionValueList, $tagIndex, $promoCodeVersionDisplayList);
+                    buildTagsDropDownDescriptorPlusOne($promoCodeDescriptorValueList, $tagIndex,$promoCodeDescriptorDisplayList);
+                    echo("</td>");
+                    echo("<td>");
+                    buildTagsDropDownVersionPlusOne($promoCodeVersionValueList, $tagIndex, $promoCodeVersionDisplayList);
                     echo("</td>");
                     echo("<td>");
                     buildTagDescriptionPlusOne($tagIndex);

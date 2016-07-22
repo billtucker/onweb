@@ -483,3 +483,122 @@ function replaceAllDivisionDropdowns(programmingType){
     getDropdownPHPJsonData(programmingType, spotType);
     getDropdownPHPJsonData(programmingType, showCodes);
 }
+
+/**
+ * This method evaluates both the Tag Version and Description fields to determine how the text is the description
+ * field is modified. If the tag version field is selected with out the descriptor field the text portion is
+ * then displayed in the description field. If the tag descriptor field is selected and a tag version appears
+ * in the description field the text is modified to now read the what is in the descriptor field and all
+ * [TagVer] placeholders are replaced with the text from the version drop down.
+ * @param changedField the string element id value of the dropdown changed
+ */
+function processTagChanges(changedField){
+
+    //1. prefix (could be PK or noPkId - pkPrefix
+    //2. id td tv tt th - elementIdentifier
+    //3. row index value - numeric row index
+    var idElements = changedField.split("_");
+    var pkPrefix = idElements[0];
+    var elementIdentifier = idElements[1];
+    var rowIndex = idElements[2];
+
+    var tagTextFieldID = getTagDescriptionTextFieldId(pkPrefix, rowIndex);
+
+    switch(elementIdentifier){
+        case "td": // Tag descriptor field was changed so get tag version id
+            var tagCheckTargetId = getTagVersionFieldId(pkPrefix, rowIndex);
+            var selectedTagVersionEl = document.getElementById(tagCheckTargetId);
+            var selectedTagVersionRawValue = selectedTagVersionEl.options[selectedTagVersionEl.selectedIndex].value;
+            var selectedTagVersionValue = selectedTagVersionRawValue.substr(selectedTagVersionRawValue.indexOf(' ') + 1);
+            var selectedTagDescriptorEl = document.getElementById(changedField);
+            var selectedTagDescriptorRawValue = selectedTagDescriptorEl.options[selectedTagDescriptorEl.selectedIndex].value;
+            var selectedTagDescriptorValue = selectedTagDescriptorRawValue.substr(selectedTagDescriptorRawValue.indexOf(' ') + 1);
+            if(selectedTagDescriptorValue && selectedTagVersionValue){
+                populateDescriptionUsingSplit(selectedTagDescriptorValue, selectedTagVersionValue, tagTextFieldID);
+            }
+            break;
+        case "tv": // tag version was changed so get descriptor field id
+            var tagCheckTargetId = getTagDescriptorFieldId(pkPrefix, rowIndex);
+            var selectedTagDescriptorEl = document.getElementById(tagCheckTargetId);
+            var selectedTagDescriptorRawValue = selectedTagDescriptorEl.options[selectedTagDescriptorEl.selectedIndex].value;
+            var selectedTagDescriptorValue = selectedTagDescriptorRawValue.substr(selectedTagDescriptorRawValue.indexOf(' ') + 1);
+            var selectedTagVersionEl = document.getElementById(changedField);
+            var selectedTagVersionRawValue = selectedTagVersionEl.options[selectedTagVersionEl.selectedIndex].value;
+            var selectedTagVersionValue = selectedTagVersionRawValue.substr(selectedTagVersionRawValue.indexOf(' ') + 1);
+            if(selectedTagDescriptorValue && selectedTagVersionValue){
+                populateDescriptionUsingSplit(selectedTagDescriptorValue, selectedTagVersionValue, tagTextFieldID);
+            }else{
+                populateDescriptionUsingTagVersionOnly(selectedTagVersionValue, tagTextFieldID);
+            }
+            break;
+        default:
+            var tagCheckTargetId = "";
+            console.log("Error we have fallen through the case statement");
+    }
+}
+
+/**
+ * Method replace/modify the text that appears in the tag description field
+ * @param tagDescriptorValue string value from the tag descriptor dropdown
+ * @param tagVersionValue string value from the tag version dropdown
+ * @param textFieldId string id of the tag description field
+ */
+function populateDescriptionUsingSplit(tagDescriptorValue, tagVersionValue, textFieldId){
+    var searchWord = '[TagVer]';
+    var textFieldEl = document.getElementById(textFieldId);
+    if(tagDescriptorValue.indexOf(searchWord) > -1){
+        var combinedText = tagDescriptorValue.split('[TagVer]').join(tagVersionValue);
+        textFieldEl.value = combinedText;
+    }else{
+        textFieldEl.value = tagDescriptorValue + " " + tagVersionValue;
+    }
+
+}
+
+/** Start of Tag Version/Tag Descriptor modifiedcation field control methods **/
+/**
+ * Method to replace or modify the Tag Description field with the text from Tag Version dropdown field
+ * @param tagVersionValue string value from Tag Version dropdown
+ * @param textFieldId string ID value of the Tag Description field
+ */
+function populateDescriptionUsingTagVersionOnly(tagVersionValue, textFieldId){
+    var textFieldEl = document.getElementById(textFieldId);
+    textFieldEl.value = tagVersionValue;
+}
+
+/**
+ * Simple method to build the string ID value of the Tag Version field
+ * @param pk string primary key value or noPkId
+ * @param index inetger value of row
+ * @returns {string} string id dynamic value
+ */
+function getTagVersionFieldId(pk, index){
+    var underscrore = "_";
+    var tvSymbol = "tv";
+    return pk + underscrore + tvSymbol + underscrore + index;
+}
+
+/**
+ * Simple method to build the string ID value of the Tag Descriptor field
+ * @param pk string primary key value or noPkId
+ * @param index inetger value of row
+ * @returns {string} string id dynamic value
+ */
+function getTagDescriptorFieldId(pk, index){
+    var underscrore = "_";
+    var tdSymbol = "td";
+    return pk + underscrore + tdSymbol + underscrore + index;
+}
+
+
+/**
+ * Simple method to build the string ID value of the Tag Description field
+ * @param pk string primary key value or noPkId
+ * @param index inetger value of row
+ * @returns {string} string id dynamic value
+ */
+function getTagDescriptionTextFieldId(pk, index){
+    var underscrore = "_";
+    var ttSymbol = "tt";
+    return pk + underscrore + ttSymbol + underscrore + index;
+}

@@ -224,6 +224,19 @@ function convertTagDisplay($line){
     return $code .$sep .$text;
 }
 
+/**
+ * @param $code Tag descriptro and version value field separator to enable Javascript replace method to work
+ * @param $value
+ * @return string
+ */
+function convertTagForValueField($line){
+    $sep = "   ";
+    $code = substr($line, 0, strpos($line, " "));
+    $text = substr($line, strpos($line, " ") + 1);
+    return $code .$sep .$text;
+    //return $code .$sep .$value;
+}
+
 //******* End New collection of functions in support of Tag processing of any type *******/
 
 /**
@@ -923,7 +936,6 @@ function deleteUploadedFile($dirArray, $target){
         foreach($allFiles as $fileName){
             if(strcmp($fileName, $target) == 0){
                 unlink($dir ."\\" .$fileName);
-                $log->debug("Successfully deleted file: " .$fileName);
                 //Note: removed json response
                 //return array("response" => array("Success" => "File $target deleted"));
                 return "success";
@@ -953,7 +965,6 @@ function getDirectoryNoJson($dirName, $directoryArray){
         return implode("|", $delimString);
     }else{
         $fullPath = $directoryArray[$dirName];
-        $log->debug("Find Files in directory: " .$fullPath);
         $files = scandir($fullPath);
         foreach($files as $file){
             if(strlen(strstr($file, '.', true)) < 1) {
