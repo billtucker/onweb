@@ -62,12 +62,12 @@ function buildTagDropDownVersion($itemList, $promoCode, $pkId, $index, $displayL
 
 function buildTagDescription($description, $pkId, $index){
     $descriptionPk = $pkId ."_tt_" .$index;
-    echo("<input id='" .$descriptionPk ."' name='" .$descriptionPk ."' style='width: 100%;' value='" .$description ."'>\n");
+    echo("<textarea id='" .$descriptionPk ."' name='" .$descriptionPk ."' rows='2' cols='50'" .">$description</textarea>");
 }
 
 function buildTagHouse($houseNumber, $pkId, $index){
     $houseNumberPk = $pkId ."_th_" .$index;
-    echo("<input id='" .$houseNumberPk ."' name='" .$houseNumberPk ."' value='" .$houseNumber ."'>\n");
+    echo("<input class='tdc-house' id='" .$houseNumberPk ."' name='" .$houseNumberPk ."' value='" .$houseNumber ."'>\n");
 }
 
 function buildTagsDropDownDescriptorPlusOne($itemList, $index, $displayList){
@@ -106,12 +106,12 @@ function buildTagsDropDownVersionPlusOne($itemList, $index, $displayList){
 
 function buildTagDescriptionPlusOne($index){
     $descriptionPk = "noTagPkId" ."_tt_" .$index;
-    echo("<input id='" .$descriptionPk ."' name='" .$descriptionPk ."' style='width: 100%;' value=''>\n");
+    echo("<textarea id='" .$descriptionPk ."' name='" .$descriptionPk ."' rows='2' cols='50'" ."></textarea>");
 }
 
 function buildTagHousePlusOne($index){
     $houseNumberPk = "noTagPkId" ."_th_" .$index;
-    echo("<input id='" .$houseNumberPk ."' name='" .$houseNumberPk ."' value=''>\n");
+    echo("<input class='tdc-house' id='" .$houseNumberPk ."' name='" .$houseNumberPk ."' value=''>\n");
 }
 
 function buildTagDeleteCell($index, $canModify){

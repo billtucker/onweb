@@ -298,3 +298,7 @@ div.empty_image_container {
     overflow: hidden;
     white-space: nowrap;
 }
+
+.tdc-house{
+    width: 75px;
+}
