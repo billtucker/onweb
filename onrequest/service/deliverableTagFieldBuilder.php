@@ -9,6 +9,14 @@
 include_once dirname(__DIR__) .DIRECTORY_SEPARATOR ."request-config.php";
 include_once($utilities ."utility.php");
 
+/**
+ * Method to build Tag Descriptor dropdown
+ * @param $itemList array string list of items for dropdown value and
+ * @param $promoCode selected string item if any were selected in FM or web
+ * @param $pkId the PK of the Tag item
+ * @param $index the index or line number of the row being added
+ * @param $displayList same as item list but named some differently for distinction
+ */
 function buildTagDropDownDescriptor($itemList, $promoCode, $pkId, $index, $displayList){
     $selectPk = $pkId ."_td_" .$index;
     echo("<select class='tags tagsShowTwoChars' style='width: 40px;' id='" .$selectPk ."' name='" .$selectPk ."' onchange='processTagChanges(this.id);'>\n");

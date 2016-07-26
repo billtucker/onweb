@@ -449,11 +449,11 @@ echo("\n<script type='text/javascript' src='../js/tdc-deliverable-save-scroll-bu
                 <table class="table table-bordered table-condensed" id="tag-table" name="tag-table">
                     <thead>
                     <tr>
-                        <th class="col-xs-1 col-md-1">Media Ver</th>
-                        <th class="col-xs-1 col-md-1">&nbsp;</th>
-                        <th class="col-xs-8 col-md-8">Media Description</th>
-                        <th class="col-xs-1 col-md-1">ISCI HD Code</th>
-                        <th class="col-xs-1 col-md-1">&nbsp;</th> <!-- delete row icon column -->
+                        <th class="col-xs-1 col-md-1 text-right" style="border-right: 0;">DESC.</th>
+                        <th class="col-xs-1 col-md-1 text-left" style="border-left: 0; border-right: 0;">TAG</th>
+                        <th class="col-xs-8 col-md-8" style="border-left: 0;">&nbsp;</th>
+                        <th class="col-xs-1 col-md-1" style="border-right: 0;">ISCI HD CODE</th>
+                        <th class="col-xs-1 col-md-1" style="border-left: 0;">&nbsp;</th> <!-- delete row icon column -->
                     </tr>
                     </thead>
                     <tbody>
