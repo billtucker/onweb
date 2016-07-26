@@ -85,7 +85,7 @@ $noRecordsFound = "401";
 //an image/file URL. Some originzation will want disable this flag to allow for virus validation before uploading to FM
 $getContainerUrl = true;
 
-$buildVersion = "07262016.BETA-830";
+$buildVersion = "07262016.BETA-1230";
 
 //Begin $_SESSION index names I expect this will grow over time to preform one time FileMaker loads then use $_SESSION
 // to access the data per page load. The labels should be self explanatory as to what is being loaded

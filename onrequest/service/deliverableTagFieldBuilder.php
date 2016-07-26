@@ -67,7 +67,7 @@ function buildTagDescription($description, $pkId, $index){
 
 function buildTagHouse($houseNumber, $pkId, $index){
     $houseNumberPk = $pkId ."_th_" .$index;
-    echo("<input id='" .$houseNumberPk ."' name='" .$houseNumberPk ."' value='" .$houseNumber ."'>\n");
+    echo("<input class='tdc-house' id='" .$houseNumberPk ."' name='" .$houseNumberPk ."' value='" .$houseNumber ."'>\n");
 }
 
 function buildTagsDropDownDescriptorPlusOne($itemList, $index, $displayList){
@@ -111,7 +111,7 @@ function buildTagDescriptionPlusOne($index){
 
 function buildTagHousePlusOne($index){
     $houseNumberPk = "noTagPkId" ."_th_" .$index;
-    echo("<input id='" .$houseNumberPk ."' name='" .$houseNumberPk ."' value=''>\n");
+    echo("<input class='tdc-house' id='" .$houseNumberPk ."' name='" .$houseNumberPk ."' value=''>\n");
 }
 
 function buildTagDeleteCell($index, $canModify){
