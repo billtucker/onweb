@@ -56,7 +56,7 @@ if(isset($_GET['error'])){
             <div class="col-xs-1 col-md-1">&nbsp;</div>
             <div class="col-xs-3 col-md-3">
                 <label for="password">Password:</label>
-                <input class="form-control" type="password" id="password" name="password">
+                <input class="form-control" type="password" id="password" name="password" required>
             </div>
             <div class="col-xs-8 col-md-8">&nbsp;</div>
         </div>
