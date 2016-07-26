@@ -62,7 +62,7 @@ function buildTagDropDownVersion($itemList, $promoCode, $pkId, $index, $displayL
 
 function buildTagDescription($description, $pkId, $index){
     $descriptionPk = $pkId ."_tt_" .$index;
-    echo("<input id='" .$descriptionPk ."' name='" .$descriptionPk ."' style='width: 100%;' value='" .$description ."'>\n");
+    echo("<textarea id='" .$descriptionPk ."' name='" .$descriptionPk ."' rows='2' cols='50'" .">$description</textarea>");
 }
 
 function buildTagHouse($houseNumber, $pkId, $index){
@@ -106,7 +106,7 @@ function buildTagsDropDownVersionPlusOne($itemList, $index, $displayList){
 
 function buildTagDescriptionPlusOne($index){
     $descriptionPk = "noTagPkId" ."_tt_" .$index;
-    echo("<input id='" .$descriptionPk ."' name='" .$descriptionPk ."' style='width: 100%;' value=''>\n");
+    echo("<textarea id='" .$descriptionPk ."' name='" .$descriptionPk ."' rows='2' cols='50'" ."></textarea>");
 }
 
 function buildTagHousePlusOne($index){
