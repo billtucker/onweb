@@ -56,11 +56,12 @@ function processDeliverableTags($post, $deliverablePkId, $orderDBHandle){
                 }
             }
         } else {
-            $tagRowArray = getRowPerPkId($post, $tagPk);
+            $tagRowArray = getTagInfoFromPost($post, $tagPk);
             if (isset($tagRowArray)) {
-                $tagRecord->setField('PromoCode_3_TagVersion_t', $tagRowArray[0]);
-                $tagRecord->setField('Tag_Version_Description_t', $tagRowArray[1]);
-                $tagRecord->setField('House_Number_t', $tagRowArray[2]);
+                $tagRecord->setField('PromoCode_Descriptor_t', getTagCodeValue($tagRowArray[0]));
+                $tagRecord->setField('PromoCode_3_TagVersion_t', getTagCodeValue($tagRowArray[1]));
+                $tagRecord->setField('Tag_Version_Description_t', stripHtmlWithSpaces($tagRowArray[2]));
+                $tagRecord->setField('House_Number_t', $tagRowArray[3]);
             }
 
             $tagCommit = $tagRecord->commit();
@@ -73,49 +74,60 @@ function processDeliverableTags($post, $deliverablePkId, $orderDBHandle){
         }
     }
 
-    $desc = "d";
-    $house = "h";
-    $us = "_";
     $prefix = "noTagPkId";
-    $search = $prefix . "_*"; //Do not forget the wildcard star!!!!!!
-    $codeDex = 0;
-    $descDex = 1;
-    $houseDex = 2;
-    $rowArray = array();
+    $search = $prefix . "_*"; //Do not forget the wildcard star!!!!!! so anything noTagPkId
+    $tagDescriptor = "td";
+    $tagVersion = "tv";
+    $tagDescription = "tt";
+    $tagHouse = "th";
+    $us = "_";
+    $allFieldsProcessed = 1;
+    $maxItemsToProcess = 4;
 
-    //Loop to test if user add data to a noTagPkId field. Loop through all noTagPkId fields if data is found create
-    // new Tag Record
+    echo PHP_EOL ."Now run search for our No Pk Id" .PHP_EOL;
+
     foreach (array_key_exists_wildcard($post, $search) as $key => $value) {
-        $itemNum = substr($value, strpos($value, $us) + 1);
-        if (is_numeric($itemNum)) {
-            if (isset($post[$value]) && !empty($post[$value])) {
-                $rowArray[$codeDex] = $post[$value];
-            }
+        $index = getTagIndex($value);
 
-            if (isset($post[$prefix . $us . $desc . $itemNum]) && !empty($post[$prefix . $us . $desc . $itemNum])) {
-                if (isset($post[$prefix . $us . $desc . $itemNum]) && strlen($post[$prefix . $us . $desc . $itemNum]) > 0) {
-                    $rowArray[$descDex] = $post[$prefix . $us . $desc . $itemNum];
-                }
-            }
+        if(isset($post[$value]) && !empty($post[$value]) && getKetType($value) == $tagDescriptor){
+            $noTagPkWriteArray[0] = getTagCodeValue($post[$prefix .$us .$tagDescriptor  .$us .$index]);
+        }
 
-            if (isset($post[$prefix . $us . $house . $itemNum]) && !empty($post[$prefix . $us . $house . $itemNum])) {
-                if (isset($post[$prefix . $us . $house . $itemNum]) && strlen($post[$prefix . $us . $house . $itemNum]) > 0) {
-                    $rowArray[$houseDex] = $post[$prefix . $us . $house . $itemNum];
-                }
-            }
+        if(isset($post[$value]) && !empty($post[$value]) && getKetType($value) == $tagVersion){
+            $noTagPkWriteArray[1] = getTagCodeValue($post[$prefix .$us .$tagVersion  .$us .$index]);
+        }
 
-            if (isset($rowArray[$codeDex]) || isset($rowArray[$descDex]) || isset($rowArray[$houseDex])) {
+        if(isset($post[$value]) && !empty($post[$value]) && getKetType($value) == $tagDescription){
+            $noTagPkWriteArray[2] = $post[$prefix .$us .$tagDescription  .$us .$index];
+        }
+
+        if(isset($post[$value]) && !empty($post[$value]) && getKetType($value) == $tagHouse){
+            $noTagPkWriteArray[3] = $post[$prefix .$us .$tagHouse  .$us .$index];
+        }
+
+        $allFieldsProcessed++;
+        //Now we have values or not written to NoPkId tag values if we do the write them to FM otherwise skip
+        if(isset($noTagPkWriteArray[0]) || isset($noTagPkWriteArray[1]) || isset($noTagPkWriteArray[2]) || isset($noTagPkWriteArray[3])){
+            if($allFieldsProcessed > $maxItemsToProcess){
                 $newTagRecord = $orderDBHandle->createRecord($tagsLayout);
                 $newTagRecord->setField("_fk_Deliverable_pk_ID", $deliverablePkId);
-                if (isset($rowArray[$codeDex])) {
-                    $newTagRecord->setField('PromoCode_3_TagVersion_t', $rowArray[$codeDex]);
+
+                if(isset($noTagPkWriteArray[0]) && !empty($noTagPkWriteArray[0])){
+                    $newTagRecord->setField('PromoCode_Descriptor_t', $noTagPkWriteArray[0]);
                 }
-                if (isset($rowArray[$descDex])) {
-                    $newTagRecord->setField('Tag_Version_Description_t', $rowArray[$descDex]);
+
+                if(isset($noTagPkWriteArray[1]) && !empty($noTagPkWriteArray[1])){
+                    $newTagRecord->setField('PromoCode_3_TagVersion_t', $noTagPkWriteArray[1]);
                 }
-                if (isset($rowArray[$houseDex])) {
-                    $newTagRecord->setField('House_Number_t', $rowArray[$houseDex]);
+
+                if(isset($noTagPkWriteArray[2]) && !empty($noTagPkWriteArray[2])){
+                    $newTagRecord->setField('Tag_Version_Description_t', stripHtmlWithSpaces($noTagPkWriteArray[2]));
                 }
+
+                if(isset($noTagPkWriteArray[3]) && !empty($noTagPkWriteArray[3])){
+                    $newTagRecord->setField('House_Number_t', $noTagPkWriteArray[3]);
+                }
+
                 $addTagResults = $newTagRecord->commit();
 
                 if (FileMaker::isError($addTagResults)) {
@@ -124,10 +136,13 @@ function processDeliverableTags($post, $deliverablePkId, $orderDBHandle){
                     processError($addTagResults->getMessage(), $addTagResults->getErrorString(), "tagProcessing.php", "N/A", $errorTitle);
                     exit;
                 }
-                $rowArray = array();
+                $allFieldsProcessed = 1;
+                $noTagPkWriteArray = array();
             }
+
         }
+
     }
-}
+}// end of method do not delete
 
 ?>

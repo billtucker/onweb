@@ -234,30 +234,39 @@ function cloneTagRow(id){
     console.log("Added Row --> Current tagIndex value: " + document.getElementById('tagIndex').value);
 }
 
-//function to modify cloned row elements name and id values to next avaiable index
+/**
+ * Method to update added Tag row with new ID value derived from hidden tag index field + one
+ * @param rowNode pointer to table row to add children
+ * @param index current numeric row index
+ * @returns {*} updated row elements with index incremented value plus
+ */
 function modifyIdName(rowNode, index){
-    var sep = "_", desc = "d", house = "h";
+    var sp = "_", deleteRowId = "delRowId", defaultPrefix = "noTagPkId";
     var elements = rowNode.children;
 
     index = parseInt(index) + 1;
     for(var cellIndex = 0; cellIndex < elements.length; cellIndex++){
         var rowElement = elements[cellIndex].children;
         for(var element = 0; element < rowElement.length; element++){
-            var elId = rowElement[element].id;
-            if(elId){
-                var base = elId.substr(0, elId.indexOf('_'));
-                if(cellIndex == 0){
-                    elId = base + sep + index;
-                }else if(cellIndex == 1){
-                    elId = base + sep + desc + index;
-                }else if(cellIndex == 2){
-                    elId = base + sep + house + index;
-                }else if(cellIndex == 3){
-                    elId = base + sep + index;
+            var replacementElementId = ""; //just in case declare the variable and reset it to empty
+            var currentRowElementId = rowElement[element].id;
+            if(currentRowElementId){
+                var elementArray = currentRowElementId.split('_');
+                var prefixId = elementArray[0];
+
+                var typeId = elementArray[1];
+
+                if(prefixId == deleteRowId) {
+                    replacementElementId = prefixId + sp + index;
+                }else if(prefixId != defaultPrefix){
+                    replacementElementId = defaultPrefix + sp + typeId + sp + index;
+                }else {
+                    replacementElementId = prefixId + sp + typeId + sp + index;
                 }
 
-                rowElement[element].id = elId;
-                rowElement[element].name = elId;
+                console.log("New Relacement ID: " + replacementElementId);
+                rowElement[element].id = replacementElementId;
+                rowElement[element].name = replacementElementId;
                 rowElement[element].value = "";
             }else{
                 console.log("Failure of add row to Tag Table.");
@@ -486,6 +495,7 @@ function replaceAllDivisionDropdowns(programmingType){
 
 /**
  * This method evaluates both the Tag Version and Description fields to determine how the text is the description
+ * Note: this is a replacement method for copyRow() TODO: remove that method since its no longer used!!
  * field is modified. If the tag version field is selected with out the descriptor field the text portion is
  * then displayed in the description field. If the tag descriptor field is selected and a tag version appears
  * in the description field the text is modified to now read the what is in the descriptor field and all
@@ -548,11 +558,10 @@ function populateDescriptionUsingSplit(tagDescriptorValue, tagVersionValue, text
     var textFieldEl = document.getElementById(textFieldId);
     if(tagDescriptorValue.indexOf(searchWord) > -1){
         var combinedText = tagDescriptorValue.split('[TagVer]').join(tagVersionValue);
-        textFieldEl.value = combinedText;
+        textFieldEl.value = combinedText.trim();
     }else{
-        textFieldEl.value = tagDescriptorValue + " " + tagVersionValue;
+        textFieldEl.value = tagDescriptorValue.trim() + " " + tagVersionValue.trim();
     }
-
 }
 
 /** Start of Tag Version/Tag Descriptor modifiedcation field control methods **/
@@ -563,7 +572,7 @@ function populateDescriptionUsingSplit(tagDescriptorValue, tagVersionValue, text
  */
 function populateDescriptionUsingTagVersionOnly(tagVersionValue, textFieldId){
     var textFieldEl = document.getElementById(textFieldId);
-    textFieldEl.value = tagVersionValue;
+    textFieldEl.value = tagVersionValue.trim();
 }
 
 /**

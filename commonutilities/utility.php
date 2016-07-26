@@ -170,45 +170,130 @@ function getPromoCode($codeLine){
 }
 
 /**
+ * @param $fullId String full Tag ID value
+ * @return mixed String td, tv, tt or th
+ */
+function getKetType($fullId){
+    $keyArray = explode("_", $fullId);
+    return $keyArray[1];
+}
+
+
+/**
+ * Method locate the PK within the POST array then return a statically loaded array of Tag data
+ * Note: This is a replacement method from the previous method to process only three Tag items of data
+ * @param $postArray $_POST[] array
+ * @param $target the PK from the FM record
+ * @return array loaded array of the Tag field td, tv, tt, and th
+ */
+function getTagInfoFromPost($postArray, $target){
+    foreach($postArray as $key => $value){
+        $purePk = returnPK($key);
+        if($purePk == $target){
+            return loadTagArray($purePk, $postArray, getTagIndex($key));
+        }
+    }
+    return array();
+}
+
+/**
+ * @param $pk PK from the FM database
+ * @param $post $_POST array
+ * @param $index the row index being processed
+ * @return array of Tag data used to write to FM database
+ */
+function loadTagArray($pk, $post, $index){
+    $tagDescriptor = "td";
+    $tagVersion = "tv";
+    $tagDescription = "tt";
+    $tagHouse = "th";
+    $us = "_";
+
+    $tagArray = array();
+
+    array_push($tagArray, $post[$pk .$us .$tagDescriptor .$us .$index]);
+    array_push($tagArray, $post[$pk .$us .$tagVersion .$us .$index]);
+    array_push($tagArray, $post[$pk .$us .$tagDescription .$us .$index]);
+    array_push($tagArray, $post[$pk .$us .$tagHouse .$us .$index]);
+    return $tagArray;
+}
+
+
+
+
+function returnPK($pkString){
+    $us = "_";
+
+    $idArray = explode($us, $pkString);
+    return $idArray[0];
+}
+
+/**
+ * Method to return the code only value from a line of Tag Descriptor or Version text
+ * @param $codeLine String full line of Tag text (i.e. NS &nbsp; &nbsp; New Season [TagVer]) return NS
+ * @return mixed String Tag code
+ */
+function getTagCodeValue($codeLine){
+    $code = explode(" ", trim($codeLine));
+    return $code[0];
+}
+
+function getTagIndex($pkString){
+    return substr($pkString, strrpos($pkString, '_') + 1);
+}
+
+/**
+ * A method to remove HTML with multiple spaces introduced by PHP code to properly display in a dropdown
+ * @param $line string Tag code with multiple &nbsp; and spaces
+ * @return string string without html code and spaces
+ */
+function stripHtmlWithSpaces($line){
+    $htmlRemoved = str_replace("&nbsp;", '', $line);
+    return trim(preg_replace('/\s+/', ' ', $htmlRemoved));
+}
+
+/**
  * method returns PK from line with PK and underscore and index value
  * @param $pkString String value containing the FileMaker item PK
  * @return string value of the PK without unique identifiers
  */
-function returnPK($pkString){
-    $us = "_";
-    return substr($pkString, 0, strpos($pkString, $us));
-}
-
-//method tests if Primary Key suffix is a number
-// (i.e. NS 66CTT 5UCX4 29ARW SK7E9_1 is true NS 66CTT 5UCX4 29ARW SK7E9_d1 is false)
-function isSuffixNumeric($numericStr){
-    $us = "_";
-    return is_numeric(substr($numericStr, strpos($numericStr, $us) + 1, 2));
-}
-
-//method assembles a array of Primary keys and associated value from passed in Primary key
-//(i.e. NS 66CTT 5UCX4 29ARW SK7E9 is passed in to method NS 66CTT 5UCX4 29ARW SK7E9_1, NS 66CTT 5UCX4 29ARW SK7E9_d1,
-//and NS 66CTT 5UCX4 29ARW SK7E9_h1 are returned)
-function getRowPerPkId($_POSTArray, $target){
-    global $log;
-    $results = array();
-
-    if(isset($_POSTArray)){
-        if(is_array($_POSTArray)){
-            foreach($_POSTArray as $key => $value){
-                if(returnPK($key) == $target){
-                    if(isSuffixNumeric($key)){
-                        array_push($results, $value);
-                    }else{
-                        array_push($results, $value);
-                    }
-                }
-            }
-        }
-    }
-    $log->debug("GetRowPerPkId method array size: " .count($results));
-    return $results;
-}
+//function returnPK($pkString){
+//    $us = "_";
+//    //return substr($pkString, 0, strpos($pkString, $us));
+//    $idArray = explode($us, $pkString);
+//    return $idArray[0];
+//}
+//
+////method tests if Primary Key suffix is a number
+//// (i.e. NS 66CTT 5UCX4 29ARW SK7E9_1 is true NS 66CTT 5UCX4 29ARW SK7E9_d1 is false)
+//function isSuffixNumeric($numericStr){
+//    $us = "_";
+//    return is_numeric(substr($numericStr, strpos($numericStr, $us) + 1, 2));
+//}
+//
+////method assembles a array of Primary keys and associated value from passed in Primary key
+////(i.e. NS 66CTT 5UCX4 29ARW SK7E9 is passed in to method NS 66CTT 5UCX4 29ARW SK7E9_1, NS 66CTT 5UCX4 29ARW SK7E9_d1,
+////and NS 66CTT 5UCX4 29ARW SK7E9_h1 are returned)
+//function getRowPerPkId($_POSTArray, $target){
+//    global $log;
+//    $results = array();
+//
+//    if(isset($_POSTArray)){
+//        if(is_array($_POSTArray)){
+//            foreach($_POSTArray as $key => $value){
+//                if(returnPK($key) == $target){
+//                    if(isSuffixNumeric($key)){
+//                        array_push($results, $value);
+//                    }else{
+//                        array_push($results, $value);
+//                    }
+//                }
+//            }
+//        }
+//    }
+//    $log->debug("GetRowPerPkId method array size: " .count($results));
+//    return $results;
+//}
 
 /**
  * This method is simply to insert two HTML spaces for formatting. This method is subject to change as formatting
