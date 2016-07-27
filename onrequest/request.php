@@ -596,7 +596,7 @@ $log->debug("Now have required all fields now build HTML");
                             <a href="deliverableview.php?pKid=<?php echo(rawurldecode($projectRelatedSet->getField('__pk_ID')));?>
                             &itemId=<?php echo($requestedProjectListCounter);?>">
                                     <span class="input-group-addon tdc-glyphicon-control tdc-cell-spacing icon-red">
-                                        <span class="glyphicon glyphicon-pencil" title="Open this record"
+                                        <span class="glyphicon glyphicon-pencil" title="Open and view this record"
                                               data-toggle="tooltip" data-placement='top'></span>
                                     </span>
                             </a>
@@ -621,7 +621,7 @@ $log->debug("Now have required all fields now build HTML");
                         <?php if($canModify){ ?>
                             <button id="add-deliverable" name="add-deliverable" value="add-deliverable" type="submit"
                                     class="input-group-addon tdc-glyphicon-control tdc-cell-spacing"
-                                    style="color:lightskyblue;border: none" aria-hidden="true" title="Add Deliverable to the Request" data-toggle="tooltip">
+                                    style="color:lightskyblue;border: none" aria-hidden="true" title="Open and view this record" data-toggle="tooltip">
                                 <span class="glyphicon glyphicon-plus"></span>
                             </button>
                         <?php } else { ?>
