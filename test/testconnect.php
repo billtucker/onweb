@@ -11,10 +11,13 @@
 include_once($_SERVER["DOCUMENT_ROOT"] ."/onweb" ."/onweb-config.php");
 include_once($fmfiles ."order.db.php");
 
+$log->debug("---- Begin query of all layouts for PRO_ORDER");
 $connect = $fmOrderDB->listLayouts();
+$log->debug("---- End query of all layouts for PRO_ORDER");
 $error = false;
 if(FileMaker::isError($connect)){
     $displayMessage = "Error with connection: " .$connect->getMessage() ." Error Code: " .$connect->getCode();
+    $log->error("Error with Test connection: " .$connect->getMessage() ." Error Code: " .$connect->getCode());
     $error = true;
 }else{
     $displayMessage = "Successfully Connected to database";
