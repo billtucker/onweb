@@ -761,16 +761,6 @@ function printEnableDisable($url){
 }
 
 /**
- * Method will remove CR(s) and replace with "," to form array formatted string for FileMaker fields with CR(s)
- * imbedded within the field
- * @param $textIn -- Multi text value FileMaker field
- * @return mixed - return comma delaminated string
- */
-function stripControlChars($textIn){
-    return str_replace("\n", ",", $textIn);
-}
-
-/**
  * Method to take in full URL path to a file and return extension of file. This method is used when using a hardcoded
  * URL within a FileMaker layout and NOT the FileMaker container object
  * @param $pathToFile String value of URL with file extension

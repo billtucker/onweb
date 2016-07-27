@@ -241,7 +241,12 @@ function setSessionData($userRecord, $site_prefix){
         $_SESSION['system_preference'] = $userRecord->getField('z_PRO_SeparateWorkByPrograming_cn');
 
         //Accounts associated with user in cr delaminated field
-        $_SESSION['user_accounts'] = array(stripControlChars($userRecord->getField('User_Contact_Programming_Type_Associations_ct')));
+        //$_SESSION['user_accounts'] = array(stripControlChars($userRecord->getField('User_Contact_Programming_Type_Associations_ct')));
+        $_SESSION['user_accounts'] = explodedCrString($userRecord->getField('User_Contact_Programming_Type_Associations_ct'));
+
+        foreach($_SESSION['user_accounts'] as $account){
+            $log->debug("User: " .$_SESSION['userName'] ." has an account: " .$account);
+        }
 
         //Now test for ON-WEB from the PLUGIN array to validate that the user has the License authority to access web
         validatePlugin($_SESSION['userName'], $_SESSION['installedPlugins'], $onWebPlugin);
