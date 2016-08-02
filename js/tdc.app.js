@@ -622,7 +622,7 @@ function getTagDescriptionTextFieldId(pk, index){
     return pk + underscrore + ttSymbol + underscrore + index;
 }
 
-//Start of Javascript to process JSON data, messages, or empty JSON from PHP page call to to RESTfm
+//***** Start of Javascript to process JSON data, messages, or empty JSON from PHP page call to to RESTfm *****/
 /**
  * Simple method to determine if object ius empty
  * @param obj object value top test for length
