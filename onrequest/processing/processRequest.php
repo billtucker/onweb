@@ -52,8 +52,12 @@ if (isset($_POST['requestsubmit']) || isset($_POST['saveDataLink'])) {
     getRequest($_POST["requestPkId"]); //get the request handle record $request
 
 //Start --> now save the request portion of the form
-    foreach ($requestFieldArray as $requestKey) {
-        $request->setField($requestKey, $_POST[$requestKey]);
+    foreach($requestFieldArray as $requestKey) {
+        if(isset($_POST[$requestKey])){
+			$request->setField($requestKey, $_POST[$requestKey]);
+		}else{
+			$log->debug("This key: " .$requestKey ." is not set in POST array find out why!!");
+		}
     }
 
 //TODO: add to request created_by or some DB property to identify Web Site User/username
