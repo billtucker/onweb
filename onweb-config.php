@@ -38,13 +38,17 @@ $dn = "CN=Users,DC=thoughtdev,DC=com";
 
 //This section dynamically sets site address so few hardcoded values are required.
 // The $siteRoot is the only concrete value
-$port = ($_SERVER['SERVER_PORT'] == '80' ? "http://" : "https://" );
-$siteRoot = "onweb";
-$homepage = $port .$_SERVER['HTTP_HOST'] ."/" .$siteRoot ."/";
+$port = ($_SERVER["SERVER_PORT"] == '80' ? "http://" : "https://" );
+$siteRoot = "onweb"; //This is a hardcoded value and I am not sure if can get this dynamically?
+$homepage = $port .$_SERVER["HTTP_HOST"] ."/" .$siteRoot ."/";
 $site_prefix = $homepage;
 
 //use this to replace the container URL for videos if required for videos
-$serverIP = $_SERVER['SERVER_NAME'];
+$serverIP = $_SERVER["SERVER_NAME"];
+
+//Used in calling a RESTfm service on the local server. Right now the code assumes that onweb and RESTfm run on a
+//single IIS server
+$restFMPath = $port .$serverIP ."/RESTfm/";
 
 
 //place holder for property used in header_top.php to display the small logo and splash logo on index. This property

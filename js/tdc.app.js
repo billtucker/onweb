@@ -1,7 +1,10 @@
 /**
  * Created by Bill on 11/19/2014.
  */
- 
+
+//global variable to hold the value of the Status select dropdown at page load time
+var originalRequestStatusValue;
+
  function goBack(){
 	window.history.back();
     return false;
@@ -9,7 +12,14 @@
 	
 $(document).ready(function () {
 
-    //Global tooltip enabled for Bootstrap
+    //Capture how the dropdown Status is set at time page is loaded
+    //Remember the element ID is hardcoded so change it required
+    if(document.getElementById('Request_Status_t')){
+        var statusElement = document.getElementById('Request_Status_t');
+        originalRequestStatusValue = statusElement.options[statusElement.selectedIndex].value;
+    }
+
+    //Global tooltip enabled for all Bootstrap tooltip message
     $('[data-toggle="tooltip"]').tooltip();
 
     /** Show message to user after save operation then fade for Request and Deliverable pages **/
@@ -611,3 +621,84 @@ function getTagDescriptionTextFieldId(pk, index){
     var ttSymbol = "tt";
     return pk + underscrore + ttSymbol + underscrore + index;
 }
+
+//Start of Javascript to process JSON data, messages, or empty JSON from PHP page call to to RESTfm
+/**
+ * Simple method to determine if object ius empty
+ * @param obj object value top test for length
+ * @param (boolean) true if object is empty
+ *
+ **/
+function isEmpty(obj) {
+    if(obj.length == 0){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+/**
+ * Method to read Json data for a JSON error element
+ * @param jsonErrorData return JSON data
+ * @param (boolean) true if error element is set
+ **/
+function isJsonErrorMessage(jsonErrorData){
+    if(jsonErrorData.error){
+        console.log("Json constains error message");
+        return true;
+    }
+    return false;
+}
+
+/**
+ * A method to process json data return from RESTfm and PHP call
+ * @param id id value oif the select dropdown for Status
+ * @param requestPk The request PK of the html form data
+ */
+function displayMetaErrors(id, requestPk, homePage){
+    var statusElement = document.getElementById(id);
+    var currentStatsValue = statusElement.options[statusElement.selectedIndex].value;
+
+    if(currentStatsValue.toLowerCase() == "Submitted".toLowerCase()){ //only run this method with the status changes to submitted
+        $.ajax({
+            url: 'service/getMetaStatusPerRequest.php',
+            type: 'POST',
+            data: {'pk':requestPk},
+            success: function (response) {
+                if(!isEmpty(response)){ //we need to test if the json data array is empty then we know no records were found
+                    console.log("response: " + response);
+                    var dialogMessages = "";
+                    var jData = JSON.parse(response);
+                    if(jData){
+                        if(isJsonErrorMessage(jData)){ //now test if an error message was inserted indicating a serious FM error
+                            var url = homePage + "errors/accessError.php?errorMessage=Serious FileMaker Error&messageTitle=FileMaker Error";
+                            window.location = url;
+                        }
+                        for(var rec in jData){ //passed all test so now display error/incomplete meta records
+                            dialogMessages = dialogMessages + jData[rec].Deliverable_Description_ct + " Question " + jData[rec].Order_n + " incomplete\n";
+                        }
+                        statusElement.value = originalRequestStatusValue; //reset dropdown to original selection if meta errors were found
+                        BootstrapDialog.show({
+                            title: 'Meta Errors',
+                            message: dialogMessages,
+                            buttons: [{
+                                label: 'Close',
+                                cssClass: 'select_status',
+                                action: function (thisDialog) {
+                                    thisDialog.close();
+                                }
+                            }]
+                        });
+                    }
+                }else{
+                    console.log("No Meta records found skip Message Display");
+                }
+
+            },
+            error: function(response){ // this needs further definition if an error is returned and with what to do with the error message
+                console.log("Ajax returned an error: " + response);
+            }
+        });
+    }
+}
+

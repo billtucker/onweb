@@ -36,6 +36,8 @@ if(file_exists($root .$appConfigName)){
 	<meta http-equiv="pragma" content="no-cache"> <!-- says not to use cached stuff, if there is any -->
 
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <!--CSS support Bootstrap dialog -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.35.2/css/bootstrap-dialog.css" rel="stylesheet" type="text/css" />
     <link href="css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen" type="text/css">
     <link href="css/fileinput.css" media="all" rel="stylesheet" type="text/css" />
     <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.1.6/nprogress.css" rel="stylesheet" type="text/css">
@@ -46,6 +48,8 @@ if(file_exists($root .$appConfigName)){
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js" type="text/javascript"></script>
 
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js" type="text/javascript"></script>
+    <!--JS support for Bootstrap dialog -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.35.2/js/bootstrap-dialog.js"></script>
     <script type="text/javascript" src="js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
     <script src="js/fileinput.js" type="text/javascript"></script>
 

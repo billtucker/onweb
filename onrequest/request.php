@@ -285,7 +285,8 @@ $log->debug("Now have required all fields now build HTML");
                     ?></textarea>
                 </td >
                 <td rowspan = "3" ><!-- Status block start -->
-                    <select class="tdc-input-xs form-control" id="<?php echo($requestStatusName); ?>" name="<?php echo($requestStatusName); ?>">
+                    <select class="tdc-input-xs form-control" id="<?php echo($requestStatusName); ?>" name="<?php echo($requestStatusName); ?>"
+                            onchange="displayMetaErrors(this.id, document.getElementById('requestPkId').value,'<?php echo $homepage; ?>');">
                         <?php
                         $requestStatusSelected = $request->getField($requestStatusName);
                         if(isset($requestStatusSelected) && (strlen($requestStatusSelected) > 0)){
