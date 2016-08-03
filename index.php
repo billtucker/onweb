@@ -30,8 +30,8 @@ if(file_exists($root .$appConfigName)){
 $validateUser = true;
 $canModify = false;
 $siteSection = "onweb";
+//added to account for users with OnRequest module enabled in FileMaker (Hide buttons associated with OnRequest)
 $showProjectTypes = true;
-
 
 if(isset($_GET['p1']) && validatePassThrough($_GET['p1'])){
     $validateUser = false;
