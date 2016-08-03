@@ -30,6 +30,8 @@ if(file_exists($root .$appConfigName)){
 $validateUser = true;
 $canModify = false;
 $siteSection = "onweb";
+$showProjectTypes = true;
+
 
 if(isset($_GET['p1']) && validatePassThrough($_GET['p1'])){
     $validateUser = false;
@@ -49,13 +51,22 @@ $projectTypesFind->addFindCriterion("Request_Type", "*");
 $projectTypesResults = $projectTypesFind->execute();
 
 if(FileMaker::isError($projectTypesResults)){
-    $errorTitle = "FileMaker Error";
-    $log->error($projectTypesResults->getMessage(), $projectTypesResults->getErrorString(), $pageUrl, "N/A", $site_prefix);
-    processError($projectTypesResults->getMessage(), $projectTypesResults->getErrorString(), $pageUrl, "N/A", $errorTitle);
-    exit;
+    if($projectTypesResults->getCode() == $noRecordsFound){
+        $log->debug("No records found in search of project types disable buttons and display");
+        //created and empty project records types array to account for system that do not use have authorization to use OnRequest
+        $projectTypeRecords = array();
+        $showProjectTypes = false;
+    }else{
+        $errorTitle = "FileMaker Error";
+        $log->error($projectTypesResults->getMessage(), $projectTypesResults->getErrorString(), $pageUrl, "N/A", $site_prefix);
+        processError($projectTypesResults->getMessage(), $projectTypesResults->getErrorString(), $pageUrl, "N/A", $errorTitle);
+        exit;
+    }
+}else{
+    $projectTypeRecords = $projectTypesResults->getRecords();
 }
 
-$projectTypeRecords = $projectTypesResults->getRecords();
+
 
 //Variables used in the Algorithm to display project type button array of 4 by X buttons per row of 12 column grid
 $projectTypeRecordCount = count($projectTypeRecords);
@@ -73,41 +84,43 @@ include_once($headerFooter .$headerToUse);
 
 ?>
 
-<br>
-<div class="row">
-    <div class="col-xs-12 col-lg-12">
-        <img class="img-responsive center-block" src="<?php echo($companyLogoSplash); ?>" alt="Login Splash Screen Image" align="center">
+    <br>
+    <div class="row">
+        <div class="col-xs-12 col-lg-12">
+            <img class="img-responsive center-block" src="<?php echo($companyLogoSplash); ?>" alt="Login Splash Screen Image" align="center">
+        </div>
     </div>
-</div>
-<br>
-<!-- hopefully this is a blank row -->
-<div class="row" id="empty_row_1"></div>
-<div class="row">
-    <div class="col-xs-2 col-lg-2">&nbsp;</div>
-    <div class="col-xs-4 col-lg-4">
-        <p class="text-primary" style="color: blue"><Strong>Existing Requests: Use Button Below</Strong></p>
+    <br>
+    <!-- hopefully this is a blank row -->
+    <div class="row" id="empty_row_1"></div>
+    <div class="row">
+        <div class="col-xs-2 col-lg-2">&nbsp;</div>
+        <div class="col-xs-4 col-lg-4">
+            <p class="text-primary" style="color: blue"><Strong>Existing Requests: Use Button Below</Strong></p>
+        </div>
+        <div class="col-xs-6 col-lg-6">&nbsp;</div>
     </div>
-    <div class="col-xs-6 col-lg-6">&nbsp;</div>
-</div>
-<div class="row">
-    <div class="col-xs-2 col-lg-2">&nbsp;</div>
-    <div class="col-xs-4 col-lg-4">
-        <button type="button" class="btn btn-primary btn-block" onclick="window.location.href='onrequest/projectlist.php'">My Open Requests</button>
+    <div class="row">
+        <div class="col-xs-2 col-lg-2">&nbsp;</div>
+        <div class="col-xs-4 col-lg-4">
+            <button type="button" class="btn btn-primary btn-block" onclick="window.location.href='onrequest/projectlist.php'">My Open Requests</button>
+        </div>
+        <div class="col-xs-6 col-lg-6">&nbsp;</div>
     </div>
-    <div class="col-xs-6 col-lg-6">&nbsp;</div>
-</div>
-<br>
-<div class="row">
-    <div class="col-xs-2 col-lg-2">&nbsp;</div>
-    <div class="col-xs-4 col-lg-4">
-        <p class="text-primary" style="color: blue"><Strong>New Requests: Select Your Project Type Below</Strong></p>
+    <br>
+<?php if($showProjectTypes){ ?>
+    <div class="row">
+        <div class="col-xs-2 col-lg-2">&nbsp;</div>
+        <div class="col-xs-4 col-lg-4">
+            <p class="text-primary" style="color: blue"><Strong>New Requests: Select Your Project Type Below</Strong></p>
+        </div>
+        <div class="col-xs-6 col-lg-6">&nbsp;</div>
     </div>
-    <div class="col-xs-6 col-lg-6">&nbsp;</div>
-</div>
-<!-- Start of new dynamic work for more than 4 buttons -->
+<?php } ?>
+    <!-- Start of new dynamic work for more than 4 buttons -->
 <?php for($rowCounter = 0; $rowCounter < $projectTypeRecordCount; $rowCounter += $maxTypesPerRow){
-$columnWidthTotal = 8; ?>
-<div class="row"><!-- Start 4 button Project Types for Bootstrap grid system -->
+    $columnWidthTotal = 8; ?>
+    <div class="row"><!-- Start 4 button Project Types for Bootstrap grid system -->
     <div class="col-xs-2 col-lg-2">&nbsp;</div><!-- Number one blank column for Bootstrap 12 column grid system -->
     <?php for($columnTypeIndex = $rowCounter; $columnTypeIndex < ($rowCounter + $maxTypesPerRow); $columnTypeIndex++){
         if($columnTypeIndex < ($projectTypeRecordCount)) {
@@ -145,28 +158,28 @@ $columnWidthTotal = 8; ?>
     } //End for dynamic cell generation for loop
     echo("<div class='col-xs-2 col-lg-2'>&nbsp;</div><!-- Last blank column for Bootstrap 12 column grid system -->\n");
     echo("</div><!-- end of row for this 12 columns -->\n");
-    } ?>
-</div><!-- End 4 button Project Types for Bootstrap grid system -->
-<!-- End of new dynamic work for more than 4 buttons -->
+} ?>
+    </div><!-- End 4 button Project Types for Bootstrap grid system -->
+    <!-- End of new dynamic work for more than 4 buttons -->
 
-<!-- Start add button for Spot Viewer -->
-<hr>
-<div class="container">
-    <div class="row">
-        <div class="col-xs-2 col-lg-2">&nbsp;</div>
-        <div class="col-xs-4 col-lg-4">
-            <p class="text-primary" style="color: blue"><Strong>Existing Spots Review: Use Button Below</Strong></p>
+    <!-- Start add button for Spot Viewer -->
+    <hr>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-2 col-lg-2">&nbsp;</div>
+            <div class="col-xs-4 col-lg-4">
+                <p class="text-primary" style="color: blue"><Strong>Existing Spots Review: Use Button Below</Strong></p>
+            </div>
+            <div class="col-xs-6 col-lg-6">&nbsp;</div>
         </div>
-        <div class="col-xs-6 col-lg-6">&nbsp;</div>
-    </div>
-    <div class="row">
-        <div class="col-xs-2 col-lg-2">&nbsp;</div>
-        <div class="col-xs-4 col-lg-4">
-            <button type="button" class="btn btn-primary btn-block" onclick="window.location.href='onspot/spotviewerlist.php'">My Spots To Review</button>
+        <div class="row">
+            <div class="col-xs-2 col-lg-2">&nbsp;</div>
+            <div class="col-xs-4 col-lg-4">
+                <button type="button" class="btn btn-primary btn-block" onclick="window.location.href='onspot/spotviewerlist.php'">My Spots To Review</button>
+            </div>
+            <div class="col-xs-6 col-lg-6">&nbsp;</div>
         </div>
-        <div class="col-xs-6 col-lg-6">&nbsp;</div>
     </div>
-</div>
-<!-- End of adding button for SpotViewer -->
-<br>
+    <!-- End of adding button for SpotViewer -->
+    <br>
 <?php include_once($headerFooter .'footer.php'); ?>
