@@ -206,10 +206,12 @@ if (isset($_POST['requestsubmit']) || isset($_POST['saveDataLink'])) {
 
     $deleteRecord = $fmOrderDB->newDeleteCommand($deliverableLayout, $deliveriableRecId);
 
-    if(FileMaker::isError($deleteRecord)){
+    $deleteResults = $deleteRecord->execute();
+
+    if(FileMaker::isError($deleteResults)){
         $errorTitle = "FileMNaker Error";
-        $log->error("Failed to delete Deliverable PK: " .$pkToDelete . " RecordId: " .$deliveriableRecId ." Error Message: " .$deleteRecord->getMessage());
-        processError($deleteRecord->getMessage(), $deleteRecord->getErrorString(), "processRequest.php", $pkToDelete, $errorTitle);
+        $log->error("Failed to delete Deliverable PK: " .$pkToDelete . " RecordId: " .$deliveriableRecId ." Error Message: " .$deleteResults->getMessage());
+        processError($deleteResults->getMessage(), $deleteResults->getErrorString(), "processRequest.php", $pkToDelete, $errorTitle);
         exit;
     }
     $log->debug("Successfully deleted Deliveriable Record PK: " .$pkToDelete ." RecId: " .$deliveriableRecId);
