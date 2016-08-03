@@ -83,7 +83,6 @@ include_once($headerFooter .$headerToUse);
 
 
 ?>
-
     <br>
     <div class="row">
         <div class="col-xs-12 col-lg-12">
@@ -92,6 +91,7 @@ include_once($headerFooter .$headerToUse);
     </div>
     <br>
     <!-- hopefully this is a blank row -->
+<?php if($showProjectTypes){ ?><!-- Block these out if no project types exist -->
     <div class="row" id="empty_row_1"></div>
     <div class="row">
         <div class="col-xs-2 col-lg-2">&nbsp;</div>
@@ -108,7 +108,6 @@ include_once($headerFooter .$headerToUse);
         <div class="col-xs-6 col-lg-6">&nbsp;</div>
     </div>
     <br>
-<?php if($showProjectTypes){ ?>
     <div class="row">
         <div class="col-xs-2 col-lg-2">&nbsp;</div>
         <div class="col-xs-4 col-lg-4">
