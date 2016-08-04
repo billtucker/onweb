@@ -90,9 +90,9 @@ function buildRequestDropDownMapWithValue($valueMap, $selectedValue){
     if(isset($valueMap)){
         foreach($valueMap as $key => $value){
             if($selectedValue == $value){
-                echo("<option value=" .$value ." selected>" .$key ."</option>\n");
+                echo("<option value='" .$value ."' selected>" .$key ."</option>\n");
             }else{
-                echo("<option value=" .$value .">" .$key ."</option>\n");
+                echo("<option value='" .$value ."'>" .$key ."</option>\n");
             }
         }
     }else{
@@ -104,9 +104,9 @@ function buildSessionDropDownMapWithValue($valueMap, $selectedValue){
     if(isset($valueMap)){
         foreach($valueMap as $key => $value){
             if($selectedValue == $key){
-                echo("<option value=" .$key ." selected>" .$value ."</option>\n");
+                echo("<option value='" .$key ."' selected>" .$value ."</option>\n");
             }else{
-                echo("<option value=" .$key .">" .$value ."</option>\n");
+                echo("<option value='" .$key ."'>" .$value ."</option>\n");
             }
         }
     }else{
@@ -119,7 +119,7 @@ function buildSessionDropDown($valueMap){
 
     if(isset($valueMap)){
         foreach($valueMap as $key => $value){
-            echo("<option value=" .$key ." >" .$value ."</option>\n");
+            echo("<option value='" .$key ."'>" .$value ."</option>\n");
         }
     }
 }
