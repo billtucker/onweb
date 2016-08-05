@@ -252,48 +252,6 @@ function stripHtmlWithSpaces($line){
     return trim(preg_replace('/\s+/', ' ', $htmlRemoved));
 }
 
-/**
- * method returns PK from line with PK and underscore and index value
- * @param $pkString String value containing the FileMaker item PK
- * @return string value of the PK without unique identifiers
- */
-//function returnPK($pkString){
-//    $us = "_";
-//    //return substr($pkString, 0, strpos($pkString, $us));
-//    $idArray = explode($us, $pkString);
-//    return $idArray[0];
-//}
-//
-////method tests if Primary Key suffix is a number
-//// (i.e. NS 66CTT 5UCX4 29ARW SK7E9_1 is true NS 66CTT 5UCX4 29ARW SK7E9_d1 is false)
-//function isSuffixNumeric($numericStr){
-//    $us = "_";
-//    return is_numeric(substr($numericStr, strpos($numericStr, $us) + 1, 2));
-//}
-//
-////method assembles a array of Primary keys and associated value from passed in Primary key
-////(i.e. NS 66CTT 5UCX4 29ARW SK7E9 is passed in to method NS 66CTT 5UCX4 29ARW SK7E9_1, NS 66CTT 5UCX4 29ARW SK7E9_d1,
-////and NS 66CTT 5UCX4 29ARW SK7E9_h1 are returned)
-//function getRowPerPkId($_POSTArray, $target){
-//    global $log;
-//    $results = array();
-//
-//    if(isset($_POSTArray)){
-//        if(is_array($_POSTArray)){
-//            foreach($_POSTArray as $key => $value){
-//                if(returnPK($key) == $target){
-//                    if(isSuffixNumeric($key)){
-//                        array_push($results, $value);
-//                    }else{
-//                        array_push($results, $value);
-//                    }
-//                }
-//            }
-//        }
-//    }
-//    $log->debug("GetRowPerPkId method array size: " .count($results));
-//    return $results;
-//}
 
 /**
  * This method is simply to insert two HTML spaces for formatting. This method is subject to change as formatting
