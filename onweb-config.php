@@ -90,7 +90,7 @@ $noRecordsFound = "401";
 //an image/file URL. Some originzation will want disable this flag to allow for virus validation before uploading to FM
 $getContainerUrl = true;
 
-$buildVersion = $branchSoftwareVersio;
+$buildVersion = $branchSoftwareVersion;
 
 
 //Begin $_SESSION index names I expect this will grow over time to preform one time FileMaker loads then use $_SESSION
