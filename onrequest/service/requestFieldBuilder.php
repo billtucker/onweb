@@ -44,6 +44,7 @@ function buildRequestDropDownMap($valueMap){
     }
 }
 
+/** Mark this for deletion  */
 function buildRequestDropDownWithFields($records){
     if(isset($records)){
         echo("<option></option>\n");
