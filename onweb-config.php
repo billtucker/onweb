@@ -14,6 +14,7 @@
 
 //$root represents file system root and is not related to TCP/IP protocol
 $root = dirname(__FILE__) .DIRECTORY_SEPARATOR;
+include_once "branch-sw-version.php";
 
 $headerFooter = $root ."headerfooter" .DIRECTORY_SEPARATOR;
 $utilities = $root ."commonutilities" .DIRECTORY_SEPARATOR;
@@ -89,7 +90,7 @@ $noRecordsFound = "401";
 //an image/file URL. Some originzation will want disable this flag to allow for virus validation before uploading to FM
 $getContainerUrl = true;
 
-$buildVersion = "08042016.Release-0800";
+$buildVersion = $branchSoftwareVersio;
 
 
 //Begin $_SESSION index names I expect this will grow over time to preform one time FileMaker loads then use $_SESSION
