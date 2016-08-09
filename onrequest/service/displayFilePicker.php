@@ -61,6 +61,7 @@ function processFilePicker($label, $questionNum, $required, $fileName, $pkId, $c
             </h6>
         </div>
     </div>
+<div class="tdc-container-fluid"><!-- wrap the file dropzone and display area with the TDC container equalize width between file and image -->
     <div class="row">
         <input type="hidden" id="<?php echo($primaryKeyId);?>" name="<?php echo($primaryKeyId);?>" value="<?php echo($pkId); ?>">
         <input type="hidden" id="<?php echo($hiddenQuestNumId);?>" name="<?php echo($hiddenQuestNumId);?>" value="<?php echo($questionNum);?>">
@@ -150,7 +151,7 @@ function processFilePicker($label, $questionNum, $required, $fileName, $pkId, $c
         <?php } ?>
     <?php } ?>
     </div>
-
+</div><!-- end of tdc-container-fluid div -->
     <script>
 
         $(document).ready(function () {
