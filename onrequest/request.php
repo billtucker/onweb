@@ -213,7 +213,7 @@ $log->debug("Now have required all fields now build HTML");
 ?>
     <!-- TODO review form and move styles to css form -->
     <!-- form style was added to keep elements  from shifting right (Yes Strange but true) -->
-    <form id="request-form" name="request-form" action="processing/processRequest.php" method="post" role="form" style="display: inline-block">
+    <form id="request-form" name="request-form" action="processing/processRequest.php" method="post" role="form">
 
         <!-- added for refactor of requestConnection.php -->
         <input type="hidden" name="requestPkId" id="requestPkId" value="<?php echo($requestPkId);?>">
@@ -414,8 +414,8 @@ $log->debug("Now have required all fields now build HTML");
                 <thead>
                 <tr>
                     <th class="text-left" colspan="6"><strong>Requested Project</strong></th>
-                    <th colspan="2" class="tableTDHeaderDef text-center">Live/Flight Dates</th><!-- Live/Flight Dates Label -->
-                    <th>&nbsp;</th>
+                    <th colspan="2" class="tableTDHeaderDef text-center" style="border-right: 0px;">Live/Flight Dates</th><!-- Live/Flight Dates Label -->
+                    <th style="border-left: 0px;">&nbsp;</th>
                 </tr>
                 </thead>
                 <thead class="tableTDHeaderDef">
@@ -448,7 +448,7 @@ $log->debug("Now have required all fields now build HTML");
                     <th class="col-xs-1 col-md-1"><?php echo($labelRecord->getField('Start')); ?></th>
                     <!-- End -->
                     <th class="col-xs-1 col-md-1"><?php echo($labelRecord->getField('End')); ?></th>
-                    <th class="col-xs-1 col-md-1">Edit</th>
+                    <th class="col-xs-1 col-md-1 text-right">Edit</th>
                 </tr>
                 </thead>
 
@@ -499,8 +499,8 @@ $log->debug("Now have required all fields now build HTML");
                                     ?>
                                 </select>
                             </td>
-                            <td><!-- Project Notes Field -->
-                                <textarea rows="3" cols="70" name=<?php echo("Notes" .$underLine .$requestedProjectListCounter);?> id=<?php echo("Notes" .$underLine .$requestedProjectListCounter);?>><?php echo($projectRelatedSet->getField('Notes')); ?></textarea>
+                            <td><!-- Spot Notes Field -->
+                                <textarea rows="3" style="width: 100%" name=<?php echo("Notes" .$underLine .$requestedProjectListCounter);?> id=<?php echo("Notes" .$underLine .$requestedProjectListCounter);?>><?php echo($projectRelatedSet->getField('Notes')); ?></textarea>
                             </td>
                             <td><!-- To Creator field -->
                                 <?php
@@ -526,7 +526,7 @@ $log->debug("Now have required all fields now build HTML");
                                 buildDateOnlyField("Flight_Date_End", $endDate, $requestedProjectListCounter);
                                 ?>
                             </td>
-                            <td>
+                            <td class="text-right">
                                 <?php displayPencilLinkWithJavaScript($requestedProjectListCounter, $projectRelatedSet->getField('__pk_ID')); ?>
                             </td>
                         </tr>
@@ -593,7 +593,7 @@ $log->debug("Now have required all fields now build HTML");
                             buildDateOnlyField("Flight_Date_End", $endDate, $requestedProjectListCounter);
                             ?>
                         </td>
-                        <td>
+                        <td class="text-right">
                             <a href="deliverableview.php?pKid=<?php echo(rawurldecode($projectRelatedSet->getField('__pk_ID')));?>
                             &itemId=<?php echo($requestedProjectListCounter);?>">
                                     <span class="input-group-addon tdc-glyphicon-control tdc-cell-spacing icon-red">

@@ -476,7 +476,7 @@ echo("\n<script type='text/javascript' src='../js/tdc-deliverable-save-scroll-bu
                         echo("<td>\n");
                         buildTagHouse($tagRecord->getField('House_Number_t'), $tagPk, $tagIndex);
                         echo("</td>\n");
-                        echo("<td>\n");
+                        echo("<td class='text-right'>\n");
                         buildTagDeleteCell($tagIndex, $canModify);
                         echo("</td>\n");
                         $tagIndex++;
@@ -495,7 +495,7 @@ echo("\n<script type='text/javascript' src='../js/tdc-deliverable-save-scroll-bu
                     echo("<td>");
                     buildTagHousePlusOne($tagIndex);
                     echo("</td>");
-                    echo("<td>\n");
+                    echo("<td class='text-right'>\n");
                     buildTagDeleteCell($tagIndex, $canModify);
                     echo("</td>\n");
                     echo("</tr>");

@@ -106,4 +106,4 @@ if(file_exists($root .$appConfigName)){
         </div>
     </div>
 </div><!-- start site navigation bar -->
-<div class="container"><!-- start container div -->
+<div class="tdc-container-fluid"><!-- start container div -->
