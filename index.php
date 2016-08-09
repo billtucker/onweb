@@ -163,7 +163,7 @@ include_once($headerFooter .$headerToUse);
 
     <!-- Start add button for Spot Viewer -->
     <hr>
-    <div class="container">
+    <div class="tdc-container-fluid">
         <div class="row">
             <div class="col-xs-2 col-lg-2">&nbsp;</div>
             <div class="col-xs-4 col-lg-4">

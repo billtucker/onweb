@@ -1,3 +1,12 @@
+
+/* Override Bootstrap container-fluid class with this version below to remove 500 pixels of whitespace left/right **/
+.tdc-container-fluid {
+    padding-right: 50px;
+    padding-left: 50px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
 .btn-file {
     position: relative;
     overflow: hidden;

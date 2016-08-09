@@ -54,7 +54,7 @@ function processImagePicker($label, $questionNum, $required, $fmFilename, $pkId,
             </h6>
         </div>
     </div>
-    <div class="container">
+    <div class="tdc-container-fluid">
         <div class="row">
             <input type="hidden" id="<?php echo($primaryKeyId);?>" name="<?php echo($primaryKeyId);?>" value="<?php echo($pkId);?>">
             <input type="hidden" id="<?php echo($hiddenQuestNumId);?>" name="<?php echo($hiddenQuestNumId);?>" value="<?php echo($questionNum);?>">
