@@ -18,7 +18,7 @@ $log->debug("Start testing the LDAP connection at Fox");
 
 //LDAP Definitions to be used in AD login
 define("COMPANY_DOMAIN", "ffe.foxeg.com");
-define("LDAP_SERVER", "ffeuspladam.ffe.foxeg.com");
+define("LDAP_SERVER", "ffeuspladam.ffe.foxeg.com"); //ffeuscnadam.ffe.foxeg.com
 define("LDAP_PORT", 636);
 //These configuration items are custom per site
 $memberOfList = array(" FBC-ONAIRPRO","FOXSPORTS-ONAIRPRO");
@@ -28,23 +28,28 @@ $ldapKeySearch = "memberof";
 //$usesLdap = false;
 //This DN is for Thought Development only!!!!
 //this wil either ffe or ffe.foxeg
-$dn = "CN=Users,DC=ffe,DC=com";
+//$dn = "CN=Users,DC=ffe,DC=com";
 
+//Fox Base DN
+$dn = "O=FEG,DC=Fox,DC=com";
+
+$tdcServiceAccount = "SVC_FNG_OAP";
 $username = "brettwi";
 $password = "Thoughtdev#2";
 
 $log->debug("Now process login with TDC LDAP server with username: " .$username . " password: " .$password);
 
 //Add domain name to user name for the bind process
-$ldapRdn = $username ."@" .COMPANY_DOMAIN;
+//$ldapRdn = $username ."@" .COMPANY_DOMAIN;
+$ldapRdn = COMPANY_DOMAIN .'\\' .$username;
 
 //Port number is optional BUT this could be important if end user has different port number for
 // their LDAP/Active Directory.
 //TODO Explore SSL LDAP connection
-$ldapConn = ldap_connect("ldaps://" .LDAP_SERVER ."/", LDAP_PORT) or die("Failed connect to: " .LDAP_SERVER);
+$ldapConn = ldap_connect("ldap://" .LDAP_SERVER ."/", LDAP_PORT) or die("Failed connect to: " .LDAP_SERVER);
 
 if($ldapConn){
-    $log->debug("We connected now bind");
+    $log->debug("Got LDAP conn to ldap://" .LDAP_SERVER ."/", LDAP_PORT);
 
     ldap_set_option($ldapConn, LDAP_OPT_PROTOCOL_VERSION, 3); //Specifies the LDAP protocol to be used (V2 or V3)
     ldap_set_option($ldapConn, LDAP_OPT_REFERRALS, 0); //Specifies whether to automatically follow referrals returned by the LDAP server
@@ -52,6 +57,8 @@ if($ldapConn){
     $log->debug("Bind using -> Username: " .$username ." Password: " .$password . " LDAP RDN: " .$ldapRdn);
 
     $bind = @ldap_bind($ldapConn, $ldapRdn, $password);
+
+    $log->error('ldap-errno: '.ldap_errno($ldap) .' ldap-error: '.ldap_error($ldap));
 
     if($bind){
         $log->debug("Bind happened so run search operation for groups");
