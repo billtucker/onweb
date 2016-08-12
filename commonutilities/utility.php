@@ -96,6 +96,7 @@ function convertPipeToAnArray($items){
 
 
 /**
+ * Method to add href to button code for index.php when dynamically building the Project Types buttons
  * @param $buttonLabel Name of Project Type
  * @param $pkId -- FileMaker primary key for Project Type
  * Function used by index.php to display Project Type buttons
@@ -104,43 +105,6 @@ function getButtonCode($buttonLabel, $pkId){
     $button = '<div class="col-xs-2 col-lg-2"><button type="button" class="btn btn-primary btn-block"
         onclick="location.href=\'onrequest/processing/getNewPackageType.php?pkId=' .urlencode($pkId) .'\'">' .$buttonLabel .'</button>';
     echo $button ."\n";
-}
-
-/**
- * Utility function to display success dynamic Javascript function
- * This utility relates to Display Image and Display file methods
- * This method shares global variables name with buildUploadClickListener method
- * @param $listenerFunctionName String value of listener name
- * @param $uploadSuccessDivId String <DIV> ID value
- * @param $hiddenDivId String <DIV> ID value
- */
-function buildShowSuccessFunction($listenerFunctionName, $uploadSuccessDivId, $hiddenDivId){
-    global $sharedFunctionName;
-
-    echo("\t /* This function is dynamically generated */ \n");
-    echo("\t function " .$listenerFunctionName ."(){\n");
-    echo("\t\t $('#" .$uploadSuccessDivId ."').fadeIn(100).delay(5000).fadeOut(500);\n");
-    echo("\t\t $('#" .$hiddenDivId ."').hide();\n");
-    echo("\t }\n");
-    $sharedFunctionName = $listenerFunctionName;
-}
-
-
-/**
- * Utility function to add Javascript listener function for upload button
- * This utility relates to Display Image and Display file methods
- * This method shares global variables name with buildShowSuccessFunction method
- * @param $questionNumber String meta question number
- * @param $uploadBtnId String ID value assigned to button to upload Item
- */
-function buildUploadClickListener($questionNumber, $uploadBtnId){
-    global $sharedFunctionName;
-
-    $underscore = '_';
-    $uploadImageBtnListener = "uploadImageBtn" .$underscore .$questionNumber;
-    echo("\t\t /* This event listener is dynamically generated */ \n");
-    echo("\t\t var " .$uploadImageBtnListener ." = document.getElementById('" .$uploadBtnId ."');\n");
-    echo("\t\t " .$uploadImageBtnListener .".addEventListener('click', " .$sharedFunctionName .", false);\n");
 }
 
 /**
