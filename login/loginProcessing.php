@@ -48,7 +48,7 @@ if($_POST['action'] == 'login'){
  * @param $site_prefix String site homepage prefix from site configuration file
  */
 function authenticateLdap($post, $site_prefix, $dbHandle){
-    global $log, $memberOfList, $ldapKeySearch, $dn;
+    global $log, $memberOfList, $ldapKeySearch, $baseDn;
 
     $username = $post['username'];
     $password = $post['password'];
@@ -76,7 +76,7 @@ function authenticateLdap($post, $site_prefix, $dbHandle){
             //Now setup LDAP search fields and return fields
             $filter = "(&(objectClass=user)(sAMAccountName=$username))";
             $theseFieldOnly = array("cn", "sAMAccountName", "memberOf");
-            $result = ldap_search($ldapConn, $dn, $filter, $theseFieldOnly);
+            $result = ldap_search($ldapConn, $baseDn, $filter, $theseFieldOnly);
             $info = ldap_get_entries($ldapConn, $result);
 
 
