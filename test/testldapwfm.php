@@ -2,46 +2,69 @@
 /**
  * Created by IntelliJ IDEA.
  * User: Bill
- * Date: 8/12/2016
- * Time: 1:27 PM
+ * Date: 8/19/2016
+ * Time: 11:06 AM
  */
 
 
-//Since I am not using the configuration page I need to setup logging
-//set Logger class, setup Log4php configuration, and get Logger that is/can be used on any PHP page
-//current configuration "config.xml" is setup for 1 MB max size log file that rolls file name onweb.log
-include_once('../vendor/apache/log4php/src/main/php/Logger.php');
-Logger::configure("../config.xml");
-$log = Logger::getLogger("ONAIRPRO_Logger");
+include_once($_SERVER["DOCUMENT_ROOT"] ."/onweb" ."/onweb-config.php");
+include_once($fmfiles ."order.db.php");
 
-$log->debug("Start simple connection to ADAM the LDAP connection at Fox");
+$log->debug(" ");
+$log->debug("********* Start Marker Testing LDAP Connection With FM ***********");
+$letMeIn = "";
+
+$username = "brettwi";
+$password = "Thoughtdev#2";
+
+$loginLayout = "[WEB] Login";
+
+$searchHandle = $fmOrderDB->newFindCommand($loginLayout);
+$searchHandle->addFindCriterion("User_Name_ct","==" .$username);
+$searchResults = $searchHandle->execute();
+
+if(FileMaker::isError($searchResults)){
+    $log->error("Failed on search: " .$searchResults->getMessage());
+    exit();
+}
+
+$userRecord = $searchResults->getFirstRecord();
+
+$baseDn = $userRecord->getField("ONWEB_LDAP_base_dn_ct");
+$companyDomain = $userRecord->getField('ONWEB_LDAP_company_domain_ct');
+$ldapServer = $userRecord->getField('ONWEB_LDAP_server_ct');
+$ldapPort = $userRecord->getField('ONWEB_LDAP_port_ct');
+$groupNames = array($userRecord->getField('ONWEB_LDAP_group_name_ct'));
+$fieldsToSearch = array($userRecord->getField('ONWEB_LDAP_fieldsToSearch_ct'));
+$ldapRawFilter = html_entity_decode($userRecord->getField('ONWEB_LDAP_filter_ct'));
+
+//This was added to work around a single quoted string PHP cannot use variable names inside a single quoted string
+$ldapFilter = str_replace('$username',$username,$ldapRawFilter);
 
 
 //LDAP Definitions to be used in AD login
-define("COMPANY_DOMAIN", "fox.com");
-define("LDAP_SERVER", "ffeuspladam.ffe.foxeg.com"); //ffeuscnadam.ffe.foxeg.com
-define("LDAP_PORT", 389);
+define("COMPANYDOMAIN", $companyDomain);
+define("LDAPSERVER", $ldapServer); //ffeuspladam.ffe.foxeg.com
+define("LDAPPORT", $ldapPort);
 
-$onAirProGroups = array("FBC-ONAIRPRO","FOXSPORTS-ONAIRPRO");
+$onAirProGroups = $groupNames;
 
 //set TCP connection to SSL or open port
-if(LDAP_PORT == "636"){
+if(LDAPPORT == "636"){
     $ldapPrefix = "ldaps://";
 }else{
     $ldapPrefix = "ldap://";
 }
 
-$username = "brettwi";
-$password = "Thoughtdev#2";
-$baseDn = "O=FEG,DC=fox,DC=com";
+//$baseDn = "O=FEG,DC=fox,DC=com";
 
 //Add domain name to user name for the bind process
-$ldapRdn = $username ."@" .COMPANY_DOMAIN;
+$ldapRdn = $username ."@" .COMPANYDOMAIN;
 
 
-$ldapConnection = ldap_connect($ldapPrefix .LDAP_SERVER, LDAP_PORT);
+$ldapConnection = ldap_connect($ldapPrefix .LDAPSERVER, LDAPPORT);
 $log->debug("Connection results: " .$ldapConnection);
-$log->debug("Connection String -> Server: " .$ldapPrefix .LDAP_SERVER ." Port: " .LDAP_PORT);
+$log->debug("Connection String -> Server: " .$ldapPrefix .LDAPSERVER ." Port: " .LDAPPORT);
 $log->error('Connection ldap-errno: '.ldap_errno($ldapConnection) .' ldap-error: '.ldap_error($ldapConnection));
 
 if($ldapConnection){
@@ -53,12 +76,10 @@ if($ldapConnection){
 
     if($bind){
         $log->debug("We have binded to ldap server now Search groups");
-        //$filter = "(&(objectCategory=People)(uid=$username))";
-        //$filter = "uid=$username,OU=People,O=FEG,DC=fox,DC=com";
-        $filter = "(&(objectClass=person)(distinguishedName=uid=$username,OU=People,O=FEG,DC=fox,DC=com))";
+        $filter =   $ldapFilter;   //"(&(objectClass=person)(distinguishedName=uid=$username,OU=People,O=FEG,DC=fox,DC=com))";
         $log->debug("Filter Line: " .$filter);
 
-        $theseFieldOnly = array("sn","name","memberOf");
+        $theseFieldOnly = $fieldsToSearch;  //array("sn","name","memberOf");
         $result = ldap_search($ldapConnection, $baseDn, $filter, $theseFieldOnly);
         $log->error('LDAP Search ldap-errno: '.ldap_errno($ldapConnection) .' ldap-error: '.ldap_error($ldapConnection));
 
@@ -83,7 +104,7 @@ if($ldapConnection){
                     }
 
                     $letMeIn = "Default is No Way";
-                    foreach($onAirProGroups as $groupName){
+                    foreach($groupNames as $groupName){
                         if(contains(strtolower($groupName), $ldapGroupList)){
                             $letMeIn = "This person is OK";
                         }
@@ -118,7 +139,9 @@ if($ldapConnection){
  * @return bool true if value found
  */
 function contains($groupName, $fullGroupArray){
+    global $log;
     foreach($fullGroupArray as $groupLines) {
+        $log->debug("Search for " .$groupName ." using " .$groupLines);
         if (strpos($groupLines, $groupName) !== false) {
             return true;
         }
@@ -126,6 +149,8 @@ function contains($groupName, $fullGroupArray){
     return false;
 }
 
+$log->debug("********* End Marker Testing LDAP Connection With FM ***********");
+$log->debug(" ");
 
 ?>
 <html>
