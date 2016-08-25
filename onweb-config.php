@@ -51,18 +51,8 @@ $serverIP = $_SERVER["SERVER_NAME"];
 //single IIS server
 $restFMPath = $port .$serverIP ."/RESTfm/";
 
-
-//place holder for property used in header_top.php to display the small logo and splash logo on index. This property
-// will be overridden by property in dynamically generated tdc-app-config.php
-$companyLogoSmall = "";
-$companyLogoSplash = "";
-$companyLogoSmallPropertyName = '$companyLogoSmall =';
-$companyLogoSplashPropertyName = '$companyLogoSplash =';
-$imageDir = "images";
+//The Onweb property filename used to load nav bar logo and index splash screen logo
 $appConfigName = "tdc-app-conf.php";
-$imageSmallFileName = "company_logo_small.";
-$imageSplashFileName = "company_logo_splash.";
-
 
 //set Logger class, setup Log4php configuration, and get Logger that is/can be used on any PHP page
 //current configuration "config.xml" is setup for 1 MB max size log file that rolls file name onweb.log

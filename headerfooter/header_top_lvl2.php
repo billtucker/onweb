@@ -9,6 +9,7 @@
 include_once($_SERVER["DOCUMENT_ROOT"] ."/onweb/onweb-config.php");
 
 include_once($utilities ."utility.php");
+include_once($commonprocessing ."loadLogosWithLdap.php");
 
 $pageUrl = urlencode($port ."$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
 
@@ -19,8 +20,10 @@ $pageUrl = urlencode($port ."$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
 */
 if(file_exists($root .$appConfigName)){
     include_once($root .$appConfigName);
+}else{
+    writeLogosWithLdap();
+    include_once($root .$appConfigName);
 }
-
 
 ?>
 

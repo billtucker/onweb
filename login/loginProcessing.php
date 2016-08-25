@@ -22,12 +22,20 @@ include_once($_SERVER["DOCUMENT_ROOT"] ."/onweb" ."/onweb-config.php");
 include_once($fmfiles ."order.db.php");
 include_once($utilities .'utility.php');
 include_once($commonprocessing ."passwordPinGenerator.php");
-include_once($commonprocessing ."loadLogos.php");
+include_once($commonprocessing ."loadLogosWithLdap.php");
 include_once($errors ."errorProcessing.php");
+
+if(file_exists($root .$appConfigName)){
+    include_once($root .$appConfigName);
+}else{
+    writeLogosWithLdap();
+    include_once($root .$appConfigName);
+}
 
 if($_POST['action'] == 'login'){
 
-    if($usesLdap){
+    if($usesLdap && $hasLdapInfo){
+        $log->debug("Use LDAP to authenticate user");
         //This login processing requires a further definition as currently developed. The question is how to interact with
         //LDAP then what is validated with FileMaker. This new method is a step 1 to integrate with AD/LDAP
         authenticateLdap($_POST, $site_prefix, $fmOrderDB);
@@ -257,10 +265,10 @@ function setSessionData($userRecord, $site_prefix){
         //This is a run once method as once the file is written is should never run unless the file is deleted
 
         //TODO remove these comments lines after the authentication flow is resolved
-        if(!file_exists($root .$appConfigName)){
-            writeFilesDynamically($userRecord, $imageDir, $imageSmallFileName,$companyLogoSmallPropertyName,
-                $imageSplashFileName,$companyLogoSplashPropertyName, $appConfigName);
-        }
+//        if(!file_exists($root .$appConfigName)){
+//            writeFilesDynamically($userRecord, $imageDir, $imageSmallFileName,$companyLogoSmallPropertyName,
+//                $imageSplashFileName,$companyLogoSplashPropertyName, $appConfigName);
+//        }
 
         if(!empty($_SESSION['forwardingUrl'])){
             $log->debug("setSessionData - User logged in and is being forwarded to: " .$_SESSION['forwardingUrl']);
