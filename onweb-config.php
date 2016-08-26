@@ -26,11 +26,11 @@ $validation = $root ."validation" .DIRECTORY_SEPARATOR;
 
 //**** Start Remove all this information as this will now be part of the tdc-app-config.php file
 //LDAP Definitions for ** TDC ** only to be used in AD login
-define("COMPANY_DOMAIN", "thoughtdev.com");
-define("LDAP_SERVER", "192.168.0.11");
-define("LDAP_PORT", 389);
-$memberOfList = array("Employees", "Remote Desktop Users");
-$ldapKeySearch = "memberof";
+//define("COMPANY_DOMAIN", "thoughtdev.com");
+//define("LDAP_SERVER", "192.168.0.11");
+//define("LDAP_PORT", 389);
+//$memberOfList = array("Employees", "Remote Desktop Users");
+//$ldapKeySearch = "memberof";
 //**** End Remove all this information as this will now be part of the tdc-app-config.php file
 
 //$useLdap switch is off when set to false and forces all login validation to FileMaker only

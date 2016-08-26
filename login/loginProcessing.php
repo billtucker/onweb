@@ -35,10 +35,11 @@ if(file_exists($root .$appConfigName)){
 if($_POST['action'] == 'login'){
 
     if($usesLdap && $hasLdapInfo){
-        $log->debug("Use LDAP to authenticate user");
+        $log->debug("Use New LDAP to authenticate user");
         //This login processing requires a further definition as currently developed. The question is how to interact with
         //LDAP then what is validated with FileMaker. This new method is a step 1 to integrate with AD/LDAP
-        authenticateLdap($_POST, $site_prefix, $fmOrderDB);
+        //authenticateLdap($_POST, $site_prefix, $fmOrderDB);
+        authenticateLdapNew($_POST, $fmOrderDB, $site_prefix);
         authenticateLdapUserFM($fmOrderDB, $_POST['username'], $site_prefix);
     }else{
         $log->debug("LDAP not turned on use FM only");
@@ -49,6 +50,105 @@ if($_POST['action'] == 'login'){
     $log->debug("We fell through user validation without authentication");
 }
 
+function authenticateLdapNew($post, $dbHandle, $site_prefix){
+    global $log, $baseDnValue, $companyDomainValue, $ldapServerValue, $ldapPortValue, $ldapGroupNameValue,
+           $ldapfieldsToSearchValue, $ldapRawFilterValue;
+
+    $username = $post['username'];
+    $password = $post['password'];
+
+    $log->debug("Now process login with LDAP server with username: " .$username . " password: " .$password);
+
+    $ldapRdn = $username ."@" .$companyDomainValue;
+
+    $log->debug("1. Checkpoint: Domain: " .$companyDomainValue ." LDAP Server: " .$ldapServerValue ." Port: " .$ldapPortValue);
+
+//set TCP connection to SSL or open port
+    if($ldapPortValue == "636"){
+        $ldapPrefix = "ldaps://";
+    }else{
+        $ldapPrefix = "ldap://";
+    }
+
+    //We need to replace the placeholder for username with the actual username
+    $ldapFilter = str_replace('$username',$username,$ldapRawFilterValue);
+    $log->debug("2. Checkpoint filter: " .$ldapFilter);
+
+    $ldapConnection = ldap_connect($ldapPrefix .$ldapServerValue, $ldapPortValue);
+    $log->debug("3. Checkpoint Connection String -> Server: " .$ldapPrefix .$ldapServerValue ." Port: " .$ldapPortValue);
+    $log->error('Connection ldap-errno: '.ldap_errno($ldapConnection) .' ldap-error: '.ldap_error($ldapConnection));
+
+    if($ldapConnection){
+        $log->debug("Connection made Now bind with username: " .$ldapRdn ." password: " .$password);
+        ldap_set_option($ldapConnection, LDAP_OPT_PROTOCOL_VERSION, 3); //Specifies the LDAP protocol to be used (V2 or V3)
+        ldap_set_option($ldapConnection, LDAP_OPT_REFERRALS, 0); //Specifies whether to automatically follow referrals returned by the LDAP server
+
+        $bind = ldap_bind($ldapConnection, $ldapRdn, $password);
+
+        if($bind){
+            $log->debug("We have binded to ldap server now Search groups");
+            $filter =   $ldapFilter;   //"(&(objectClass=person)(distinguishedName=uid=$username,OU=People,O=FEG,DC=fox,DC=com))";
+            $log->debug("Search-Filter: " .$filter);
+
+            $theseFieldOnly = array($ldapfieldsToSearchValue);  //array("sn","name","memberOf");
+            $result = ldap_search($ldapConnection, $baseDnValue, $filter, $theseFieldOnly);
+            $log->error('LDAP Search ldap-errno: '.ldap_errno($ldapConnection) .' ldap-error: '.ldap_error($ldapConnection));
+
+            $log->debug("Found Records: " .ldap_count_entries($ldapConnection, $result));
+
+            if(ldap_errno($ldapConnection) == 0){
+                $entries = ldap_get_entries($ldapConnection,$result);
+                $log->error('LDAP Get Entries ldap-errno: '.ldap_errno($ldapConnection) .' ldap-error: '.ldap_error($ldapConnection));
+
+                if(isset($entries) && $entries['count'] > 0){
+                    $groupNames = array($ldapGroupNameValue);
+                    $log->debug("We have some entries from search count: " .$entries['count'] ." now list each item");
+
+                    if(isset($entries[0]['memberof'])){
+                        $log->debug("Ok we have the attribute can we get a count: " .count($entries[0]['memberof']));
+                        $members = $entries[0]['memberof'];
+                        $ldapGroupList = array();
+                        foreach($members as $key => $value){
+                            array_push($ldapGroupList, $value);
+                        }
+
+                        foreach($groupNames as $groupName){
+                            if(contains(strtolower($groupName), $ldapGroupList)){
+                                if($ldapConnection){
+                                    ldap_close($ldapConnection);
+                                }
+                                return;
+                            }
+                        }
+                    }else{
+                        $log->debug("We did not find the member of array try again");
+                    }
+                }else{
+                    $log->debug("No entries found from search");
+                }
+            }
+            ldap_close($ldapConnection);
+        }else{
+            $log->debug("LDAP-Bind failed use full FM method for login process");
+            $log->error("authenticateLdap - Login Error: " .ldap_error($ldapConnection) ." username: " .$username);
+            if($ldapConnection){
+                ldap_close($ldapConnection);
+            }
+            authenticateFMOnly($dbHandle, $post, $site_prefix);
+        }
+    }else{ //if test for connection to LDAP
+        //This is determined to be a serious error and so the user should be redirected to the site Error Page
+        $errorMessage = "authenticateLdap - LDAP server is down or application was unable to connect for user: " .$username;
+        $log->error($errorMessage ." Error: " .ldap_error($ldapConnection));
+        if($ldapConnection){
+            ldap_close($ldapConnection);
+        }
+        $log->debug("LDAP/AD connection error switch to FM only login process");
+        authenticateFMOnly($dbHandle, $post, $site_prefix);
+    }
+}
+
+//TODO Remove this method and rename authenticateLdapNew() once testing is fully completed using port 636 at Fox
 /**
  * New method to validate user login with LDAP/AD will be step one validation. Step two is to bounce the username and
  * password with FileMaker however it is not clear how the flow is defined 10/27/2015

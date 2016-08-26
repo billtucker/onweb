@@ -2,27 +2,35 @@
 /**
  * Created by IntelliJ IDEA.
  * User: Bill
- * Date: 8/12/2016
- * Time: 1:27 PM
+ * Date: 8/26/2016
+ * Time: 10:02 AM
  */
 
+include_once($_SERVER["DOCUMENT_ROOT"] ."/onweb" ."/onweb-config.php");
+include_once($fmfiles ."order.db.php");
+include_once($commonprocessing ."loadLogosWithLdap.php");
 
-//Since I am not using the configuration page I need to setup logging
-//set Logger class, setup Log4php configuration, and get Logger that is/can be used on any PHP page
-//current configuration "config.xml" is setup for 1 MB max size log file that rolls file name onweb.log
-include_once('../vendor/apache/log4php/src/main/php/Logger.php');
-Logger::configure("../config.xml");
-$log = Logger::getLogger("ONAIRPRO_Logger");
 
-$log->debug("Start simple connection to ADAM the LDAP connection at Fox");
+$log->debug("Start Login using tdc-app-config file to authenticate LDAP");
 
+if(file_exists($root .$appConfigName)){
+    include_once($root .$appConfigName);
+}else{
+    writeLogosWithLdap();
+    include_once($root .$appConfigName);
+}
+
+$letMeIn = "Not Authenticated";
+
+$username = 'brettwi';
+$password = 'Thoughtdev#2';
 
 //LDAP Definitions to be used in AD login
-define("COMPANY_DOMAIN", "fox.com");
-define("LDAP_SERVER", "ffeuscnadam.ffe.foxeg.com"); //ffeuspladam.ffe.foxeg.com
-define("LDAP_PORT", 389);
+define("COMPANY_DOMAIN", $companyDomainValue);
+define("LDAP_SERVER", $ldapServerValue); //ffeuspladam.ffe.foxeg.com
+define("LDAP_PORT", $ldapPortValue);
 
-$onAirProGroups = array("FBC-ONAIRPRO","FOXSPORTS-ONAIRPRO");
+$log->debug("1. Checkpoint: Domain: " .COMPANY_DOMAIN ." LDAP Server: " .LDAP_SERVER ." Port: " .LDAP_PORT);
 
 //set TCP connection to SSL or open port
 if(LDAP_PORT == "636"){
@@ -31,17 +39,17 @@ if(LDAP_PORT == "636"){
     $ldapPrefix = "ldap://";
 }
 
-$username = "brettwi";
-$password = "Thoughtdev#2";
-$baseDn = "O=FEG,DC=fox,DC=com";
+//$baseDn = "O=FEG,DC=fox,DC=com";
 
 //Add domain name to user name for the bind process
 $ldapRdn = $username ."@" .COMPANY_DOMAIN;
 
+//We need to replace the placeholder for username with the actual username
+$ldapFilter = str_replace('$username',$username,$ldapRawFilterValue);
+$log->debug("2. Checkpoint filter: " .$ldapFilter);
 
 $ldapConnection = ldap_connect($ldapPrefix .LDAP_SERVER, LDAP_PORT);
-$log->debug("Connection results: " .$ldapConnection);
-$log->debug("Connection String -> Server: " .$ldapPrefix .LDAP_SERVER ." Port: " .LDAP_PORT);
+$log->debug("3. Checkpoint Connection String -> Server: " .$ldapPrefix .LDAP_SERVER ." Port: " .LDAP_PORT);
 $log->error('Connection ldap-errno: '.ldap_errno($ldapConnection) .' ldap-error: '.ldap_error($ldapConnection));
 
 if($ldapConnection){
@@ -53,13 +61,11 @@ if($ldapConnection){
 
     if($bind){
         $log->debug("We have binded to ldap server now Search groups");
-        //$filter = "(&(objectCategory=People)(uid=$username))";
-        //$filter = "uid=$username,OU=People,O=FEG,DC=fox,DC=com";
-        $filter = "(&(objectClass=person)(distinguishedName=uid=$username,OU=People,O=FEG,DC=fox,DC=com))";
-        $log->debug("Filter Line: " .$filter);
+        $filter =   $ldapFilter;   //"(&(objectClass=person)(distinguishedName=uid=$username,OU=People,O=FEG,DC=fox,DC=com))";
+        $log->debug("Search-Filter: " .$filter);
 
-        $theseFieldOnly = array("sn","name","memberOf");
-        $result = ldap_search($ldapConnection, $baseDn, $filter, $theseFieldOnly);
+        $theseFieldOnly = array($ldapfieldsToSearchValue);  //array("sn","name","memberOf");
+        $result = ldap_search($ldapConnection, $baseDnValue, $filter, $theseFieldOnly);
         $log->error('LDAP Search ldap-errno: '.ldap_errno($ldapConnection) .' ldap-error: '.ldap_error($ldapConnection));
 
         $log->debug("Found Records: " .ldap_count_entries($ldapConnection, $result));
@@ -69,10 +75,8 @@ if($ldapConnection){
             $log->error('LDAP Get Entries ldap-errno: '.ldap_errno($ldapConnection) .' ldap-error: '.ldap_error($ldapConnection));
 
             if(isset($entries) && $entries['count'] > 0){
+                $groupNames = array($ldapGroupNameValue);
                 $log->debug("We have some entries from search count: " .$entries['count'] ." now list each item");
-                for($index = 0;$index < $entries['count']; $index++){
-                    $log->debug("SN: " .$entries[$index]['sn'][0] . " Name: " .$entries[$index]['name'][0] ." Member Of:" .$entries[$index]['memberof'][0]);
-                }
 
                 if(isset($entries[0]['memberof'])){
                     $log->debug("Ok we have the attribute can we get a count: " .count($entries[0]['memberof']));
@@ -83,7 +87,7 @@ if($ldapConnection){
                     }
 
                     $letMeIn = "Default is No Way";
-                    foreach($onAirProGroups as $groupName){
+                    foreach($groupNames as $groupName){
                         if(contains(strtolower($groupName), $ldapGroupList)){
                             $letMeIn = "This person is OK";
                         }
@@ -94,46 +98,41 @@ if($ldapConnection){
             }else{
                 $log->debug("No entries found from search");
             }
-        }else{
-            $log-error("Error found so read LDAP Search line");
         }
-
-
-
-    }else{
-        $log->error("We failed to bind");
-        $log->error('Bind ldap-errno: '.ldap_errno($ldapConnection) .' ldap-error: '.ldap_error($ldapConnection));
+        ldap_close($ldapConnection);
     }
-
-    $log->debug("Close the connection to clean up");
-    ldap_close($ldapConnection);
-}else{
-    $log->error('Connection to server failed ldap-errno: '.ldap_errno($ldapConnection) .' ldap-error: '.ldap_error($ldapConnection));
 }
+
+
+
 
 /**
  * A method test the returned memberof list from LDAP server with a specific group names
  * @param $groupName string name to test if exists in member list line
- * @param $fullGroupArray full LDAP memebrof array
+ * @param $fullLdapGroupArray full LDAP memebrof array
  * @return bool true if value found
  */
-function contains($groupName, $fullGroupArray){
-    foreach($fullGroupArray as $groupLines) {
-        if (strpos($groupLines, $groupName) !== false) {
+function contains($groupName, $fullLdapGroupArray){
+    global $log;
+    foreach($fullLdapGroupArray as $LdapGroupName) {
+        $log->debug("Search for " .$groupName ." using " .$LdapGroupName);
+        if (strpos($LdapGroupName, $groupName) !== false) {
             return true;
         }
     }
     return false;
 }
 
+$log->debug("End of PHP code reading file to authenticate user with LDAP");
 
 ?>
+
 <html>
 <head>
-    <title>Simple LDAP Connection</title>
+    <title>Search LDAP tdc-app-config</title>
 </head>
 <body>
-<h3>Connection Test is Completed</h3>
-<p>The Let Me In Says <?php echo $letMeIn ?></p>
+    <h1>Done with LDAP search</h1>
+    <p>Result: <?php echo $letMeIn ?></p>
 </body>
 </html>

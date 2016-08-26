@@ -19,6 +19,7 @@ function writeLogosWithLdap(){
     $imageSmallFileName = "company_logo_small.";
     $imageSplashFileName = "company_logo_splash.";
 
+    $userNamePropertyField = '$username = ""';
     $baseDnPropertyName = '$baseDnValue = ';
     $companyDomainPropertyName = '$companyDomainValue = ';
     $ldapServerPropertyName = '$ldapServerValue = ';
@@ -111,11 +112,12 @@ function writeLogosWithLdap(){
         fwrite($fp, $propertyOut);
         fwrite($fp, $propertySplashOut);
         fwrite($fp, $baseDnPropertyName ."\"" .$baseDnField ."\"" .";" .PHP_EOL);
+        fwrite($fp, $userNamePropertyField .";" .PHP_EOL);
         fwrite($fp, $companyDomainPropertyName ."\"" .$companyDomainField ."\"" .";" .PHP_EOL);
         fwrite($fp, $ldapServerPropertyName ."\"" .$ldapServerField ."\"" .";" .PHP_EOL);
         fwrite($fp, $ldapPortPropertyName ."\"" .$ldapPortField ."\"" .";" .PHP_EOL);
         fwrite($fp, $ldapGroupNamePropertyName ."\"" .implode(",", $groupNamesField) ."\"" .";" .PHP_EOL);
-        fwrite($fp, $ldapFieldsToSearchPropertyName ."\"" .implode(",", $fieldsToSearchField) ."\"" .";" .PHP_EOL);
+        fwrite($fp, $ldapFieldsToSearchPropertyName .'\'' .implode(",", $fieldsToSearchField) .'\'' .";" .PHP_EOL);
         fwrite($fp, $ldapRawFilterPropertyName ."\"" .$ldapRawFilterField ."\"" .";" .PHP_EOL);
         fwrite($fp, $hasLdapInfoPropertyName ." " .$fieldsNotNull .";" .PHP_EOL);
         fwrite($fp, $phpFooter);

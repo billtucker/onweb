@@ -1076,4 +1076,24 @@ function buildShowCodesSessionArray($dbHandle, $accountArray, $requestPkId, $pag
 }
 
 
+/**
+ * A method test the returned memberof list from LDAP server with a specific group names
+ * @param $groupName string name to test if exists in member list line
+ * @param $fullLdapGroupArray full LDAP memebrof array
+ * @return bool true if value found
+ */
+function contains($groupName, $fullLdapGroupArray){
+    global $log;
+
+    $log->debug("LDAP group membership Search for " .$groupName);
+
+    foreach($fullLdapGroupArray as $LdapGroupName) {
+        if (strpos($LdapGroupName, $groupName) !== false) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
 ?>
