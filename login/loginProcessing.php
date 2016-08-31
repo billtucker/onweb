@@ -63,12 +63,15 @@ function authenticateLdapNew($post, $dbHandle, $site_prefix){
 
     $log->debug("1. Checkpoint: Domain: " .$companyDomainValue ." LDAP Server: " .$ldapServerValue ." Port: " .$ldapPortValue);
 
+    //removed the ldaps since just using 636 port ensures encryption to the ADAM server
 //set TCP connection to SSL or open port
-    if($ldapPortValue == "636"){
-        $ldapPrefix = "ldaps://";
-    }else{
-        $ldapPrefix = "ldap://";
-    }
+//    if($ldapPortValue == "636"){
+//        $ldapPrefix = "ldaps://";
+//    }else{
+//        $ldapPrefix = "ldap://";
+//    }
+
+    $ldapPrefix = "ldap://";
 
     //We need to replace the placeholder for username with the actual username
     $ldapFilter = str_replace('$username',$username,$ldapRawFilterValue);
