@@ -18,11 +18,17 @@ $log->debug("Start simple connection to ADAM the LDAP connection at Fox");
 
 
 //LDAP Definitions to be used in AD login
-define("COMPANY_DOMAIN", "fox.com");
-define("LDAP_SERVER", "ffeuscnadam.ffe.foxeg.com"); //ffeuspladam.ffe.foxeg.com
+//define("COMPANY_DOMAIN", "fox.com");
+define("COMPANY_DOMAIN", "gsn.com");
+//define("LDAP_SERVER", "ffeuscnadam.ffe.foxeg.com"); //ffeuspladam.ffe.foxeg.com
+define("LDAP_SERVER", "SM-DC-01.gsn.com");
 define("LDAP_PORT", 389);
 
-$onAirProGroups = array("FBC-ONAIRPRO","FOXSPORTS-ONAIRPRO");
+$letMeIn = "Default is No Way";
+
+//$onAirProGroups = array("FBC-ONAIRPRO","FOXSPORTS-ONAIRPRO");
+//$onAirProGroups = array("GSN-OnAirPro");
+$onAirProGroups = array("GSN-CAGFullAccess");
 
 //set TCP connection to SSL or open port
 if(LDAP_PORT == "636"){
@@ -31,9 +37,13 @@ if(LDAP_PORT == "636"){
     $ldapPrefix = "ldap://";
 }
 
-$username = "brettwi";
-$password = "Thoughtdev#2";
-$baseDn = "O=FEG,DC=fox,DC=com";
+//$username = "brettwi";
+//$password = "Thoughtdev#2";
+$username = "thoughtdev";
+$password = "Td3v@a9Q1";
+
+//$baseDn = "O=FEG,DC=fox,DC=com";
+$baseDn = "DC=gsn,DC=com";
 
 //Add domain name to user name for the bind process
 $ldapRdn = $username ."@" .COMPANY_DOMAIN;
@@ -55,14 +65,15 @@ if($ldapConnection){
         $log->debug("We have binded to ldap server now Search groups");
         //$filter = "(&(objectCategory=People)(uid=$username))";
         //$filter = "uid=$username,OU=People,O=FEG,DC=fox,DC=com";
-        $filter = "(&(objectClass=person)(distinguishedName=uid=$username,OU=People,O=FEG,DC=fox,DC=com))";
+        //$filter = "(&(objectClass=person)(distinguishedName=uid=$username,OU=People,O=FEG,DC=fox,DC=com))"; //Fox Search String
+        $filter = "(&(objectClass=user)(CN=$username*))"; //GSN Search String
         $log->debug("Filter Line: " .$filter);
 
-        $theseFieldOnly = array("sn","name","memberOf");
+        $theseFieldOnly = array("sn","name","memberOf"); //Let drop this down to just memberOf only
         $result = ldap_search($ldapConnection, $baseDn, $filter, $theseFieldOnly);
         $log->error('LDAP Search ldap-errno: '.ldap_errno($ldapConnection) .' ldap-error: '.ldap_error($ldapConnection));
 
-        $log->debug("Found Records: " .ldap_count_entries($ldapConnection, $result));
+        $log->debug("Found this many records: " .ldap_count_entries($ldapConnection, $result));
 
         if(ldap_errno($ldapConnection) == 0){
             $entries = ldap_get_entries($ldapConnection,$result);
@@ -79,12 +90,14 @@ if($ldapConnection){
                     $members = $entries[0]['memberof'];
                     $ldapGroupList = array();
                     foreach($members as $key => $value){
+                        $log->debug("Pusing group name on array: " .$value);
                         array_push($ldapGroupList, $value);
                     }
 
-                    $letMeIn = "Default is No Way";
+
                     foreach($onAirProGroups as $groupName){
                         if(contains(strtolower($groupName), $ldapGroupList)){
+                            $log->debug("We found our group name " .$groupName);
                             $letMeIn = "This person is OK";
                         }
                     }
@@ -119,7 +132,7 @@ if($ldapConnection){
  */
 function contains($groupName, $fullGroupArray){
     foreach($fullGroupArray as $groupLines) {
-        if (strpos($groupLines, $groupName) !== false) {
+        if (strpos(strtolower($groupLines), $groupName) !== false) {
             return true;
         }
     }
