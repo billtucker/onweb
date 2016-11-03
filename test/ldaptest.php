@@ -16,6 +16,7 @@ $log = Logger::getLogger("ONAIRPRO_Logger");
 
 $log->debug("Start simple connection to ADAM the LDAP connection at Fox");
 
+//**** Note: This file is currently configured to connect to GSN LDAP ********
 
 //LDAP Definitions to be used in AD login
 //define("COMPANY_DOMAIN", "fox.com");
