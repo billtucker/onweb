@@ -25,4 +25,8 @@ $DB_NAME = 'PRO_WORK';
 $DB_USER = 'php';
 $DB_PASS = 'php';
 
+//Note this is the future username for PRO_Work and PRO_ORDER
+//DB_USER = 'php'
+//DB_PASS = '8TS-za3C3euUVuw-h^GB'
+
 $fmWorkDB = new FileMaker($DB_NAME, $DB_HOST, $DB_USER, $DB_PASS);
