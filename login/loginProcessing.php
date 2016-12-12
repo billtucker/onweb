@@ -16,6 +16,9 @@
  *    if the configuration is not present in the filesystem
  * 3. 10/26/2015 Added LDAP authentication to the login process. This process will include validation of groups within
  *    the memberOf attribute of the Active Directory/LDAP
+ * 4. 12/12/2016 Fixed issue with retrieved Plugin field from FileMaker. The code always expected an array bit in some
+ *    cases the field could be a single value or null if an error occurred. PHP threw an exception so now the code tests
+ *    for all case possibilities and will bypass PHP exception.
  */
 
 include_once($_SERVER["DOCUMENT_ROOT"] ."/onweb" ."/onweb-config.php");
@@ -341,8 +344,19 @@ function setSessionData($userRecord, $site_prefix){
         $_SESSION['LAST_ACTIVITY'] = time();
 
         $pipeInstalledPlugins = $userRecord->getField('z_SYS_LicensedPlugins_ct');
-        //Force the Array items to uppercase just in case the character case was mixed at entry
-        $_SESSION['installedPlugins'] = array_map("strtoupper", convertPipeToArray($pipeInstalledPlugins));
+        $convertedPlugins = convertPipeToArray($pipeInstalledPlugins);
+
+        //Added this fix 12/12/2016 after issues with Fox Sports login issues.
+        //Test if the pipe array of the converted plugins to an array or a single value
+        //If empty then set this up an empty string to be caught and thrown to error page
+        //Otherwise PHP will through an "Not An Array" exception visible to the user
+        if(!empty($convertedPlugins) && is_array($convertedPlugins)){
+            $_SESSION['installedPlugins'] = array_map("strtoupper", $convertedPlugins);
+        }elseif (!empty($convertedPlugins)){
+            $_SESSION['installedPlugins'] = strtoupper($convertedPlugins);
+        }else{
+            $_SESSION['installedPlugins'] = "";
+        }
 
         //New values to capture from [WEB] Login view to be used when determining which users can view Spots
         // based on account name and we also need to capture PK for the contact ID
