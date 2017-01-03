@@ -38,7 +38,7 @@ $spotList->setRange(0, $maxNumRecords);
 $spotResults = $spotList->execute();
 
 if(FileMaker::isError($spotResults)){
-    if($spotResults->getCode == $noRecordsFound){
+    if($spotResults->getCode() == $noRecordsFound){
         $spotRecords = array();
         $log->debug("No Spot Viewer records Found for list check that z_QuickList_RoughCutsToApprove_cn is set to 1");
     }else{
