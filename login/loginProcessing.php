@@ -16,9 +16,9 @@
  *    if the configuration is not present in the filesystem
  * 3. 10/26/2015 Added LDAP authentication to the login process. This process will include validation of groups within
  *    the memberOf attribute of the Active Directory/LDAP
- * 4. 12/12/2016 Fixed issue with retrieved Plugin field from FileMaker. The code always expected an array bit in some
- *    cases the field could be a single value or null if an error occurred. PHP threw an exception so now the code tests
- *    for all case possibilities and will bypass PHP exception.
+ * 4. 01/04/2017 Added '@' symbols to prefix calls to ldap connection and bind to suppress PHP waring messages. Also
+ *    added function call to generatePasswordPin encryption prior to any calls to authenticateFMOnly to ensure that
+ *    the password or PIN was encrypted before attempting to authenticate.
  */
 
 include_once($_SERVER["DOCUMENT_ROOT"] ."/onweb" ."/onweb-config.php");
@@ -43,6 +43,8 @@ if($_POST['action'] == 'login'){
         //LDAP then what is validated with FileMaker. This new method is a step 1 to integrate with AD/LDAP
         //authenticateLdap($_POST, $site_prefix, $fmOrderDB);
         authenticateLdapNew($_POST, $fmOrderDB, $site_prefix);
+        $log->debug("Failed LDAP authentication now make sure password is encrypted");
+        generatePasswordPin($_POST['username'], $fmOrderDB, $site_prefix);
         authenticateLdapUserFM($fmOrderDB, $_POST['username'], $site_prefix);
     }else{
         $log->debug("LDAP not turned on use FM only");
@@ -55,7 +57,7 @@ if($_POST['action'] == 'login'){
 
 function authenticateLdapNew($post, $dbHandle, $site_prefix){
     global $log, $baseDnValue, $companyDomainValue, $ldapServerValue, $ldapPortValue, $ldapGroupNameValue,
-           $ldapfieldsToSearchValue, $ldapRawFilterValue;
+           $ldapfieldsToSearchValue, $ldapRawFilterValue, $fmOrderDB, $site_prefix;
 
     $username = $post['username'];
     $password = $post['password'];
@@ -80,7 +82,7 @@ function authenticateLdapNew($post, $dbHandle, $site_prefix){
     $ldapFilter = str_replace('$username',$username,$ldapRawFilterValue);
     $log->debug("2. Checkpoint filter: " .$ldapFilter);
 
-    $ldapConnection = ldap_connect($ldapPrefix .$ldapServerValue, $ldapPortValue);
+    $ldapConnection = @ldap_connect($ldapPrefix .$ldapServerValue, $ldapPortValue);
     $log->debug("3. Checkpoint Connection String -> Server: " .$ldapPrefix .$ldapServerValue ." Port: " .$ldapPortValue);
     $log->error('Connection ldap-errno: '.ldap_errno($ldapConnection) .' ldap-error: '.ldap_error($ldapConnection));
 
@@ -89,7 +91,7 @@ function authenticateLdapNew($post, $dbHandle, $site_prefix){
         ldap_set_option($ldapConnection, LDAP_OPT_PROTOCOL_VERSION, 3); //Specifies the LDAP protocol to be used (V2 or V3)
         ldap_set_option($ldapConnection, LDAP_OPT_REFERRALS, 0); //Specifies whether to automatically follow referrals returned by the LDAP server
 
-        $bind = ldap_bind($ldapConnection, $ldapRdn, $password);
+        $bind = @ldap_bind($ldapConnection, $ldapRdn, $password);
 
         if($bind){
             $log->debug("We have binded to ldap server now Search groups");
@@ -140,6 +142,8 @@ function authenticateLdapNew($post, $dbHandle, $site_prefix){
             if($ldapConnection){
                 ldap_close($ldapConnection);
             }
+            $log->debug("now encrpt password before validation of FM password");
+            generatePasswordPin($_POST['username'], $fmOrderDB, $site_prefix);
             authenticateFMOnly($dbHandle, $post, $site_prefix);
         }
     }else{ //if test for connection to LDAP
@@ -149,6 +153,8 @@ function authenticateLdapNew($post, $dbHandle, $site_prefix){
         if($ldapConnection){
             ldap_close($ldapConnection);
         }
+        $log->debug("now encrpt password before validation of FM password");
+        generatePasswordPin($_POST['username'], $fmOrderDB, $site_prefix);
         $log->debug("LDAP/AD connection error switch to FM only login process");
         authenticateFMOnly($dbHandle, $post, $site_prefix);
     }
@@ -167,7 +173,7 @@ function authenticateLdap($post, $site_prefix, $dbHandle){
     $username = $post['username'];
     $password = $post['password'];
 
-    $log->debug("Now process login with TDC LDAP server with username: " .$username . " password: " .$password);
+    $log->debug("Now process login with LDAP server with username: " .$username . " password: " .$password);
 
     //Add domain name to user name for the bind process
     $ldapRdn = $username ."@" .COMPANY_DOMAIN;
@@ -175,7 +181,7 @@ function authenticateLdap($post, $site_prefix, $dbHandle){
     //Port number is optional BUT this could be important if end user has different port number for
     // their LDAP/Active Directory.
     //TODO Explore SSL LDAP connection
-    $ldapConn = ldap_connect("ldap://" .LDAP_SERVER ."/", LDAP_PORT) or die("Could not connect to: " .LDAP_SERVER);
+    $ldapConn = @ldap_connect("ldap://" .LDAP_SERVER ."/", LDAP_PORT) or die("Could not connect to: " .LDAP_SERVER);
 
     if($ldapConn){ //connection to LDAP server was successful
         ldap_set_option($ldapConn, LDAP_OPT_PROTOCOL_VERSION, 3); //Specifies the LDAP protocol to be used (V2 or V3)
@@ -274,7 +280,7 @@ function authenticateFMOnly($dbHandle, $post, $site_prefix){
     global $log, $bypassPassword;
     $loginLayout = '[WEB] Login';
 
-    $log->debug("Now entering FileMaker Authentication processing");
+    $log->debug("Now entering FileMaker Authentication only processing");
 
     $ePassword = encryptPassowrdKey($post['password']);
 
@@ -308,7 +314,7 @@ function authenticateFMOnly($dbHandle, $post, $site_prefix){
     if($bypassPassword || isPasswordPinMatch($userRecord->getField('User_Password_Hash_t'), $ePassword) ||
         isPasswordPinMatch($userRecord->getField('User_Pin_Hash_t'), $ePassword)){
         $log->debug("Now call session creation for FM full authentication");
-            setSessionData($userRecord, $site_prefix);
+        setSessionData($userRecord, $site_prefix);
     }else{
         $error = "Authentication Failure";
         $log->info("loginProcessing.php - processLogin() - Last Check Authentication Error: " .$error ." username: " .$post['username']);
@@ -326,78 +332,68 @@ function setSessionData($userRecord, $site_prefix){
     global $log, $onWebPlugin, $companyLogoSmallPropertyName, $imageDir, $appConfigName, $imageSmallFileName,
            $imageSplashFileName,$companyLogoSplashPropertyName, $root;
 
-        if(!session_id()){
-            session_start();
-        }
+    if(!session_id()){
+        session_start();
+    }
 
-        $log->debug("setSessionData - Session was started now populate session Array");
+    $log->debug("setSessionData - Session was started now populate session Array");
 
-        $_SESSION['authenticated'] = true;
-        $_SESSION['firstName'] = $userRecord->getField('User_FirstName_ct');
-        $_SESSION['lastName'] = $userRecord->getField('User_LastName_ct');
+    $_SESSION['authenticated'] = true;
+    $_SESSION['firstName'] = $userRecord->getField('User_FirstName_ct');
+    $_SESSION['lastName'] = $userRecord->getField('User_LastName_ct');
 
-        $accessLevel = $userRecord->getField('User_Privs_t');
-        $log->debug("User Privi Set: " .$accessLevel);
-        $_SESSION['accessLevel'] = convertPipeToArray($accessLevel);
+    $accessLevel = $userRecord->getField('User_Privs_t');
+    $log->debug("User Privi Set: " .$accessLevel);
+    $_SESSION['accessLevel'] = convertPipeToArray($accessLevel);
 
-        $_SESSION['userName'] = $userRecord->getField('User_Name_ct');
-        $_SESSION['LAST_ACTIVITY'] = time();
+    $_SESSION['userName'] = $userRecord->getField('User_Name_ct');
+    $_SESSION['LAST_ACTIVITY'] = time();
 
-        $pipeInstalledPlugins = $userRecord->getField('z_SYS_LicensedPlugins_ct');
-        $convertedPlugins = convertPipeToArray($pipeInstalledPlugins);
+    $pipeInstalledPlugins = $userRecord->getField('z_SYS_LicensedPlugins_ct');
+    $log->debug("Piped Installed Plugin from field: " .$pipeInstalledPlugins);
+    //Force the Array items to uppercase just in case the character case was mixed at entry
+    $_SESSION['installedPlugins'] = array_map("strtoupper", convertPipeToArray($pipeInstalledPlugins));
 
-        //Added this fix 12/12/2016 after issues with Fox Sports login issues.
-        //Test if the pipe array of the converted plugins to an array or a single value
-        //If empty then set this up an empty string to be caught and thrown to error page
-        //Otherwise PHP will through an "Not An Array" exception visible to the user
-        if(!empty($convertedPlugins) && is_array($convertedPlugins)){
-            $_SESSION['installedPlugins'] = array_map("strtoupper", $convertedPlugins);
-        }elseif (!empty($convertedPlugins)){
-            $_SESSION['installedPlugins'] = strtoupper($convertedPlugins);
-        }else{
-            $_SESSION['installedPlugins'] = "";
-        }
+    //New values to capture from [WEB] Login view to be used when determining which users can view Spots
+    // based on account name and we also need to capture PK for the contact ID
+    $_SESSION['contact_pk'] = $userRecord->getField('User_Contact__pk_ID_ct');
 
-        //New values to capture from [WEB] Login view to be used when determining which users can view Spots
-        // based on account name and we also need to capture PK for the contact ID
-        $_SESSION['contact_pk'] = $userRecord->getField('User_Contact__pk_ID_ct');
+    //System preference apply if 1 or else value is null
+    $_SESSION['system_preference'] = $userRecord->getField('z_PRO_SeparateWorkByPrograming_cn');
 
-        //System preference apply if 1 or else value is null
-        $_SESSION['system_preference'] = $userRecord->getField('z_PRO_SeparateWorkByPrograming_cn');
+    //Accounts associated with user in cr delaminated field
+    //$_SESSION['user_accounts'] = array(stripControlChars($userRecord->getField('User_Contact_Programming_Type_Associations_ct')));
+    $_SESSION['user_accounts'] = explodedCrString($userRecord->getField('User_Contact_Programming_Type_Associations_ct'));
 
-        //Accounts associated with user in cr delaminated field
-        //$_SESSION['user_accounts'] = array(stripControlChars($userRecord->getField('User_Contact_Programming_Type_Associations_ct')));
-        $_SESSION['user_accounts'] = explodedCrString($userRecord->getField('User_Contact_Programming_Type_Associations_ct'));
+    foreach($_SESSION['user_accounts'] as $account){
+        $log->debug("User: " .$_SESSION['userName'] ." has an account: " .$account);
+    }
 
-        foreach($_SESSION['user_accounts'] as $account){
-            $log->debug("User: " .$_SESSION['userName'] ." has an account: " .$account);
-        }
+    //Now test for ON-WEB from the PLUGIN array to validate that the user has the License authority to access web
+    validatePlugin($_SESSION['userName'], $_SESSION['installedPlugins'], $onWebPlugin);
 
-        //Now test for ON-WEB from the PLUGIN array to validate that the user has the License authority to access web
-        validatePlugin($_SESSION['userName'], $_SESSION['installedPlugins'], $onWebPlugin);
+    //Now the login ands plugin validation is processed now write the tdc-app-config.php and set small logo location
+    //Only perform this operation if the tdc-app-conf.php is not present in the directory. If the file exists then
+    //it is ass-u-me(d) that the logo name and location 'was' resolved and is available to the presentation layer
+    //This is a run once method as once the file is written is should never run unless the file is deleted
 
-        //Now the login ands plugin validation is processed now write the tdc-app-config.php and set small logo location
-        //Only perform this operation if the tdc-app-conf.php is not present in the directory. If the file exists then
-        //it is ass-u-me(d) that the logo name and location 'was' resolved and is available to the presentation layer
-        //This is a run once method as once the file is written is should never run unless the file is deleted
-
-        //TODO remove these comments lines after the authentication flow is resolved
+    //TODO remove these comments lines after the authentication flow is resolved
 //        if(!file_exists($root .$appConfigName)){
 //            writeFilesDynamically($userRecord, $imageDir, $imageSmallFileName,$companyLogoSmallPropertyName,
 //                $imageSplashFileName,$companyLogoSplashPropertyName, $appConfigName);
 //        }
 
-        if(!empty($_SESSION['forwardingUrl'])){
-            $log->debug("setSessionData - User logged in and is being forwarded to: " .$_SESSION['forwardingUrl']);
-            //added this fix to forward user to page they expected to see prior to login. Assigned session item to var
-            //then unset session item then forward user
-            $forwardingUrl = $_SESSION['forwardingUrl'];
-            unset($_SESSION['forwardingUrl']);
-            header("location:" .$forwardingUrl);
-            exit;
-        }else{
-            $log->debug("setSessionData - No previous forwarding is defined so go to index page");
-            header("location: " .$site_prefix ."index.php");
-            exit;
-        }
+    if(!empty($_SESSION['forwardingUrl'])){
+        $log->debug("setSessionData - User logged in and is being forwarded to: " .$_SESSION['forwardingUrl']);
+        //added this fix to forward user to page they expected to see prior to login. Assigned session item to var
+        //then unset session item then forward user
+        $forwardingUrl = $_SESSION['forwardingUrl'];
+        unset($_SESSION['forwardingUrl']);
+        header("location:" .$forwardingUrl);
+        exit;
+    }else{
+        $log->debug("setSessionData - No previous forwarding is defined so go to index page");
+        header("location: " .$site_prefix ."index.php");
+        exit;
+    }
 }
