@@ -19,7 +19,8 @@
  * 4. 01/04/2017 Added '@' symbols to prefix calls to ldap connection and bind to suppress PHP waring messages. Also
  *    added function call to generatePasswordPin encryption prior to any calls to authenticateFMOnly to ensure that
  *    the password or PIN was encrypted before attempting to authenticate.
- * 5. 01/04/2017 Removed all calls to generatePasswordPin method calls. Replaced them with single md5() conversion
+ * 5. 01/04/2017 Removed all calls to generatePasswordPin method calls. Replaced them with single md5() conversion. All
+ *    FileMaker passwords and pins now use MD5 so we no longer need to apply/write a PHP encryption value.
  */
 
 include_once($_SERVER["DOCUMENT_ROOT"] ."/onweb" ."/onweb-config.php");
@@ -42,7 +43,6 @@ if($_POST['action'] == 'login'){
         $log->debug("Use New LDAP to authenticate user");
         //This login processing requires a further definition as currently developed. The question is how to interact with
         //LDAP then what is validated with FileMaker. This new method is a step 1 to integrate with AD/LDAP
-        //authenticateLdap($_POST, $site_prefix, $fmOrderDB);
         authenticateLdapNew($_POST, $fmOrderDB, $site_prefix);
         authenticateLdapUserFM($fmOrderDB, $_POST['username'], $site_prefix);
     }else{
@@ -141,7 +141,6 @@ function authenticateLdapNew($post, $dbHandle, $site_prefix){
                 ldap_close($ldapConnection);
             }
             $log->debug("LDAP-Bind failed use full FM only method for login process");
-            //generatePasswordPin($_POST['username'], $fmOrderDB, $site_prefix);
             authenticateFMOnly($dbHandle, $post, $site_prefix);
         }
     }else{ //if test for connection to LDAP
@@ -151,8 +150,6 @@ function authenticateLdapNew($post, $dbHandle, $site_prefix){
         if($ldapConnection){
             ldap_close($ldapConnection);
         }
-        //$log->debug("now encrpt password before validation of FM password");
-        //generatePasswordPin($_POST['username'], $fmOrderDB, $site_prefix);
         $log->debug("LDAP/AD connection error switch to FM only login process");
         authenticateFMOnly($dbHandle, $post, $site_prefix);
     }
