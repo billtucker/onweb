@@ -19,6 +19,7 @@
  * 4. 01/04/2017 Added '@' symbols to prefix calls to ldap connection and bind to suppress PHP waring messages. Also
  *    added function call to generatePasswordPin encryption prior to any calls to authenticateFMOnly to ensure that
  *    the password or PIN was encrypted before attempting to authenticate.
+ * 5. 01/04/2017 Removed all calls to generatePasswordPin method calls. Replaced them with single md5() conversion
  */
 
 include_once($_SERVER["DOCUMENT_ROOT"] ."/onweb" ."/onweb-config.php");
@@ -43,12 +44,9 @@ if($_POST['action'] == 'login'){
         //LDAP then what is validated with FileMaker. This new method is a step 1 to integrate with AD/LDAP
         //authenticateLdap($_POST, $site_prefix, $fmOrderDB);
         authenticateLdapNew($_POST, $fmOrderDB, $site_prefix);
-        $log->debug("Failed LDAP authentication now make sure password is encrypted");
-        generatePasswordPin($_POST['username'], $fmOrderDB, $site_prefix);
         authenticateLdapUserFM($fmOrderDB, $_POST['username'], $site_prefix);
     }else{
         $log->debug("LDAP not turned on use FM only");
-        generatePasswordPin($_POST['username'], $fmOrderDB, $site_prefix);
         authenticateFMOnly($fmOrderDB, $_POST, $site_prefix);
     }
 
@@ -142,8 +140,8 @@ function authenticateLdapNew($post, $dbHandle, $site_prefix){
             if($ldapConnection){
                 ldap_close($ldapConnection);
             }
-            $log->debug("now encrpt password before validation of FM password");
-            generatePasswordPin($_POST['username'], $fmOrderDB, $site_prefix);
+            $log->debug("LDAP-Bind failed use full FM only method for login process");
+            //generatePasswordPin($_POST['username'], $fmOrderDB, $site_prefix);
             authenticateFMOnly($dbHandle, $post, $site_prefix);
         }
     }else{ //if test for connection to LDAP
@@ -153,82 +151,13 @@ function authenticateLdapNew($post, $dbHandle, $site_prefix){
         if($ldapConnection){
             ldap_close($ldapConnection);
         }
-        $log->debug("now encrpt password before validation of FM password");
-        generatePasswordPin($_POST['username'], $fmOrderDB, $site_prefix);
+        //$log->debug("now encrpt password before validation of FM password");
+        //generatePasswordPin($_POST['username'], $fmOrderDB, $site_prefix);
         $log->debug("LDAP/AD connection error switch to FM only login process");
         authenticateFMOnly($dbHandle, $post, $site_prefix);
     }
 }
 
-//TODO Remove this method and rename authenticateLdapNew() once testing is fully completed using port 636 at Fox
-/**
- * New method to validate user login with LDAP/AD will be step one validation. Step two is to bounce the username and
- * password with FileMaker however it is not clear how the flow is defined 10/27/2015
- * @param $post - $_POST array
- * @param $site_prefix String site homepage prefix from site configuration file
- */
-function authenticateLdap($post, $site_prefix, $dbHandle){
-    global $log, $memberOfList, $ldapKeySearch, $baseDn;
-
-    $username = $post['username'];
-    $password = $post['password'];
-
-    $log->debug("Now process login with LDAP server with username: " .$username . " password: " .$password);
-
-    //Add domain name to user name for the bind process
-    $ldapRdn = $username ."@" .COMPANY_DOMAIN;
-
-    //Port number is optional BUT this could be important if end user has different port number for
-    // their LDAP/Active Directory.
-    //TODO Explore SSL LDAP connection
-    $ldapConn = @ldap_connect("ldap://" .LDAP_SERVER ."/", LDAP_PORT) or die("Could not connect to: " .LDAP_SERVER);
-
-    if($ldapConn){ //connection to LDAP server was successful
-        ldap_set_option($ldapConn, LDAP_OPT_PROTOCOL_VERSION, 3); //Specifies the LDAP protocol to be used (V2 or V3)
-        ldap_set_option($ldapConn, LDAP_OPT_REFERRALS, 0); //Specifies whether to automatically follow referrals returned by the LDAP server
-
-        $log->debug("Bind using -> Username: " .$username ." Password: " .$password . " LDAP RDN: " .$ldapRdn);
-
-        $bind = @ldap_bind($ldapConn, $ldapRdn, $password);
-
-        if($bind){ //user successfully logged into LDAP/AD (Bind) server
-
-            //Now setup LDAP search fields and return fields
-            $filter = "(&(objectClass=user)(sAMAccountName=$username))";
-            $theseFieldOnly = array("cn", "sAMAccountName", "memberOf");
-            $result = ldap_search($ldapConn, $baseDn, $filter, $theseFieldOnly);
-            $info = ldap_get_entries($ldapConn, $result);
-
-
-            //validate that user belongs to (memberOf) OnAir-Pro groups
-            if(multiKeyExists($info, $ldapKeySearch, $memberOfList)){
-                ldap_unbind($ldapConn); //for disconnect from LDAP once done
-                $log->debug("User Logged in via LDAP and groups were validated. Now return and call FM to setup session data");
-                return;
-            }else{
-                //Could not validate user belongs to group memberOf field of LDAP
-                ldap_unbind($ldapConn); //for disconnect from LDAP once done
-                $log->debug("Group membership validation failed. So call FileMaker to validate if user belongs to site");
-                return;
-                //header("location: " .$site_prefix ."index.php?error=" .$error);
-                //exit;
-            }
-        }else{ //unsuccessful login to LDAP AD (note: authenticate with FileMaker since LDAP failed)
-            $log->debug("LDAP-Bind failed use full FM method for login process");
-            $log->error("authenticateLdap - Login Error: " .ldap_error($ldapConn) ." username: " .$username);
-            ldap_unbind($ldapConn);
-            authenticateFMOnly($dbHandle, $post, $site_prefix);
-        }
-
-    }else{
-        //This is determined to be a serious error and so the user should be redirected to the site Error Page
-        $errorMessage = "authenticateLdap - LDAP server is down or application was unable to connect";
-        $log->error($errorMessage ." Error: " .ldap_error($ldapConn));
-        ldap_unbind($ldapConn);
-        $log->debug("LDAP/AD connection error switch to FM login process");
-        authenticateFMOnly($dbHandle, $post, $site_prefix);
-    }
-}
 
 /**
  * This method is to validate username after LDAP/AD username/password authentication. This method will gather
@@ -282,7 +211,8 @@ function authenticateFMOnly($dbHandle, $post, $site_prefix){
 
     $log->debug("Now entering FileMaker Authentication only processing");
 
-    $ePassword = encryptPassowrdKey($post['password']);
+    //$ePassword = encryptPassowrdKey($post['password']);
+    $ePassword = md5($post['password']);
 
     $searchHandle = $dbHandle->newFindCommand($loginLayout);
     $searchHandle->addFindCriterion('User_Name_ct', "==" . $post['username']);
@@ -317,7 +247,7 @@ function authenticateFMOnly($dbHandle, $post, $site_prefix){
         setSessionData($userRecord, $site_prefix);
     }else{
         $error = "Authentication Failure";
-        $log->info("loginProcessing.php - processLogin() - Last Check Authentication Error: " .$error ." username: " .$post['username']);
+        $log->info("authenticateFMOnly - FM [WEB] Login check Authentication Error: " .$error ." username: " .$post['username']);
         header("location: " .$site_prefix ."login.php?error=" .$error);
         exit();
     }
