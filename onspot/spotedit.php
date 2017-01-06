@@ -235,7 +235,7 @@ if(!$bypass){
         include_once($spotRoot ."approveView.php");
     }
 }else{
-    $headerToUse = getHeaderIncludeFileName(urldecode($pageUrl));
+    $headerToUse = "header_static_view_only.php"; //This now fixed when the viewOnly attribute is active
     include_once($headerFooter .$headerToUse);
     include_once($spotRoot ."titleWithVideoView.php");
 }
