@@ -48,7 +48,7 @@ validateUser($site_prefix, $pageUrl, $siteSection, $onSpotView, $OnSpotPluginToV
 //Globals used by process notes or approval block information
 $spotViewerLayout = "[WEB] cwp_spotviewer_browse";
 $userNotesLayout = "[WEB] UserNotes";
-$noteType = "Approval Notes";
+$noteType = "Rough Cut Approval";
 
 //Process the Approval information only as a user selected a Approval Radio button
 //Since the calling page is now a dual form this code accepts a click event occurred so the data should be

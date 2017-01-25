@@ -311,3 +311,15 @@ div.empty_image_container {
 .tdc-house{
     width: 75px;
 }
+
+/* Use this class when displaying an error message on spot viewer when the path supplied cannot be parsed */
+.spotviewer_error_div {
+    border: groove;
+    height: auto;
+    max-width: 800px;
+    margin-left: 150px;
+    margin-right: 150px;
+    box-sizing: border-box;
+    box-shadow: 0 10px 6px -1px black;
+    vertical-align: middle;
+}

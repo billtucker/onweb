@@ -691,7 +691,28 @@ function printEnableDisable($url){
 function getFileExtensionFromURL($pathToFile){
     $pathInfo = pathinfo($pathToFile);
 
-    return $pathInfo['extension'];
+    if(!empty($pathInfo['extension']) && isset($pathInfo['extension'])){
+        return $pathInfo['extension'];
+    }else{
+        return 'invalid';
+    }
+
+}
+
+/**
+ * This method replaces server name or IP with public exposed name or IP to play videos
+ * @param $containerUrl String url from FileMaker with host and IP
+ * @param $hostIp String IP or name used to access site by user
+ * @return mixed String of URL fullVideoLink to be used in spotViewer
+ */
+function getUserVideoUrl($containerUrl, $hostIp){
+
+    $urlParts = parse_url($containerUrl);
+    $videoHost = $urlParts['host'];
+    if(stripos($containerUrl, $hostIp) === false){
+        return str_replace($videoHost, $hostIp, $containerUrl);
+    }
+    return $containerUrl;
 }
 
 /**

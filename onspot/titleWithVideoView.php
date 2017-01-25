@@ -89,6 +89,10 @@ if(!session_id()){
 </div><!-- End Page Title -->
 <div class="clearfix"></div>
 <div class="container-fluid tdc-spotviewer-div-margin"><!-- Start Player DIV -->
+    <!-- Test if we have a valid video link from FileMaker -->
+    <?php
+    if($validVideo){
+    ?>
     <div class="row">
         <div class="col-md-12 col-xs-12">
             <video height="100%" width="100%" controls>
@@ -108,6 +112,15 @@ if(!session_id()){
             </div><!-- Video Link End -->
         </div>
     </div>
+    <?php } else { ?>
+        <!-- all verbiage used is subject to change about why we cannot play the video -->
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-xs-12 alert alert-danger spotviewer_error_div">
+            <p class="text-capitalize text-center lead"><strong>Unable to play video due to an invalid video format from FileMaker</strong></p>
+            <p class="text-capitalize text-center lead"><strong>Please use Back button to return to spot list</strong></p>
+        </div>
+    </div>
+    <?php } ?>
 </div><!-- End Player DIV -->
 <div class="clearfix">&nbsp;</div>
 <!-- End titleWithVideoView HTML Code -->

@@ -149,8 +149,9 @@ $record = $spots[0];
 $videoPath = "";
 $videoType = "";
 $fullVideoLink = "";
+$validVideo = true; //set this as true as we expect that the container will always have valid video extension
 
-//TODO modify this record to use the container if URL exists for container if not then use full path ct field
+//TODO we should test for a valid extension the conatiner as well as the FileMaker text field
 if(!empty($record->getField('z_ONSPOT_Rough_Media_Store_con'))){
     $container_url = $record->getField('z_ONSPOT_Rough_Media_Store_con');
     $ext = getFileMakerContainerFileExtension($container_url);
@@ -162,6 +163,10 @@ if(!empty($record->getField('z_ONSPOT_Rough_Media_Store_con'))){
     $fullPathField = "z_ONSPOT_Rough_Full_Path_ct";
     $fullVideoLink = $record->getField($fullPathField);
     $ext = getFileExtensionFromURL($fullVideoLink);
+    if($ext == 'invalid'){
+        $log->debug("System found no extension associated text path: " .$fullPathField);
+        $validVideo = false;
+    }
     $videoType = getVideoSourceType($ext);
     $log->debug("URL from field Full Path value: " .$fullVideoLink ." video type: " .$videoType);
 }
@@ -181,11 +186,13 @@ if(!$bypass){
     $pipedApprovalList = "Yes|No|Re-do";
     $approvalvalues  = convertPipeToArray($pipedApprovalList);
 
+    $noteType = "Rough Cut Approval";
     //Now get the User Notes layout for historical comments
     $sortFieldOne = 'z_RecCreatedDate';
     $sortFieldTwo = "z_RecCreatedTime";
     $note = $fmWorkDB->newFindCommand($userNotesLayout);
     $note->addFindCriterion('_fk_LinkedObject_ID', '==' . $pkId);
+    $note->addFindCriterion('Note_Type_t', '=='. $noteType);
     if(!$spotNotesView && $spotNotesEdit){
         $log->info("Secondary search for user records for user: " .$_SESSION['userName']);
         $note->addFindCriterion("z_RecCreatedBy", "==" .$_SESSION['userName']);
@@ -225,14 +232,20 @@ if(!$bypass){
     //Editing or viewing blocks are dependant on privileges enabled by the FileMaker [WEB]Login layout in PRO_ORDER
     //If the user falls through the tests then only the upper header with video will appear
     if(($spotNotesView || $spotNotesEdit) && $approvalView){
-        $log->debug("Display notesAndApprovalView PHP Code");
-        include_once($spotRoot ."notesAndApproveView.php");
+        if($validVideo){
+            $log->debug("Display notesAndApprovalView PHP Code");
+            include_once($spotRoot ."notesAndApproveView.php");
+        }
     }elseif(($spotNotesView || $spotNotesEdit) && !$approvalView){
-        $log->debug("Display notesView PHP Code");
-        include_once($spotRoot ."notesView.php");
+        if($validVideo){
+            $log->debug("Display notesView PHP Code");
+            include_once($spotRoot ."notesView.php");
+        }
     }elseif((!$spotNotesView && !$spotNotesEdit) && $approvalView){
-        $log->debug("Display approveView PHP Code");
-        include_once($spotRoot ."approveView.php");
+        if($validVideo){
+            $log->debug("Display approveView PHP Code");
+            include_once($spotRoot ."approveView.php");
+        }
     }
 }else{
     $headerToUse = "header_static_view_only.php"; //This now fixed when the viewOnly attribute is active
@@ -243,22 +256,5 @@ if(!$bypass){
 
 include_once($headerFooter ."footer.php");
 $log->debug("Completed spotedit.php code now display HTML code".PHP_EOL);
-
-//TODO move this host replacement method to utility.php after testing
-/**
- * This method replaces server name or IP with public exposed name or IP to play videos
- * @param $containerUrl String url from FileMaker with host and IP
- * @param $hostIp String IP or name used to access site by user
- * @return mixed String of URL fullVideoLink to be used in spotViewer
- */
-function getUserVideoUrl($containerUrl, $hostIp){
-
-    $urlParts = parse_url($containerUrl);
-    $videoHost = $urlParts['host'];
-    if(stripos($containerUrl, $hostIp) === false){
-        return str_replace($videoHost, $hostIp, $containerUrl);
-    }
-    return $containerUrl;
-}
 
 ?>
