@@ -37,8 +37,9 @@ $orderUrl = $restFMPath .$databaseName ."/layout/" .$encodeLayoutName .".json?RF
 $log->debug("URL: " .$orderUrl);
 
 //Pro_Order username password cUrl will encrypt the credentials
-$orderUsername = "0ap\$Admin";
-$orderPassword = "gui39vp4s";
+//TODO we need to link the fmfiles and assign DB_USER and DB_PASS to this RESTfm credentials
+$orderUsername = "php";
+$orderPassword = "8TS-za3C3euUVuw-h^GB";
 
 $opts = array(
     'http'=>array(
@@ -57,7 +58,7 @@ $data = @file_get_contents($orderUrl, false, $context);
 //2. If we have found an error test for which error (serious or just no documents found)
 if($data === false){
     if(in_array("X-RESTfm-FM-Status: 401", $http_response_header)){
-        $log->debug("We found our 401 error");
+        $log->debug("Returned 401 not found error");
         echo null; // send an empty null back to receiver
         exit();
     }else{

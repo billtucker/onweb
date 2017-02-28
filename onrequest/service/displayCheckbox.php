@@ -15,6 +15,9 @@ function processCheckBox($rawItems, $question, $questionNum, $required, $answerI
     $log->debug("Inside processCheckBox method");
     $items = convertPipeToArray($rawItems);
     $convertedAnswer = $answerItem;
+    if(!is_array($items)){
+        $items = array($items);
+    }
     ?>
     <br> 
     <div class="row">

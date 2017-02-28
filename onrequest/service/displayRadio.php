@@ -11,6 +11,12 @@ include_once($utilities ."utility.php");
 
 function processRadioButton($rawRadioItems, $name, $label, $questionNum, $required, $answer){
     $radioItems = convertPipeToArray($rawRadioItems);
+    if(!is_array($radioItems)){
+        echo "The value is a string so now convert to array" .PHP_EOL;
+        $radioItems = array($radioItems);
+
+    }
+
     ?>
 
     <div class="row">
