@@ -10,11 +10,15 @@
 
 include_once dirname(__DIR__) .DIRECTORY_SEPARATOR ."request-config.php";
 
+//Now include the order.db.php file to remove hardcoded values from that file
+include_once($fmfiles ."order.db.php");
+
 //init this JSON array container so it can be used almost anywhere
 $dataErrorRecordMaster = array();
 
 if(isset($_POST['pk'])){
     $requestPk = $_POST['pk'];
+    $log->debug("Status on Request was changed to Submitted so check if all Required Meta records have answers");
 }else{
     $log->error("No PK Sent from calling page");
     $dataErrorRecordMaster['error'] = true;
@@ -37,9 +41,8 @@ $orderUrl = $restFMPath .$databaseName ."/layout/" .$encodeLayoutName .".json?RF
 $log->debug("URL: " .$orderUrl);
 
 //Pro_Order username password cUrl will encrypt the credentials
-//TODO we need to link the fmfiles and assign DB_USER and DB_PASS to this RESTfm credentials
-$orderUsername = "php";
-$orderPassword = "8TS-za3C3euUVuw-h^GB";
+$orderUsername =  $DB_USER;
+$orderPassword =  $DB_PASS;
 
 $opts = array(
     'http'=>array(
