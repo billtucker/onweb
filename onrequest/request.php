@@ -155,10 +155,18 @@ $programmingPipeItems = $request->getField('UI_ValueList_ProgrammingType_ct');
 if(isset($programmingPipeItems))
     $programmingItems = convertPipeToArray($programmingPipeItems);
 
+//The following will attempt to load a FileMaker Field with an expected set of values for the status dropdown
+//If the field contains one or no values the $requestStatusArray will not throw an exception when processed
+//Note: the worst case from this code is an empty array to populate the dropdown
 $requestStatusName = 'Request_Status_t';
 $requestStatusPipeList = $request->getField('UI_ValueList_RequestStatus_ct');
-if(isset($requestStatusPipeList))
+$requestStatusArray = array();
+if(isset($requestStatusPipeList)){
     $requestStatusArray = convertPipeToArray($requestStatusPipeList);
+    if(!is_array($requestStatusArray)){
+        $requestStatusArray = array($requestStatusArray);
+    }
+}
 
 
 //Removed query of list ands modified dropdown to input box 02/12/2015
