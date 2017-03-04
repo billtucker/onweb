@@ -151,9 +151,16 @@ $requestorEpisodeNumberName = "Show_EpisodeNumber_t";
 
 //This must stay in place until an understanding is had about use case
 //$requestDivisionFieldName = "Programming_Type_t";
+//Yet another refactor to avoid possible PHP exceptions being thrown by ensuring a List is an array
+//Note: the worst case from this code is an empty array to populate the dropdown
 $programmingPipeItems = $request->getField('UI_ValueList_ProgrammingType_ct');
-if(isset($programmingPipeItems))
+$programmingItems = array();
+if(isset($programmingPipeItems)){
     $programmingItems = convertPipeToArray($programmingPipeItems);
+    if(!is_array($programmingItems)){
+        $programmingItems = array($programmingItems);
+    }
+}
 
 //The following will attempt to load a FileMaker Field with an expected set of values for the status dropdown
 //If the field contains one or no values the $requestStatusArray will not throw an exception when processed
