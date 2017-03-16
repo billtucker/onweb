@@ -21,6 +21,7 @@
  *    the password or PIN was encrypted before attempting to authenticate.
  * 5. 01/04/2017 Removed all calls to generatePasswordPin method calls. Replaced them with single md5() conversion. All
  *    FileMaker passwords and pins now use MD5 so we no longer need to apply/write a PHP encryption value.
+ * 6. 03/16/2017 Removed all logging instances that was capturing passwords for obvious reasons
  */
 
 include_once($_SERVER["DOCUMENT_ROOT"] ."/onweb" ."/onweb-config.php");
@@ -60,7 +61,7 @@ function authenticateLdapNew($post, $dbHandle, $site_prefix){
     $username = $post['username'];
     $password = $post['password'];
 
-    $log->debug("Now process login with LDAP server with username: " .$username . " password: " .$password);
+    $log->debug("Now process login with LDAP server with username: " .$username);
 
     $ldapRdn = $username ."@" .$companyDomainValue;
 
@@ -85,7 +86,7 @@ function authenticateLdapNew($post, $dbHandle, $site_prefix){
     $log->error('Connection ldap-errno: '.ldap_errno($ldapConnection) .' ldap-error: '.ldap_error($ldapConnection));
 
     if($ldapConnection){
-        $log->debug("Connection made Now bind with username: " .$ldapRdn ." password: " .$password);
+        $log->debug("Connection made Now bind with username: " .$ldapRdn);
         ldap_set_option($ldapConnection, LDAP_OPT_PROTOCOL_VERSION, 3); //Specifies the LDAP protocol to be used (V2 or V3)
         ldap_set_option($ldapConnection, LDAP_OPT_REFERRALS, 0); //Specifies whether to automatically follow referrals returned by the LDAP server
 

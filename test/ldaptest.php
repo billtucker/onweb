@@ -4,13 +4,16 @@
  * User: Bill
  * Date: 8/12/2016
  * Time: 1:27 PM
+ * Since I am not using the configuration page I need to setup logging
+ * set Logger class, setup Log4php configuration, and get Logger that is/can be used on any PHP page
+ * current configuration "config.xml" is setup for 1 MB max size log file that rolls file name onweb.log
+ * This code is strictly used to test connection to a Ldap server.
+ * Search/filter, root dsn, host, and company domain strings will be different for each company
+ * This can be used as a fill in the blank fields in FileMaker for auto configuration
+ * Note: Removed all logging that was capturing passwords
  */
 
-
-//Since I am not using the configuration page I need to setup logging
-//set Logger class, setup Log4php configuration, and get Logger that is/can be used on any PHP page
-//current configuration "config.xml" is setup for 1 MB max size log file that rolls file name onweb.log
-include_once('../vendor/apache/log4php/src/main/php/Logger.php');
+//include_once('../vendor/apache/log4php/src/main/php/Logger.php');
 Logger::configure("../config.xml");
 $log = Logger::getLogger("ONAIRPRO_Logger");
 
@@ -20,16 +23,18 @@ $log->debug("Start simple connection to ADAM the LDAP connection at Fox");
 
 //LDAP Definitions to be used in AD login
 //define("COMPANY_DOMAIN", "fox.com");
-define("COMPANY_DOMAIN", "gsn.com");
+//define("COMPANY_DOMAIN", "gsn.com");
+define("COMPANY_DOMAIN", "thoughtdev.com");
 //define("LDAP_SERVER", "ffeuscnadam.ffe.foxeg.com"); //ffeuspladam.ffe.foxeg.com
-define("LDAP_SERVER", "SM-DC-01.gsn.com");
+//define("LDAP_SERVER", "SM-DC-01.gsn.com");
+define("LDAP_SERVER", "192.168.0.11");
 define("LDAP_PORT", 389);
 
 $letMeIn = "Default is No Way";
 
 //$onAirProGroups = array("FBC-ONAIRPRO","FOXSPORTS-ONAIRPRO");
 //$onAirProGroups = array("GSN-OnAirPro");
-$onAirProGroups = array("GSN-CAGFullAccess");
+$onAirProGroups = array("Employees","Remote Desktop Users");
 
 //set TCP connection to SSL or open port
 if(LDAP_PORT == "636"){
@@ -38,13 +43,14 @@ if(LDAP_PORT == "636"){
     $ldapPrefix = "ldap://";
 }
 
-//$username = "brettwi";
-//$password = "Thoughtdev#2";
-$username = "thoughtdev";
-$password = "Td3v@a9Q1";
+//$username = "brettwi"; //This was the username for Fox Ldap
+//$password = "Thoughtdev#2"; //This was the password for Fox Ldap
+$username = ""; //for the test (the company or TDC) fill in the hardcoded username
+$password = ""; //for the test (the company or TDC) fill in the hardcoded password
 
 //$baseDn = "O=FEG,DC=fox,DC=com";
-$baseDn = "DC=gsn,DC=com";
+//$baseDn = "DC=gsn,DC=com";
+$baseDn = "CN=Users,DC=thoughtdev,DC=com";
 
 //Add domain name to user name for the bind process
 $ldapRdn = $username ."@" .COMPANY_DOMAIN;
@@ -56,14 +62,14 @@ $log->debug("Connection String -> Server: " .$ldapPrefix .LDAP_SERVER ." Port: "
 $log->error('Connection ldap-errno: '.ldap_errno($ldapConnection) .' ldap-error: '.ldap_error($ldapConnection));
 
 if($ldapConnection){
-    $log->debug("Connection made Now bind with username: " .$ldapRdn ." password: " .$password);
+    $log->debug("Connection made Now bind with username: " .$ldapRdn);
     ldap_set_option($ldapConnection, LDAP_OPT_PROTOCOL_VERSION, 3); //Specifies the LDAP protocol to be used (V2 or V3)
     ldap_set_option($ldapConnection, LDAP_OPT_REFERRALS, 0); //Specifies whether to automatically follow referrals returned by the LDAP server
 
     $bind = ldap_bind($ldapConnection, $ldapRdn, $password);
 
     if($bind){
-        $log->debug("We have binded to ldap server now Search groups");
+        $log->debug("We have binned to ldap server now Search groups");
         //$filter = "(&(objectCategory=People)(uid=$username))";
         //$filter = "uid=$username,OU=People,O=FEG,DC=fox,DC=com";
         //$filter = "(&(objectClass=person)(distinguishedName=uid=$username,OU=People,O=FEG,DC=fox,DC=com))"; //Fox Search String
