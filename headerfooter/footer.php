@@ -14,7 +14,7 @@ include_once($_SERVER["DOCUMENT_ROOT"] ."/onweb/onweb-config.php");
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
-                <p class="text-center text-muted">&copy; Copyright 2016, Thought Development Corporation &middot; All rights reserved</p>
+                <p class="text-center text-muted">&copy; Copyright 2017, Thought Development Corporation &middot; All rights reserved</p>
                 <p class="text-center text-muted">Build: <?php echo($buildVersion);?></p>
             </div>
         </div>

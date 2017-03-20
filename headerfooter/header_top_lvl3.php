@@ -65,6 +65,18 @@ if(file_exists($root .$appConfigName)){
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.1.6/nprogress.js"></script>
     <script type="text/javascript" src="../js/dropzone.js"></script>
     <script type="text/javascript" src="../../js/tdc.app.js"></script>
+	
+	<!-- favicons links -->
+	<link rel="apple-touch-icon" sizes="180x180" href="../../images/favicons/apple-touch-icon.png">
+	<link rel="icon" type="image/png" href="../../images/favicons/favicon-32x32.png" sizes="32x32">
+	<link rel="icon" type="image/png" href="../../images/favicons/favicon-194x194.png" sizes="194x194">
+	<link rel="icon" type="image/png" href="../../images/favicons/android-chrome-192x192.png" sizes="192x192">
+	<link rel="icon" type="image/png" href="../../images/favicons/favicon-16x16.png" sizes="16x16">
+	<link rel="manifest" href="../../images/favicons/manifest.json">
+	<link rel="mask-icon" href="../../images/favicons/safari-pinned-tab.svg" color="#2d89ef">
+	<meta name="apple-mobile-web-app-title" content="ON-AIR Pro Mobile">
+	<meta name="application-name" content="ON-AIR Pro Mobile">
+
 
     <!--[if lt IE 9]>
     <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
