@@ -675,7 +675,7 @@ function printEnableDisable($url){
         }
     }
 
-    if($disablePage) {
+    if($disablePrint) {
         echo("<a href=\"#\" onclick=\"disabledPrintBtnMessage()\"><strong>Print</strong></a>");
     }else{
         echo("<a href=\"#\" onclick=\"document.print.submit()\"><strong>Print</strong></a>");

@@ -254,7 +254,7 @@ echo("\n<script type='text/javascript' src='../js/tdc-deliverable-save-scroll-bu
         </td >
         <td><!-- Submit To -->
             <?php
-            $requestApproverList = $request->getField('Request_Approver_List_t');
+            $requestApproverList = $request->getField('Request_Approver_Contact_Name_List_t');
             if(isset($requestApproverList) && (strlen($requestApproverList) > 0)){
                 echo($requestApproverList);
             }

@@ -293,7 +293,8 @@ $log->debug("Now have required all fields now build HTML");
                 </td >
                 <td rowspan = "3" ><!-- Submit To -->
                 <textarea class="tdc-textarea-font-size form-control" cols = "10" rows = "6" name="Request_Approver_List_t" id="Request_Approver_List_t" disabled><?php
-                    $requestApproverList = $request->getField('Request_Approver_List_t');
+                    //$requestApproverList = $request->getField('Request_Approver_List_t'); //Request_Approver_Contact_Name_List_t
+                    $requestApproverList = $request->getField('Request_Approver_Contact_Name_List_t');
                     if(isset($requestApproverList) && (strlen($requestApproverList) > 0)){
                         echo($requestApproverList);
                     }
