@@ -72,7 +72,7 @@ include_once($requestInclude .'requestListConnection.php');
                     <td><?php echo($requestRecord->getField('Request_Status_t')); ?></td>
                     <td><?php echo($requestRecord->getField('Request_Status_Date_d')); ?></td>
                     <td><?php echo($requestRecord->getField('Contact_Name_t')); ?></td>
-                    <td><?php echo($requestRecord->getField('Request_Approver_List_t')) ;?></td>
+                    <td><?php echo($requestRecord->getField('Request_Approver_Contact_Name_List_t')) ;?></td>
                     <td><?php echo($requestRecord->getField('Request_Created_Date_d')) ;?></td>
                 </tr>
           <?php }
