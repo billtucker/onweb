@@ -64,7 +64,8 @@ if(file_exists($root .$appConfigName)){
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.1.6/nprogress.js"></script>
     <script type="text/javascript" src="js/dropzone.js"></script>
     <script type="text/javascript" src="js/tdc.app.js"></script>
-	
+
+    <!-- favicon list -->
 	<link rel="apple-touch-icon" sizes="180x180" href="images/favicons/apple-touch-icon.png">
 	<link rel="icon" type="image/png" href="images/favicons/favicon-32x32.png" sizes="32x32">
 	<link rel="icon" type="image/png" href="images/favicons/favicon-194x194.png" sizes="194x194">
