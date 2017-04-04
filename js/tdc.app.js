@@ -12,6 +12,12 @@ var originalRequestStatusValue;
 	
 $(document).ready(function () {
 
+    //When the chevron on the spot viewer (Only) is clicked show Project Information and hide when closed
+    $('#open_close').click(function () {
+        console.log("Chevron button was clicked");
+        $(this).find('span').toggleClass('glyphicon-chevron-down').toggleClass('glyphicon-chevron-up');
+    });
+
     //Capture how the dropdown Status is set at time page is loaded
     //Remember the element ID is hardcoded so change it required
     if(document.getElementById('Request_Status_t')){
@@ -187,7 +193,8 @@ $(document).ready(function () {
 //class or multiple classes to determine if NProgress should run (Example class="btn btn-default delgrp" or
 //class="delgrp")
 function skipNprogressHasClassName(ele){
-    var classArray = ['fileinput-remove', 'delgrp', 'remove-cross','upload-btn', 'printBtn','select_status'];
+    var classArray = ['fileinput-remove', 'delgrp', 'remove-cross','upload-btn', 'printBtn','select_status',
+        'ignore_button','navbar-toggle'];
     for(var x = 0; x < classArray.length; x++){
         if($(ele.target).hasClass(classArray[x])){
             return true;

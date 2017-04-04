@@ -4,6 +4,9 @@
  * User: Bill
  * Date: 10/16/2014
  * Time: 1:33 PM
+ *
+ * 04/04/2017 - Refactor navigation bar to use responsive bar over custom bar
+ *
  */
 
 include_once($_SERVER["DOCUMENT_ROOT"] ."/onweb/onweb-config.php");
@@ -85,42 +88,29 @@ if(file_exists($root .$appConfigName)){
 <body>
 <!-- add this javascript library here because it must be seen in  the DOM -->
 <script src="js/lightbox.min.js" type="text/javascript"></script>
-<div class="container-fluid"><!-- start site navigation bar -->
-    <div class="row tdc-nav-bar-background-grad">
-        <div class="col-xs-1 col-md-1 tdc-nav-bar-header-margin-padding-right">
-            <!-- <img src="images/universal-sports-logo_75x37_org.png" alt="Universal Sports Logo"> -->
-            <img class="img-thumbnail center-block" style="height: 42px;" src="<?php echo($companyLogoSmall);?>" alt="Company Logo">
-        </div>
-        <form role="form" action="commonutilities/printPage.php" method="post" id="print" name="print">
-            <input type="hidden" name="url" id="url" value="<?php echo($pageUrl);?>">
-            <div class="col-xs-4 col-md-4">
-                <ul class="nav nav-pills" role="tablist">
-                    <li class="tdc-nav-bar-header-divider-left" role="presentation">
-                        <a href="<?php echo($homepage);?>"><strong>Home</strong></a>
-                    </li>
-                    <li class="tdc-nav-bar-header-divider-left" role="presentation">
-                        <!-- This configuration works in all browsers -->
-                        <a href="#" onclick="history.go(-1);return false;"><strong>Back</strong></a>
-                    </li>
-                    <li class="tdc-nav-bar-header-divider-left" role="presentation">
-                    <li class="tdc-nav-bar-header-divider-left printBtn" role="presentation">
-                        <!-- disable the print button functionality on the spotedit.php only -->
-                        <?php printEnableDisable($pageUrl); ?>
-                    </li>
-                    </li>
-                    <li class="tdc-nav-bar-header-divider-left" role="presentation">
-                        <a href="<?php echo($site_prefix ."logout.php");?>" id="logout"><strong>Logout</strong></a>
-                    </li>
-                    <li class="tdc-nav-bar-header-divider-left" role="presentation">
-                        <a href="#" id="empty_nav_link">&nbsp;</a>
-                    </li>
-                </ul>
-            </div>
-        </form>
-        <div class="col-xs-6 col-md-6">&nbsp;</div>
-        <div class="col-xs-1 col-md-1 pull-right">
-            <img src="images/TD_OAP_logo_small.png" alt="No Alt Available" align="right" width="120" height="35">
-        </div>
+<nav class="navbar navbar-default" role="navigation">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
     </div>
-</div><!-- start site navigation bar -->
+    <a class="navbar-left hidden-xs"><img class="img-thumbnail center-block" style="height: 42px;margin-left: 10px;" src="<?php echo($companyLogoSmall);?>" alt="Company Logo"></a>
+    <a class="navbar-brand pull-right hidden-xs" href="#"><img src="images/TD_OAP_logo_small.png" alt="No Alt Available" align="right" width="120" height="35" style="padding-bottom: 5px;"></a>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <form role="form" action="commonutilities/printPage.php" method="post" id="print" name="print" style="position: relative;">
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li class="active"><a href="<?php echo($homepage);?>">Home</a></li>
+                <li><a href="#" onclick="history.go(-1);return false;">Back</a></li>
+                <input type="hidden" name="url" id="url" value="<?php echo($pageUrl); ?>"><!-- hidden element used in print operation when enabled -->
+                <li><?php printEnableDisable($pageUrl);?></li><!-- print <a> Tag enabled or disabled note: removed strong label-->
+                <li><a href="<?php echo($site_prefix ."logout.php");?>">Logout</a> </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </form><!-- end of form for wkhtmltopdf printer -->
+</nav>
 <div class="tdc-container-fluid"><!-- start container div -->
