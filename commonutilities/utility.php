@@ -676,9 +676,9 @@ function printEnableDisable($url){
     }
 
     if($disablePrint) {
-        echo("<a href=\"#\" onclick=\"disabledPrintBtnMessage()\">Print</a>");
+        echo("<a class=\"printBtn\" href=\"#\" onclick=\"disabledPrintBtnMessage()\">Print</a>");
     }else{
-        echo("<a href=\"#\" onclick=\"document.print.submit()\">Print</a>");
+        echo("<a class=\"printBtn\" href=\"#\" onclick=\"document.print.submit()\">Print</a>");
     }
 }
 
