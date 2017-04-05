@@ -59,8 +59,8 @@ function loadSpotTypesSessionData($dbHandle, $allProgrammingTypes){
     $spotListFilter = "Spot Type List";
 
     if (!isset($_SESSION[$spotTypesSessionIndex])) {
-        $spotTypeArray = buildSpotVersionsSessionArray($spotListFilter, $spotTypeCodeDescriptionField, $spotTypeCodeDescriptionField, $spotTypeDivision,
-            $allProgrammingTypes, "Spot Types", $dbHandle, $spotTypeCodeDescriptionField);
+        $spotTypeArray = buildSpotVersionsSessionArray($spotListFilter, $spotTypeCodeDescriptionField, $spotTypeCodeDescriptionField,
+            $spotTypeDivision, $allProgrammingTypes, "Spot Types", $dbHandle, $spotTypeCodeDescriptionField);
 
         $_SESSION[$spotTypesSessionIndex] = $spotTypeArray;
     } else {
