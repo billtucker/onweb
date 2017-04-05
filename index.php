@@ -32,6 +32,7 @@ $canModify = false;
 $siteSection = "onweb";
 //added to account for users with OnRequest module enabled in FileMaker (Hide buttons associated with OnRequest)
 $showProjectTypes = true;
+$showSpotTypes = true;
 
 if(isset($_GET['p1']) && validatePassThrough($_GET['p1'])){
     $validateUser = false;
@@ -44,6 +45,10 @@ if($validateUser) {
     validateUser($site_prefix, $pageUrl, $siteSection, "", $onWebPlugin);
     $canModify = userCanModifyRequest($okModify);
 }
+
+//Check if user has ON-REQUEST PLUGIN and if shutdown the ability to view sections of the site
+$showProjectTypes = userAccess("ON-REQUEST");
+$showSpotTypes = userAccess("ON-SPOT");
 
 $projectTypesFind = $fmOrderDB->newFindCommand('[WEB] Project Request Types');
 //Note: Locally 192.168.0.14 this field is 'Request Type' however in main line the field is 'Request_Type'
@@ -115,7 +120,7 @@ include_once($headerFooter .$headerToUse);
         </div>
         <div class="col-xs-6 col-lg-6">&nbsp;</div>
     </div>
-<?php } ?>
+
     <!-- Start of new dynamic work for more than 4 buttons -->
 <?php for($rowCounter = 0; $rowCounter < $projectTypeRecordCount; $rowCounter += $maxTypesPerRow){
     $columnWidthTotal = 8; ?>
@@ -158,11 +163,13 @@ include_once($headerFooter .$headerToUse);
     echo("<div class='col-xs-2 col-lg-2'>&nbsp;</div><!-- Last blank column for Bootstrap 12 column grid system -->\n");
     echo("</div><!-- end of row for this 12 columns -->\n");
 } ?>
+<?php } ?><!-- End of test for ON-REQUEST -->
     </div><!-- End 4 button Project Types for Bootstrap grid system -->
     <!-- End of new dynamic work for more than 4 buttons -->
 
     <!-- Start add button for Spot Viewer -->
     <hr>
+    <?php if($showSpotTypes) { ?>
     <div class="tdc-container-fluid">
         <div class="row">
             <div class="col-xs-2 col-lg-2">&nbsp;</div>
@@ -179,6 +186,7 @@ include_once($headerFooter .$headerToUse);
             <div class="col-xs-6 col-lg-6">&nbsp;</div>
         </div>
     </div>
+    <?php } ?> <!-- end of check for ON-SPOT access -->
     <!-- End of adding button for SpotViewer -->
     <br>
 <?php include_once($headerFooter .'footer.php'); ?>

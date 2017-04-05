@@ -103,6 +103,31 @@ function validateUser($site_prefix, $fullUrl, $siteSection, $viewCheck, $pluginT
     $log->debug("User is fully validated so redirect to page URL: " .urldecode($fullUrl));
 }
 
+/**
+ * Method will validate if user access purchased plugin for web access
+ * @param $access  initially ON-SPOT or/and ON-REQUEST test if plugin is authorized
+ * @return bool if access is found in session array then return true other wise return false
+ */
+function userAccess($access){
+    global $log;
+
+    if(!session_id()){
+        session_start();
+    }
+
+    if(!empty($_SESSION['installedPlugins'])){
+        if(is_array($_SESSION['installedPlugins'])){
+            if(in_array($access, $_SESSION['installedPlugins'])){
+                $log->debug("User has an Access Level: " .$access);
+                return true;
+            }
+        }
+    }
+
+    $log->debug("User does not have Access Level: " .$access);
+    return false;
+}
+
 //This method will currently process queries from ON-Request pages if user is allowed to edit Request
 //TODO this method should be replaced by the SpotViewer methods that determine if a user can access or edit sections
 function userCanModifyRequest($phraseToTest){
