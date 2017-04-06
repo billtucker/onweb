@@ -4,6 +4,11 @@
  * User: Bill
  * Date: 6/20/2016
  * Time: 11:10 AM
+ *
+ * Javascript calls this script until page until image is inside FileMaker container object or the user has moved to
+ * another page. The script that call this page is found in displayFilePicker.php and displayImagePicker.php files.
+ * This page will log at debug level that the PK of the meta record it is attempting to update.
+ * Note: current timeout function for Javascript is set to 5 seconds so it obviously needs to be adjusted to 2 minutes
  */
 
 include_once($_SERVER["DOCUMENT_ROOT"] ."/onweb/onweb-config.php");
