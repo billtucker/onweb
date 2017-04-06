@@ -308,7 +308,7 @@ function processFilePicker($label, $questionNum, $required, $fileName, $pkId, $c
                         }
                     }
                 });
-            }, 5000); //This setup to run ever 5 seconds and this needs to be adjusted to more like 1 or 2 minute cycles
+            }, 90000); //This setup to run ever 1.5 minutes
         }
 
         /**
