@@ -5,6 +5,13 @@
  * Date: 11/3/2014
  * Time: 3:35 PM
  * Modified Date 02-12-2015
+ *
+ * 04-10-2017 a container was added to FileMaker Request templates. When a new template is selected if that template
+ * has a document (PDF) then the code will extract the URL and construct a link <a> element and display said link
+ * otherwise hide the link element.
+ *
+ * 01-01-2017 Date is unknown at this time however, added that elements from the request are now loaded to the session
+ * to eliminate the need to reread the data from the request on each page load.
  */
 
 include_once("request-config.php");
@@ -213,6 +220,17 @@ If(!isset($_SESSION[$versionDescriptorSessionIndex])){
     $versionDescriptorArray = $_SESSION[$versionDescriptorSessionIndex];
 }
 
+//04-10-2017 a container was added to FileMaker Request templates. When a new template is selected
+//if that template has a document (PDF) then the code will extract the URL and construct a link <a> element
+//and display said link otherwise hide the link element.
+$attachmentURL = $request->getField('Request_Type_Attachment_c');
+$showRequestAttachment = false;
+if(isset($attachmentURL) && !empty($attachmentURL)){
+    $showRequestAttachment = true;
+    $attachmentFileName = getLightBoxCaption(urldecode($attachmentURL));
+    $log->debug("The Request has an attachment with name: " .$attachmentFileName);
+}
+
 //1. Do not include HTML header record until most processing is completed. The error page cannot be called "Redirected"
 //after HTML header is called.
 //2. Determine which header should be presented based on site level position
@@ -312,8 +330,13 @@ $log->debug("Now have required all fields now build HTML");
                         }
                         ?>
                     </select>
+                    <br />
                     <p class="form-control-static text-center" >
-                        <!-- <?php echo($request->getField('Request_Status_Date_d'));?> <?php echo($request->getField('Request_Status_Time_i')); ?> -->
+                        <!-- if an attchement exists on the record then display a link otherwise skip shwoing the link -->
+                        <?php if($showRequestAttachment) { ?>
+                            <!-- the ignore_button will ensure nprogress is NOT set off -->
+                          <a class="ignore_button" href="<?php echo($attachmentURL); ?>" target="_blank"><?php echo($attachmentFileName); ?></a>
+                        <?php } ?>
                     </p>
                     <p class="form-control-static text-center" >
                         <!-- <?php echo($request->getField('Request_Status_By_t')); ?> -->
