@@ -12,6 +12,10 @@
  *
  * 01-01-2017 Date is unknown at this time however, added that elements from the request layout are now loaded to the
  * session to eliminate the need to reread the data from the request on each page load.
+ *
+ * 04-10-2017 The $requestedProjectListCounter and $underLine declarations were moved from line 495/496 as it was in not
+ * in focus when no distribution records were declared
+ *
  */
 
 include_once("request-config.php");
@@ -241,6 +245,11 @@ include_once($headerFooter .$headerToUse);
 // null field Javascript errors
 //TODO figure this one out as the JS directory dose not exist at the Request level. For now hardcode the value
 echo("\n<script type='text/javascript' src='../js/tdc-request-save-scroll-button.js'></script>\n");
+
+//04-10-2017 The $requestedProjectListCounter and $underLine declarations were moved from line 495/496 as it was in
+//focus when no distribution records were declared
+$requestedProjectListCounter = 1;
+$underLine = "_"; //Used for selects to assign name and ID(s) for elements
 
 $log->debug("Now have required all fields now build HTML");
 ?>
@@ -492,10 +501,6 @@ $log->debug("Now have required all fields now build HTML");
                 </thead>
 
                 <?php
-                $requestedProjectListCounter = 1;
-                $underLine = "_"; //Used for selects to assign name and ID(s) for elements
-
-
                 if(isset($projectReqDelRelatedSets) && !empty($projectReqDelRelatedSets)){
                     foreach($projectReqDelRelatedSets as $projectRelatedSet){ ?>
                         <!-- Start of data row for Project List --><!-- let make sure to add and if statement for can edit -->
