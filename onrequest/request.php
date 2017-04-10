@@ -10,8 +10,8 @@
  * has a document (PDF) then the code will extract the URL and construct a link <a> element and display said link
  * otherwise hide the link element.
  *
- * 01-01-2017 Date is unknown at this time however, added that elements from the request are now loaded to the session
- * to eliminate the need to reread the data from the request on each page load.
+ * 01-01-2017 Date is unknown at this time however, added that elements from the request layout are now loaded to the
+ * session to eliminate the need to reread the data from the request on each page load.
  */
 
 include_once("request-config.php");
