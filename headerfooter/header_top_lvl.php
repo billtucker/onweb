@@ -102,11 +102,11 @@ if(file_exists($root .$appConfigName)){
     <a class="navbar-brand pull-right hidden-xs" href="#"><img src="images/TD_OAP_logo_small.png" alt="No Alt Available" align="right" width="120" height="35" style="padding-bottom: 5px;"></a>
     <!-- Collect the nav links, forms, and other content for toggling -->
     <form role="form" action="commonutilities/printPage.php" method="post" id="print" name="print" style="position: relative;">
+        <input type="hidden" name="url" id="url" value="<?php echo($pageUrl); ?>"><!-- hidden element used in print operation when enabled -->
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav navbar-right">
                 <li class="active"><a href="<?php echo($homepage);?>">Home</a></li>
                 <li><a href="#" onclick="history.go(-1);return false;">Back</a></li>
-                <input type="hidden" name="url" id="url" value="<?php echo($pageUrl); ?>"><!-- hidden element used in print operation when enabled -->
                 <li><?php printEnableDisable($pageUrl);?></li><!-- print <a> Tag enabled or disabled note: removed strong label-->
                 <li><a href="<?php echo($site_prefix ."logout.php");?>">Logout</a> </li>
             </ul>
