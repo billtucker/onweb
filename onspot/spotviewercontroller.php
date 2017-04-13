@@ -224,21 +224,18 @@ if (!$bypass) {
         $showNotesBlock = "hide";
     }
 
-    $disableNotes = "enable";
-    if (!$spotNotesEdit) {
-        $disableNotes = "disable";
-    }
-
-    $disableApproval = "enable";
-    if (!$approvalEdit) {
-        $disableApproval = "disable";
-    }
+    //This controls the number of columns allocated to the video/audio/images/documents when not in viedoOnly mode
+    //When also do not hide the second column
+    $viewerColumnClass = "col-md-9 col-xs-12";
+    $hideNotesApproval = "show";
 //End -- We now have the access level so now setup the JavaScript/JQuery hide/disable variables
 }else{ //If this is a bypass then hide notes and approval blocks (set the disable bit to keep out undefined variables
     $showApprovalBlock = "hide";
     $showNotesBlock = "hide";
-    $disableNotes = "disable";
-    $disableApproval = "disable";
+
+    //This controls to hide the Notes Approve blocks and expand the column width to full 12 columns for viewOnly mode
+    $viewerColumnClass = "col-md-12 col-xs-12";
+    $hideNotesApproval = "hide";
 }
 
 $headerToUse = getHeaderIncludeFileName(urldecode($pageUrl));
