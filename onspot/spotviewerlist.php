@@ -89,7 +89,7 @@ $log->debug("Finished with FM, got header, and now display HTML to display list 
                     <td><?php echo($record->getField("z_ONSPOT_Rough_Filename_t"));?></td>
                     <td><?php echo($record->getField('Rough_Cut_Approval_YN_t')); ?></td>
                     <td>
-                        <a href="spotviewercontroller.php.php?pkId=<?php echo(urlencode($record->getField('__pk_ID')));?>">
+                        <a href="spotviewercontroller.php?pkId=<?php echo(urlencode($record->getField('__pk_ID')));?>">
                             <img src="../images/leftarrow_icon.jpg" alt="Left Arrow Icon"></a>
                     </td>
                 </tr>
