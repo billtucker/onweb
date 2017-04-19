@@ -6,6 +6,13 @@
  * Time: 2:51 PM
  */
 
+include_once("onspot-config.php");
+include_once($utilities ."utility.php");
+include_once ($processing ."spotviewer_utility.php");
+
+$pageUrl = urlencode($port ."$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
+
+
 
 //Added the session check to make sure that I can collect the $_SESSION['userName']. This may be an overkill
 // but the if() controls the action
@@ -20,8 +27,9 @@ $showTitle = $record->getField('Show_Title_ct');
 <script type="text/javascript">
     $(document).ready(function () {
         //Function to control when Project Details chevron is clicked
-        $('#open_close').click(function () {
-            $(this).find('span').toggleClass('glyphicon-chevron-down').toggleClass('glyphicon-chevron-up');
+        $('.glyphicon-chevron-down').click(function(){
+            $(this).parent("div").find(".glyphicon-chevron-down")
+                .toggleClass("glyphicon-chevron-up");
         });
 
         //Check if user has access to the Approval block if not hide the entire block
@@ -60,41 +68,30 @@ $showTitle = $record->getField('Show_Title_ct');
 </script>
 
 <!-- setup here what is hidden and what is exposed -->
-<script src="../js/lightbox.min.js" type="text/javascript"></script>
 <input id="hideApprovalBlock" type="hidden" value="<?php echo $showApprovalBlock; ?>">
 <input id="hideNotesBlock" type="hidden" value="<?php echo $showNotesBlock; ?>">
 <input id="hideNotesApprover" type="hidden" value="<?php echo $hideNotesApproval; ?>">
 <div class="row">
     <div class="<?php echo $viewerColumnClass; ?>"><!-- start video and project details column -->
         <?php
-        if ($validVideo) {
-            ?>
-            <video width="100%" controls><!--Make the video fill in all the space allocated -->
-                <source src="<?php echo($fullVideoLink); ?>" type="<?php echo($videoType); ?>">
-                Your browser does not support displaying HTML5 video.
-            </video>
-            <?php
+            processDisplayType($fullVideoLink, $typeResult[0], $typeResult[1]);
+        ?>
+        <?php
             if (isset($downloadLink) && $downloadLink) {
                 echo "<div style='font-size:10px;'><!-- Video <a> Link Start -->";
             } else {
                 echo "<div style='display: none;'><!-- Video <a> Link Start hidden  -->";
             }
-            ?>
-            <a href="<?php echo $fullVideoLink ?>"><?php echo $fullVideoLink ?></a>
-            <?php echo "</div><!-- end of the video link <a> div to set font size -->"; ?>
-        <?php } else { ?>
-            <!-- all verbiage used is subject to change about why we cannot play the video -->
-            <p class="text-capitalize text-center lead"><strong>Unable to play video due to an invalid video format from
-                    FileMaker</strong></p>
-            <p class="text-capitalize text-center lead"><strong>Please use Back button to return to spot list</strong>
-            </p>
-        <?php } ?>
+        ?>
+        <a href="<?php echo $fullVideoLink ?>"><?php echo $fullVideoLink ?></a>
+    </div><!-- end of the video link <a> div to set font size -->
         <br>
-        <button class="btn input-group-addon tdc-glyphicon-control ignore_button" type="button" id="open_close"
-                data-toggle="collapse" data-target="#hidethisdiv" data-toggle="tooltip"
+    <button class="btn input-group-addon tdc-glyphicon-control ignore_button" type="button" id="open_close"
+            data-toggle="collapse" data-target="#hidethisdiv" data-toggle="tooltip"
                 title="Click to Show or Hide Project Details">
-            <span id="project_info" class="tdc-glyphicon-control glyphicon glyphicon-chevron-down"></span>
-        </button>
+        <!-- added ignore_button class to glyphicon to fix Edge browser class detection for nprogress.js -->
+            <span id="project_info" class="tdc-glyphicon-control glyphicon glyphicon-chevron-down ignore_button"></span>
+    </button>
         <label for="open_close"><?php echo($showTitle); ?></label>
         <div id="hidethisdiv" class="row collapse">
             <table class="table table-bordered table-responsive">

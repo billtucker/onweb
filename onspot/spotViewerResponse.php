@@ -127,7 +127,7 @@ if(isset($_POST['userNote'])){
 }
 
 //redirect to spot viewer page for user to see note added or approver change
-header("Location: spotedit.php?pkId=" .urlencode($pkId));
+header("Location: spotviewercontroller.php?pkId=" .urlencode($pkId));
 exit;
 
 ?>

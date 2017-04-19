@@ -660,14 +660,13 @@ function findTarget($sLine, $target){
 
 
 /**
- * Method determines which onclick method to invoke based on URL. If the url contains spotedit.php the
- * Print button in the navigation bar will display an JavaScript Alert to the user
+ * Method determines which onclick method to invoke based on URL. If the url contains spotviewercontroller.php or
+ * index.php the Print button in the navigation bar will display an JavaScript Alert to the user
  * @param $url String HTTP url
  */
 function printEnableDisable($url){
-    $pageToDisablePrint = "spotedit.php";
     $disablePrint = false;
-    $pagesToDisableArray = array("spotedit.php", "login.php");
+    $pagesToDisableArray = array("spotviewercontroller.php", "login.php");
 
     foreach($pagesToDisableArray as $disablePage){
         if(strpos($url, $disablePage)){
@@ -1114,6 +1113,86 @@ function contains($groupName, $fullLdapGroupArray){
         }
     }
     return false;
+}
+
+
+/**
+ * A method to determine the type of the file presented from FileMaker URL
+ * @param $fileName parsed filename from FileMaker URL
+ * @return array return an url with the type audio, video, application, image
+ */
+function getFileTypeInformation($fileName){
+    $types = array("application","audio","video","image","text");
+    $returnArray = array();
+
+    $ext = pathinfo($fileName, PATHINFO_EXTENSION);
+
+    $typesArray = array(
+        "application"=>array(
+            "abw"=>"application/x-abiword",
+            "arc"=>"application/octet-stream",
+            "doc"=>"application/msword",
+            "docx"=>"application/msword",
+            "epub"=>"application/epub+zip",
+            "odp"=>"application/vnd.oasis.opendocument.presentation",
+            "ods"=>"application/vnd.oasis.opendocument.spreadsheet","odt"=>"application/vnd.oasis.opendocument.text",
+            "ogx"=>"application/ogg","pdf"=>"application/pdf",
+            "ppt"=>"application/vnd.ms-powerpoint",
+            "rar"=>"application/x-rar-compressed",
+            "rtf"=>"application/rtf",
+            "sh"=>"application/x-sh",
+            "swf"=>"application/x-shockwave-flash",
+            "vsd"=>"application/vnd.visio",
+            "xls"=>"application/vnd.ms-excel",
+            "xlsx"=>"application/vnd.ms-excel"),
+        "audio"=>array(
+            "aac"=>"audio/aac",
+            "mp3"=>"audio/mp3",
+            "oga"=>"audio/ogg",
+            "ogg"=>"audio/ogg",
+            "wav"=>"audio/x-wav",
+            "weba"=>"audio/webm"),
+        "video"=>array(
+            "avi"=>"video/x-msvideo",
+            "mov"=>"video/mov",
+            "mpeg"=>"video/mpeg",
+            "mp4"=>"video/mp4",
+            "ogv"=>"video/ogg",
+            "webm"=>"video/webm",
+            "3gp"=>"video/3gpp",
+            "3g2"=>"video/3gpp2"),
+        "image"=>array(
+            "bmp"=>"image/bmp",
+            "gif"=>"image/gif",
+            "ico"=>"image/x-icon",
+            "jpeg"=>"image/jpg",
+            "jpg"=>"image/jpg",
+            "png"=>"image/png",
+            "svg"=>"image/svg+xml",
+            "tif"=>"image/tiff",
+            "tiff"=>"image/tiff",
+            "ttf"=>"image/tiff",
+            "webp"=>"image/webp"),
+        "text"=>array(
+            "csv"=>"text/csv",
+            "txt"=>"text/plain"),
+        "ebook"=>array(
+            "azw"=>"application/vnd.amazon.ebook")
+    );
+
+    foreach ($types as $type){
+        if(isset($typesArray[$type])){
+            $thatArray = $typesArray[$type];
+            if(isset($thatArray[$ext])){
+                array_push($returnArray,$type,$thatArray[$ext]);
+                return $returnArray;
+            }
+        }
+    }
+
+    //Default value if not matching extensions found in search of array
+    array_push($returnArray,"application","application/octet-stream");
+    return $returnArray;
 }
 
 

@@ -149,21 +149,26 @@ $validVideo = true; //set this as true as we expect that the container will alwa
 //TODO we should test for a valid extension the conatiner as well as the FileMaker text field
 if (!empty($record->getField('z_ONSPOT_Rough_Media_Store_con'))) {
     $container_url = $record->getField('z_ONSPOT_Rough_Media_Store_con');
+    $fileName = getLightBoxCaption($container_url);
+    $typeResult = array();
+    $typeResult = getFileTypeInformation($fileName);
+
     $ext = getFileMakerContainerFileExtension($container_url);
     $videoType = getVideoSourceType($ext);
+
+    //We still need this to substitute if the user is using an internal server IP from DMZ server
     $getContainerUrl = $fmWorkDB->getContainerDataURL($container_url);
     $fullVideoLink = getUserVideoUrl($getContainerUrl, $serverIP);
     $log->debug("URL from Container value: " . $fullVideoLink . " video type: " . $videoType);
 } else {
     $fullPathField = "z_ONSPOT_Rough_Full_Path_ct";
     $fullVideoLink = $record->getField($fullPathField);
-    $ext = getFileExtensionFromURL($fullVideoLink);
-    if ($ext == 'invalid') {
-        $log->debug("System found no extension associated text path: " . $fullPathField);
-        $validVideo = false;
-    }
-    $videoType = getVideoSourceType($ext);
-    $log->debug("URL from field Full Path value: " . $fullVideoLink . " video type: " . $videoType);
+    $fileName = getLightBoxCaption($fullVideoLink);
+    $typeResult = array();
+    $typeResult = getFileTypeInformation($fileName);
+
+    $log->debug("URL from field Full Path value: " . $fullVideoLink . " Player Type: " .$typeResult[0]
+        ." Source Type: " .$typeResult[1]);
 }
 //This will now extract Spot Image full path from FileMaker without injecting path information manually
 

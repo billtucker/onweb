@@ -11,6 +11,8 @@
 
 include_once dirname(__DIR__) .DIRECTORY_SEPARATOR ."onweb-config.php";
 
+$processing = $spotRoot ."processing" .DIRECTORY_SEPARATOR;
+
 //Start privileges properties
 $siteSection = "OnSpot"; //Prefix for On Air On Spot Viewer privilege set so each item of the set will begin with OnSpot
 $onSpotView = "View"; //OnSpot and View to access the On Spot Viewer

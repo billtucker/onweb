@@ -323,3 +323,9 @@ div.empty_image_container {
     box-shadow: 0 10px 6px -1px black;
     vertical-align: middle;
 }
+
+/* This will ensure that images placed for view within the spot viewer will stay within the div bounds */
+.tdc-spotviewer-image{
+    overflow: hidden;
+    height: auto;
+}
