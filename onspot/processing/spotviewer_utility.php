@@ -24,7 +24,7 @@ include_once dirname(__DIR__) .DIRECTORY_SEPARATOR ."onspot-config.php";
 function processDisplayType($url, $type, $sourceType, $downloadLink, $fullVideoLink){
     global $log;
 
-    $log->debug("Working type: " .$sourceType ." with URL: " .$url);
+    $log->debug("Working type: " .$sourceType ." with URL: " .$url ." Type is: " .$type);
     switch($type){
         case "audio":
             buildAudioType($url, $sourceType, $downloadLink, $fullVideoLink);
@@ -70,7 +70,7 @@ function buildAudioType($url, $sourceType, $downloadLink, $fullVideoLink){
     writeAudioLinkDivSpacer();
     echo "<div class='row'><!-- Start of special row to apply audio display formating -->" .PHP_EOL;
     echo "<div class=\"col-md-3 col-xs-12\"></div>" .PHP_EOL;
-    echo "<div class='col-md-5 col-xs-12 video-audio-border text-center'>" .PHP_EOL;
+    echo "<div class='col-md-6 col-xs-12 video-audio-border text-center'>" .PHP_EOL;
     echo "<audio width='100%' controls>" .PHP_EOL;
     echo "<source src='$url' type='$sourceType'>" .PHP_EOL;
     echo "</audio>" .PHP_EOL;
@@ -85,8 +85,8 @@ function buildAudioType($url, $sourceType, $downloadLink, $fullVideoLink){
  * @param $url the url to object loaded in FileMaker Container
  */
 function buildImageType($url){
-    echo "<div class='tdc-spotviewer-image'>" .PHP_EOL;
-    echo "<img class='img-responsive ignore_button' src='$url' alt='Rough Cut Image'>" .PHP_EOL;
+    echo "<div class='img-responsive tdc-spotviewer-image'>" .PHP_EOL;
+    echo "<img class='ignore_button' src='$url' alt='Rough Cut Image'>" .PHP_EOL;
     echo "</div>" .PHP_EOL;
 }
 
@@ -99,7 +99,7 @@ function buildApplicationType($url){
     echo "<div class='row'><!-- Start of special row to apply audio or image link display formating -->" .PHP_EOL;
     echo "<div class=\"col-md-3 col-xs-12\"></div>" .PHP_EOL;
     echo "<div class='col-md-6 col-xs-12 video-audio-border text-center'>" .PHP_EOL;
-    echo "<a class='ignore_button' href='$url' target='_blank'>Document From Rough Cut</a>" .PHP_EOL;
+    echo "<a class='ignore_button text-center' href='$url' target='_blank' style='margin-top: 10px; margin-bottom: 10px;'>Document From Rough Cut</a>" .PHP_EOL;
     echo "<div class=\"col-md-3 col-xs-12\"></div><!-- Last of empty columns foir audio display -->" .PHP_EOL;
     echo "</div><!-- add this div to fix audio display issues. -->";
     echo "</div><!-- shits and grins -->" .PHP_EOL;

@@ -72,18 +72,18 @@ $showTitle = $record->getField('Show_Title_ct');
 <input id="hideNotesBlock" type="hidden" value="<?php echo $showNotesBlock; ?>">
 <input id="hideNotesApprover" type="hidden" value="<?php echo $hideNotesApproval; ?>">
 <div class="row">
-    <div class="<?php echo $viewerColumnClass; ?>"><!-- start video and project details column -->
+    <div class="<?php echo $viewerColumnClass; ?>"><!-- start video/audio and project details column column -->
         <?php
-            processDisplayType($fullVideoLink, $typeResult[0], $typeResult[1], $downloadLink, $fullVideoLink);
+        processDisplayType($fullVideoLink, $typeResult[0], $typeResult[1], $downloadLink, $fullVideoLink);
         ?>
-    </div><!-- end of the video link <a> div to set font size -->
+        <!--</div>&lt;!&ndash; End of video/audio column presentation &ndash;&gt;--><!-- Removed this end div which fixes video -->
         <br>
-    <button class="btn input-group-addon tdc-glyphicon-control ignore_button" type="button" id="open_close"
-            data-toggle="collapse" data-target="#hidethisdiv" data-toggle="tooltip"
+        <button class="btn input-group-addon tdc-glyphicon-control ignore_button" type="button" id="open_close"
+                data-toggle="collapse" data-target="#hidethisdiv" data-toggle="tooltip"
                 title="Click to Show or Hide Project Details">
-        <!-- added ignore_button class to glyphicon to fix Edge browser class detection for nprogress.js -->
+            <!-- added ignore_button class to glyphicon to fix Edge browser class detection for nprogress.js -->
             <span id="project_info" class="tdc-glyphicon-control glyphicon glyphicon-chevron-down ignore_button"></span>
-    </button>
+        </button><!-- End of button code to hide and display project details -->
         <label for="open_close"><?php echo($showTitle); ?></label>
         <div id="hidethisdiv" class="row collapse">
             <table class="table table-bordered table-responsive">
@@ -147,8 +147,8 @@ $showTitle = $record->getField('Show_Title_ct');
                     </td>
                 </tr>
             </table>
-        </div><!-- End of collapse DIV -->
-    </div><!-- End of video column -->
+        </div><!-- End of collapse DIV Project Deatils -->
+    </div><!-- End video/audio row column -->
     <div id="columnHide"> <!-- This div is to hide the approval/notes blocks when in view only -->
         <div class="col-md-3 col-xs-12 tdc-spotviewer-div-margin approver_notes">
             <table class="table table-responsive" style="border: none">
@@ -256,7 +256,7 @@ $showTitle = $record->getField('Show_Title_ct');
                     </td>
                 </tr><!-- end of Notes TR -->
             </table>
-        </div><!-- End of approval and notes div -->
+        </div><!-- End of approval and notes div column -->
     </div><!-- End of hiding Notes and Approval block -->
 </div><!-- end of page row as the page is a single row with many columns This will span the entire page and use
     include to bring other column data elements -->
