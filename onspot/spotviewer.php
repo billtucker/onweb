@@ -74,16 +74,8 @@ $showTitle = $record->getField('Show_Title_ct');
 <div class="row">
     <div class="<?php echo $viewerColumnClass; ?>"><!-- start video and project details column -->
         <?php
-            processDisplayType($fullVideoLink, $typeResult[0], $typeResult[1]);
+            processDisplayType($fullVideoLink, $typeResult[0], $typeResult[1], $downloadLink, $fullVideoLink);
         ?>
-        <?php
-            if (isset($downloadLink) && $downloadLink) {
-                echo "<div style='font-size:10px;'><!-- Video <a> Link Start -->";
-            } else {
-                echo "<div style='display: none;'><!-- Video <a> Link Start hidden  -->";
-            }
-        ?>
-        <a href="<?php echo $fullVideoLink ?>"><?php echo $fullVideoLink ?></a>
     </div><!-- end of the video link <a> div to set font size -->
         <br>
     <button class="btn input-group-addon tdc-glyphicon-control ignore_button" type="button" id="open_close"

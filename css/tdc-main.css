@@ -324,8 +324,26 @@ div.empty_image_container {
     vertical-align: middle;
 }
 
-/* This will ensure that images placed for view within the spot viewer will stay within the div bounds */
+/* Spot Viewer specific This will ensure that images placed for view within the spot viewer will stay within the div bounds */
 .tdc-spotviewer-image{
     overflow: hidden;
     height: auto;
+}
+
+/* Spot Viewer specific added to control borders around a audio player and links to PDF or documents */
+.video-audio-border{
+    border: groove 1px;
+    border-radius: 10px;
+    padding-top: 10px;
+    background-color: #f3f3f3;
+}
+
+/* Spot Viewer specific added to control position elements inside a large div like an audio player */
+.divider-10{
+    width:100%;
+    min-height:1px;
+    margin-top:10px;
+    margin-bottom:10px;
+    display:inline-block;
+    position:relative;
 }
