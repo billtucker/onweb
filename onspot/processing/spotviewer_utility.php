@@ -5,8 +5,8 @@
  * Time: 3:07 PM
  *
  * Function to support the build of the container object type loaded in the FileMaker container
+ * Note: Take information and present that to the user based on what detected within the container dynamically
  *
- * Note: as of page code creation no formatting (CSS) has been applied but will be at later time
  */
 
 include_once dirname(__DIR__) .DIRECTORY_SEPARATOR ."onspot-config.php";
