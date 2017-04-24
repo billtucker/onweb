@@ -1,7 +1,6 @@
 <?php
 /**
- * Created by IntelliJ IDEA.
- * User: billt
+ * Created by Intellij User: billt
  * Date: 4/14/2017
  * Time: 3:07 PM
  *
@@ -102,7 +101,7 @@ function buildApplicationType($url){
     echo "<a class='ignore_button text-center' href='$url' target='_blank' style='margin-top: 10px; margin-bottom: 10px;'>Document From Rough Cut</a>" .PHP_EOL;
     echo "<div class=\"col-md-3 col-xs-12\"></div><!-- Last of empty columns foir audio display -->" .PHP_EOL;
     echo "</div><!-- add this div to fix audio display issues. -->";
-    echo "</div><!-- shits and grins -->" .PHP_EOL;
+    echo "</div><!-- End of second row definition  -->" .PHP_EOL;
 }
 
 
