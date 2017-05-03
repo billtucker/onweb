@@ -804,7 +804,10 @@ function getLightBoxCaption($fmUrl){
     if(isset($fmUrl) && !empty($fmUrl)){
         $pathUrl = parse_url($fmUrl, PHP_URL_PATH);
         $pathArray = pathinfo($pathUrl);
-        return $pathArray['filename'] ."." .$pathArray['extension'];
+        if(isset($pathArray['filename']) && !empty($pathArray['filename']) &&
+            isset($pathArray['extension']) && !empty($pathArray['extension'])){
+            return $pathArray['filename'] ."." .$pathArray['extension'];
+            }
     }
     return "";
 }

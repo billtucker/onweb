@@ -8,4 +8,4 @@
  * software version of onweb-config.php file
  */
 
-$branchSoftwareVersion = "Onweb-SpotViewer-Beta-04242017-0900";
+$branchSoftwareVersion = "Onweb-SpotViewer-Beta-05032017-0900";

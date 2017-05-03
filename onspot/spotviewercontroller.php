@@ -145,30 +145,44 @@ $videoPath = "";
 $videoType = "";
 $fullVideoLink = "";
 $validVideo = true; //set this as true as we expect that the container will always have valid video extension
+$downloadLink = false;
 
 //TODO we should test for a valid extension the conatiner as well as the FileMaker text field
 if (!empty($record->getField('z_ONSPOT_Rough_Media_Store_con'))) {
     $container_url = $record->getField('z_ONSPOT_Rough_Media_Store_con');
     $fileName = getLightBoxCaption($container_url);
     $typeResult = array();
-    $typeResult = getFileTypeInformation($fileName);
+    if(!empty($fileName)){
+        $typeResult = getFileTypeInformation($fileName);
+        $ext = getFileMakerContainerFileExtension($container_url);
+        $videoType = getVideoSourceType($ext);
+        //We still need this to substitute if the user is using an internal server IP from DMZ server
+        $getContainerUrl = $fmWorkDB->getContainerDataURL($container_url);
+        $fullVideoLink = getUserVideoUrl($getContainerUrl, $serverIP);
+        $log->debug("URL from Container value: " . $fullVideoLink . " video type: " . $videoType);
+    }else{
+        $typeResult[0] = "unknown";
+        $typeResult[1] = "unknown";
+    }
 
-    $ext = getFileMakerContainerFileExtension($container_url);
-    $videoType = getVideoSourceType($ext);
-
-    //We still need this to substitute if the user is using an internal server IP from DMZ server
-    $getContainerUrl = $fmWorkDB->getContainerDataURL($container_url);
-    $fullVideoLink = getUserVideoUrl($getContainerUrl, $serverIP);
-    $log->debug("URL from Container value: " . $fullVideoLink . " video type: " . $videoType);
 } else {
     $fullPathField = "z_ONSPOT_Rough_Full_Path_ct";
     $fullVideoLink = $record->getField($fullPathField);
     $fileName = getLightBoxCaption($fullVideoLink);
     $typeResult = array();
-    $typeResult = getFileTypeInformation($fileName);
+    if(!empty($fileName)){
+        $typeResult = getFileTypeInformation($fileName);
+        $log->debug("URL from field Full Path value: " . $fullVideoLink . " Player Type: " .$typeResult[0]
+            ." Source Type: " .$typeResult[1]);
+    }else{
+        $typeResult[0] = "unknown";
+        $typeResult[1] = "unknown";
+        $log->debug("Cannot get type of file so send in unknown type");
+    }
 
-    $log->debug("URL from field Full Path value: " . $fullVideoLink . " Player Type: " .$typeResult[0]
-        ." Source Type: " .$typeResult[1]);
+
+
+
 }
 //This will now extract Spot Image full path from FileMaker without injecting path information manually
 

@@ -37,6 +37,10 @@ function processDisplayType($url, $type, $sourceType, $downloadLink, $fullVideoL
         case "application":
             buildApplicationType($url);
             break;
+        case "unknown": //we were unable to get a filename or extension so tell user we cannot display information
+            $log->debug("Found an unknow type so now just present a error unable to decode");
+            buildUnknownType();
+            break;
         default:
             $log->error("No defined type for this type: " .$type);
             return;
@@ -70,13 +74,30 @@ function buildAudioType($url, $sourceType, $downloadLink, $fullVideoLink){
     echo "<div class='row'><!-- Start of special row to apply audio display formating -->" .PHP_EOL;
     echo "<div class=\"col-md-3 col-xs-12\"></div>" .PHP_EOL;
     echo "<div class='col-md-6 col-xs-12 video-audio-border text-center'>" .PHP_EOL;
-    echo "<audio width='100%' controls>" .PHP_EOL;
+    //TODO: take this style and add it to the main CSS file
+    echo "<audio width='100%' controls style='margin-top: 5px;'>" .PHP_EOL;
     echo "<source src='$url' type='$sourceType'>" .PHP_EOL;
     echo "</audio>" .PHP_EOL;
     downloadLinkStatus($downloadLink, $fullVideoLink);
     echo "</div><!-- Some end div that seems to work not sure why -->" .PHP_EOL;
     echo "<div class=\"col-md-3 col-xs-12\"></div><!-- Last of empty columns foir audio display -->" .PHP_EOL;
     echo "</div><!-- add this div to fix audio display issues. -->";
+}
+
+function buildUnknownType(){
+    writeAudioLinkDivSpacer();
+    echo "<div class='row'><!-- Start of special row to apply audio display formating -->" .PHP_EOL;
+    echo "<div class=\"col-md-3 col-xs-12\"></div>" .PHP_EOL;
+    echo "<div class='col-md-6 col-xs-12 video-audio-border text-center'>" .PHP_EOL;
+    echo "" .PHP_EOL;
+    echo "<h4 class='text-center text-danger'>Unable to display file from Rough Cut tab in Project</h4>" .PHP_EOL;
+    echo "</div><!-- Some end div that seems to work not sure why -->" .PHP_EOL;
+    echo "<div class=\"col-md-3 col-xs-12\"></div><!-- Last of empty columns foir audio display -->" .PHP_EOL;
+    echo "</div><!-- add this div to fix audio display issues. -->";
+    //**
+//    echo "<div class='img-responsive tdc-spotviewer-image'>" .PHP_EOL;
+//    echo "<h4 class='text-center'>Unable to determine type of object in rough cut</h4>" .PHP_EOL;
+//    echo "</div>" .PHP_EOL;
 }
 
 /**
