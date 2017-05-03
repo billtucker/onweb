@@ -227,7 +227,7 @@ If(!isset($_SESSION[$versionDescriptorSessionIndex])){
 //04-10-2017 a container was added to FileMaker Request templates. When a new template is selected
 //if that template has a document (PDF) then the code will extract the URL and construct a link <a> element
 //and display said link otherwise hide the link element.
-$attachmentURL = $request->getField('Request_Type_Attachment_c');
+$attachmentURL = $request->getField('Request_Type_Attachment_cc');
 $showRequestAttachment = false;
 if(isset($attachmentURL) && !empty($attachmentURL)){
     $showRequestAttachment = true;
