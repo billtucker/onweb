@@ -56,12 +56,11 @@ function processDisplayType($url, $type, $sourceType, $downloadLink, $fullVideoL
 function buildVideoType($url, $sourceType, $downloadLink, $fullVideoLink){
     global $log;
 
-    echo "<video width='100%' controls><!--Make the video fill in all the space allocated -->" .PHP_EOL;
+    echo "<video width='100%' controls controlsList='nodownload'><!--Make the video fill in all the space allocated -->" .PHP_EOL;
     echo "<source src='$url' type='$sourceType'>" .PHP_EOL;
     echo "Your browser does not support displaying HTML5 video." .PHP_EOL;
     echo "</video>" .PHP_EOL;
     downloadLinkStatus($downloadLink, $fullVideoLink);
-    //echo "</div><!-- Ending of DIV(s) for video Not sure about this -->" .PHP_EOL;
 }
 
 /**
@@ -75,7 +74,7 @@ function buildAudioType($url, $sourceType, $downloadLink, $fullVideoLink){
     echo "<div class=\"col-md-3 col-xs-12\"></div>" .PHP_EOL;
     echo "<div class='col-md-6 col-xs-12 video-audio-border text-center'>" .PHP_EOL;
     //TODO: take this style and add it to the main CSS file
-    echo "<audio width='100%' controls style='margin-top: 5px;'>" .PHP_EOL;
+    echo "<audio width='100%' controls style='margin-top: 5px;' controlsList='nodownload'>" .PHP_EOL;
     echo "<source src='$url' type='$sourceType'>" .PHP_EOL;
     echo "</audio>" .PHP_EOL;
     downloadLinkStatus($downloadLink, $fullVideoLink);

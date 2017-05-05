@@ -147,7 +147,9 @@ $fullVideoLink = "";
 $validVideo = true; //set this as true as we expect that the container will always have valid video extension
 $downloadLink = false;
 
-//TODO we should test for a valid extension the conatiner as well as the FileMaker text field
+//05-02-2017: Refactor notes
+//Test if a determination can be made as to the container object or URL path field type or can the code make sense
+// of the URL from the container field. If no such determination can be made then send an unknown type to the viewer page.
 if (!empty($record->getField('z_ONSPOT_Rough_Media_Store_con'))) {
     $container_url = $record->getField('z_ONSPOT_Rough_Media_Store_con');
     $fileName = getLightBoxCaption($container_url);
