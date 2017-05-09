@@ -146,12 +146,16 @@ $videoType = "";
 $fullVideoLink = "";
 $validVideo = true; //set this as true as we expect that the container will always have valid video extension
 $downloadLink = false;
+$linkFilename = "";
 
 //05-02-2017: Refactor notes
 //Test if a determination can be made as to the container object or URL path field type or can the code make sense
 // of the URL from the container field. If no such determination can be made then send an unknown type to the viewer page.
 if (!empty($record->getField('z_ONSPOT_Rough_Media_Store_con'))) {
     $container_url = $record->getField('z_ONSPOT_Rough_Media_Store_con');
+    //add 05-09-2017 In the case where a link is required as in the case of a PDF we can now show the filename rather than
+    // Rough Cut Object
+    $linkFilename = $record->getField('z_ONSPOT_Rough_Filename_ct z_ONSPOT_Rough_Filename_ct');
     $fileName = getLightBoxCaption($container_url);
     $typeResult = array();
     if(!empty($fileName)){

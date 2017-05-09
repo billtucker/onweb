@@ -74,7 +74,7 @@ $showTitle = $record->getField('Show_Title_ct');
 <div class="row">
     <div class="<?php echo $viewerColumnClass; ?>"><!-- start video/audio and project details column column -->
         <?php
-        processDisplayType($fullVideoLink, $typeResult[0], $typeResult[1], $downloadLink, $fullVideoLink);
+        processDisplayType($fullVideoLink, $typeResult[0], $typeResult[1], $downloadLink, $fullVideoLink, $linkFilename);
         ?>
         <!--</div>&lt;!&ndash; End of video/audio column presentation &ndash;&gt;--><!-- Removed this end div which fixes video -->
         <br>

@@ -20,7 +20,7 @@ include_once dirname(__DIR__) .DIRECTORY_SEPARATOR ."onspot-config.php";
  * @param $type the type audio, video, image, or application
  * @param $sourceType if required audio/mp3 or video/mp4
  */
-function processDisplayType($url, $type, $sourceType, $downloadLink, $fullVideoLink){
+function processDisplayType($url, $type, $sourceType, $downloadLink, $fullVideoLink, $linkFilename){
     global $log;
 
     $log->debug("Working type: " .$sourceType ." with URL: " .$url ." Type is: " .$type);
@@ -35,7 +35,7 @@ function processDisplayType($url, $type, $sourceType, $downloadLink, $fullVideoL
             buildImageType($url);
             break;
         case "application":
-            buildApplicationType($url);
+            buildApplicationType($url, $linkFilename);
             break;
         case "unknown": //we were unable to get a filename or extension so tell user we cannot display information
             $log->debug("Found an unknow type so now just present a error unable to decode");
@@ -113,12 +113,17 @@ function buildImageType($url){
  * Method to build a document or link block with launch in new browser tab
  * @param $url the url to object loaded in FileMaker Container
  */
-function buildApplicationType($url){
+function buildApplicationType($url, $linkFilename){
     writeAudioLinkDivSpacer();
     echo "<div class='row'><!-- Start of special row to apply audio or image link display formating -->" .PHP_EOL;
     echo "<div class=\"col-md-3 col-xs-12\"></div>" .PHP_EOL;
     echo "<div class='col-md-6 col-xs-12 video-audio-border text-center'>" .PHP_EOL;
-    echo "<a class='ignore_button text-center' href='$url' target='_blank' style='margin-top: 10px; margin-bottom: 10px;'>Document From Rough Cut</a>" .PHP_EOL;
+    if(empty($linkFilename)){
+        echo "<a class='ignore_button text-center' href='$url' target='_blank' style='margin-top: 10px; margin-bottom: 10px;'>Document From Rough Cut</a>" .PHP_EOL;
+    }else{
+        echo "<a class='ignore_button text-center' href='$url' target='_blank' style='margin-top: 10px; margin-bottom: 10px;'>$linkFilename</a>" .PHP_EOL;
+    }
+
     echo "<div class=\"col-md-3 col-xs-12\"></div><!-- Last of empty columns foir audio display -->" .PHP_EOL;
     echo "</div><!-- add this div to fix audio display issues. -->";
     echo "</div><!-- End of second row definition  -->" .PHP_EOL;
