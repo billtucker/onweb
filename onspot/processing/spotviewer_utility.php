@@ -32,7 +32,7 @@ function processDisplayType($url, $type, $sourceType, $downloadLink, $fullVideoL
             buildVideoType($url, $sourceType, $downloadLink, $fullVideoLink);
             break;
         case "image":
-            buildImageType($url);
+            buildImageType($url, $linkFilename);
             break;
         case "application":
             buildApplicationType($url, $linkFilename);
@@ -103,9 +103,18 @@ function buildUnknownType(){
  * Method to build a Image block
  * @param $url the url to object loaded in FileMaker Container
  */
-function buildImageType($url){
+function buildImageType($url, $linkFilename){
+    global $log;
+
     echo "<div class='img-responsive tdc-spotviewer-image'>" .PHP_EOL;
-    echo "<img class='ignore_button' src='$url' alt='Rough Cut Image'>" .PHP_EOL;
+    $log->debug("Image - Test if linkFilename is set: " .$linkFilename);
+
+    if(empty($linkFilename)){
+        echo "<img class='ignore_button' src='$url' alt='Rough Cut Image'>" .PHP_EOL;
+    }else{
+        echo "<img class='ignore_button' src='$url' alt='$linkFilename'>" .PHP_EOL;
+    }
+
     echo "</div>" .PHP_EOL;
 }
 
@@ -114,10 +123,13 @@ function buildImageType($url){
  * @param $url the url to object loaded in FileMaker Container
  */
 function buildApplicationType($url, $linkFilename){
+    global $log;
+
     writeAudioLinkDivSpacer();
     echo "<div class='row'><!-- Start of special row to apply audio or image link display formating -->" .PHP_EOL;
     echo "<div class=\"col-md-3 col-xs-12\"></div>" .PHP_EOL;
     echo "<div class='col-md-6 col-xs-12 video-audio-border text-center'>" .PHP_EOL;
+    $log->debug("Application - Test if linkFilename is set: " .$linkFilename);
     if(empty($linkFilename)){
         echo "<a class='ignore_button text-center' href='$url' target='_blank' style='margin-top: 10px; margin-bottom: 10px;'>Document From Rough Cut</a>" .PHP_EOL;
     }else{

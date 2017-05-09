@@ -156,6 +156,7 @@ if (!empty($record->getField('z_ONSPOT_Rough_Media_Store_con'))) {
     //add 05-09-2017 In the case where a link is required as in the case of a PDF we can now show the filename rather than
     // Rough Cut Object
     $linkFilename = $record->getField('z_ONSPOT_Rough_Filename_ct z_ONSPOT_Rough_Filename_ct');
+    $log->debug("Did we get the filename from the FileMaker field: " .$linkFilename);
     $fileName = getLightBoxCaption($container_url);
     $typeResult = array();
     if(!empty($fileName)){
