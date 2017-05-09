@@ -334,7 +334,7 @@ div.empty_image_container {
 .video-audio-border{
     border: groove 1px;
     border-radius: 10px;
-    padding-top: 10px;
+    padding-top: 2px;
     background-color: #f3f3f3;
 }
 
