@@ -10,7 +10,7 @@
  * Date: 4/12/2017
  * Time: 11:06 AM
  *
- * Note: This page represents a refactor of the spotedit.php to the new controller version.
+ * Note: This page represents a refactor of the spotviewercontroller.php to the new controller version.
  *
  */
 
@@ -279,6 +279,6 @@ include_once("spotviewer.php");
 $log->debug("Called in header and header to use " .$headerToUse);
 
 include_once($headerFooter . "footer.php");
-$log->debug("Completed spotedit.php code now display HTML code" . PHP_EOL);
+$log->debug("Completed spotviewercontroller.php code now display HTML code" . PHP_EOL);
 
 ?>

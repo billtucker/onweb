@@ -350,7 +350,7 @@ function addHiddenTagField(fieldId){
 
 
 /**
- * Disable Print button from navigation bar when on page spotedit.php and display alert user to use ctrl print
+ * Disable Print button from navigation bar when on page spotviewercontroller.php and display alert user to use ctrl print
  * to print the page
  * @returns false boolean
  */

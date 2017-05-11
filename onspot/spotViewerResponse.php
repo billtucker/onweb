@@ -5,7 +5,7 @@
  * Bill Tucker
  * 07/23/2015
  *
- * This code processes action taken from spotedit.php. The user will have two options to make a change to the approval
+ * This code processes action taken from spotviewercontroller.php. The user will have two options to make a change to the approval
  * status radio buttons or to add a new note. The processor takes in to account the dual form arrangement
  * so adding a note is one option while approving a spot.
  *
