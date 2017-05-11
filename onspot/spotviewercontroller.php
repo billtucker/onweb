@@ -173,15 +173,23 @@ if (!empty($record->getField('z_ONSPOT_Rough_Media_Store_con'))) {
     }
 
 } else {
+    //Now read what is in z_ONSPOT_Rough_Full_Path_ct FileMaker field since the container is empty
     $fullPathField = "z_ONSPOT_Rough_Full_Path_ct";
     $fullVideoLink = $record->getField($fullPathField);
     $fileName = getLightBoxCaption($fullVideoLink);
     $typeResult = array();
     if(!empty($fileName)){
+        $log->debug("We have a filename so this must be valid link: " .$fileName);
         $typeResult = getFileTypeInformation($fileName);
         $log->debug("URL from field Full Path value: " . $fullVideoLink . " Player Type: " .$typeResult[0]
             ." Source Type: " .$typeResult[1]);
-    }else{
+    } elseif (empty($fileName) && isValidUrl($fullVideoLink)){
+        $log->debug("Filename is empty but URL is valid: " .$fullVideoLink);
+        $typeResult[0] = "application";
+        $typeResult[1] = "";
+        $fileName = "";
+    } else {
+        $log->debug("Link is not valid: " .$fullVideoLink ." and no filename: " .$fileName);
         $typeResult[0] = "unknown";
         $typeResult[1] = "unknown";
         $log->debug("Cannot get type of file so send in unknown type");

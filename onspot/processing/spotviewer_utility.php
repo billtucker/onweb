@@ -121,7 +121,8 @@ function buildImageType($url, $linkFilename){
 }
 
 /**
- * Method to build a document or link block with launch in new browser tab
+ * Method to build a document or link block with launch in new browser tab. This function now 05-11-2017 also processes
+ * straight links to YouTube and Vimeo videos. A playable link will appear to launch the external site player.
  * @param $url the url to object loaded in FileMaker Container
  */
 function buildApplicationType($url, $linkFilename){
@@ -133,7 +134,8 @@ function buildApplicationType($url, $linkFilename){
     echo "<div class='col-md-6 col-xs-12 video-audio-border text-center'>" .PHP_EOL;
     $log->debug("Test For linkFilename: " .$linkFilename);
     if(empty($linkFilename)){
-        echo "<a class='ignore_button text-center' href='$url' target='_blank' style='margin-top: 10px; margin-bottom: 10px;'>Document From Rough Cut</a>" .PHP_EOL;
+        echo "<a class='ignore_button text-center' href='$url' target='_blank' style='margin-top: 10px; margin-bottom: 10px;'>Click to view</a>" .PHP_EOL;
+        echo "<p class='text-center'>" .$url ."</p>" .PHP_EOL;
     }else{
         echo "<a class='ignore_button text-center' href='$url' target='_blank' style='margin-top: 10px; margin-bottom: 10px;'>$linkFilename</a>" .PHP_EOL;
     }

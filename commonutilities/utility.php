@@ -1198,5 +1198,20 @@ function getFileTypeInformation($fileName){
     return $returnArray;
 }
 
+/**
+ * This function will determine if a URL entered in the rough cut full address FileMaker field is valid.
+ * This function will not validate the container URL. If the URL is valid then a anchor <a> will display HREF
+ * to this URL to be opened in a new browser tab
+ * @param $url - String URL to object video, audio, image, etc...
+ * @return bool - Boolean true if valid (note: must be able to connect to external address)
+ *
+ */
+function isValidUrl($url){
+    if(!isset($url) || empty($url)) return false;
+    $parsedUrl = parse_url($url);
+    if(!isset($parsedUrl['host'])) return false;
+    return !(gethostbyname($parsedUrl['host']) == $parsedUrl['host']);
+}
+
 
 ?>
