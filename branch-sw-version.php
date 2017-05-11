@@ -8,4 +8,4 @@
  * software version of onweb-config.php file
  */
 
-$branchSoftwareVersion = "Onweb-05112017-1300";
+$branchSoftwareVersion = "Onweb-Release-05112017-1300";
