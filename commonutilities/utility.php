@@ -1207,10 +1207,18 @@ function getFileTypeInformation($fileName){
  *
  */
 function isValidUrl($url){
+
     if(!isset($url) || empty($url)) return false;
+
     $parsedUrl = parse_url($url);
     if(!isset($parsedUrl['host'])) return false;
-    return !(gethostbyname($parsedUrl['host']) == $parsedUrl['host']);
+
+    //new test added for host name as DNS or IP and call in appropriate PHP function byname or by byaddr
+    if((bool)ip2long($parsedUrl['host'])){
+        return !(gethostbyaddr($parsedUrl['host']) == $parsedUrl['host']);
+    }else{
+        return !(gethostbyname($parsedUrl['host']) == $parsedUrl['host']);
+    }
 }
 
 
