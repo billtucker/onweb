@@ -2,7 +2,7 @@
 
 ## Synopsis
 
-A Thought Development PHP site using the FileMaker 14 PHP API to access On-Air Pro tables, various scripts
+A Thought Development PHP site using the FileMaker 15 with the PHP API to access On-Air Pro tables, various scripts
 and FileMaker structures. A majority of the work is considered a proof of concept or prototype for future work. 
 More information about Thought Development can be found at http://thought-dev.com/ 
 
